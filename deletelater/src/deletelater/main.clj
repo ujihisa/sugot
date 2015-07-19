@@ -1,6 +1,7 @@
 (ns deletelater.main
-  (:import [org.bukkit.event.player AsyncPlayerChatEven])
-  (:gen-class))
+  (:import [org.bukkit.event.player AsyncPlayerChatEvent])
+  (:gen-class
+    :extends org.bukkit.plugin.java.JavaPlugin))
 
 (defn f []
-  (prn 'hi AsyncPlayerChatEven))
+  (prn 'hi AsyncPlayerChatEvent))

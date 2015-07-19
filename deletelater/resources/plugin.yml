@@ -1,0 +1,6 @@
+name: test-clojure-spibot
+main: deletelater.main
+version: 1.0
+website: http://ujihisa.wordpress.com
+author: Tatsuhiro Ujihisa
+description: lingr
