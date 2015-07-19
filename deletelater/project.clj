@@ -3,7 +3,13 @@
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.6.0"]]
+  :dependencies [[org.clojure/clojure "1.6.0"]
+                 ^{:pom-scope :provided} [org.spigotmc/spigot-api "1.8.7-R0.1-SNAPSHOT"]
+                 ^{:pom-scope :provided } [org.bukkit/bukkit "1.8.7-R0.1-SNAPSHOT"]]
+  :repositories {"org.bukkit"
+                 "http://repo.bukkit.org/content/groups/public/"
+                 "spibot"
+                 "https://hub.spigotmc.org/nexus/content/groups/public/"}
   :main ^:skip-aot deletelater.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
