@@ -1,5 +1,6 @@
 (ns sugot.core
-  (:import [org.bukkit.craftbukkit Main]))
+  (:import [org.bukkit.craftbukkit Main]
+           [org.bukkit Bukkit]))
 
 (defn start [server]
   (prn :yay server))
