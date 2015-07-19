@@ -6,6 +6,10 @@
   (:gen-class))
 
 (declare start)
+(declare defevent*)
+
+(defmacro defevent [pm event-type args body]
+  `(defevent* ~pm ~event-type (fn ~args ~body)))
 
 (defn -main
   "I don't do a whole lot ... yet."
@@ -21,7 +25,21 @@
 
 (defn start [server]
   (let [pm (-> server .getPluginManager)
-        plugin (reify Plugin
+        player (reify org.bukkit.entity.Player
+                 (getName [this] "dummy-player"))]
+    (defevent pm org.bukkit.event.player.AsyncPlayerChatEvent [event]
+              (prn 'event event))
+    #_ (try
+      (-> pm (.disablePlugin (.getPlugin pm "dynmap")))
+      (catch Exception e nil))
+    (-> pm (.callEvent (org.bukkit.event.player.AsyncPlayerChatEvent. true player "a" (java.util.HashSet.))))
+    (System/exit 0)
+
+    ; This didn't work
+    #_ (prn (Bukkit/dispatchCommand (-> server .getConsoleSender) "stop"))))
+
+(defn defevent* [pm event-type f]
+  (let [plugin (reify Plugin
                  (getConfig [this] nil)
                  (getDatabase [this] nil)
                  (getDataFolder [this] nil)
@@ -42,20 +60,10 @@
                  (saveDefaultConfig [this] nil)
                  (saveResource [this resourcePath, replace-b] nil)
                  (setNaggable [boolean canNag] nil))
-        event org.bukkit.event.player.AsyncPlayerChatEvent
         listener (reify org.bukkit.event.Listener)
         executor (reify org.bukkit.plugin.EventExecutor
                    (execute [this listener event]
-                     (prn (format "Welcome, %s" (-> event .getPlayer .getName)))))
-        priority org.bukkit.event.EventPriority/NORMAL
-        player (reify org.bukkit.entity.Player
-                 (getName [this] "dummy-player"))]
-    (-> pm (.registerEvent event listener priority executor plugin))
-    #_ (try
-      (-> pm (.disablePlugin (.getPlugin pm "dynmap")))
-      (catch Exception e nil))
-    (-> pm (.callEvent (org.bukkit.event.player.AsyncPlayerChatEvent. true player "a" (java.util.HashSet.))))
-    (System/exit 0)
-
-    ; This didn't work
-    #_ (prn (Bukkit/dispatchCommand (-> server .getConsoleSender) "stop"))))
+                     (f event)
+                     #_ (prn (format "Welcome, %s" (-> event .getPlayer .getName)))))
+        priority org.bukkit.event.EventPriority/NORMAL]
+    (-> pm (.registerEvent event-type listener priority executor plugin))))
