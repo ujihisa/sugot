@@ -11,6 +11,12 @@ Clojure + Spigot minecraft server
     * Leave username/password empty
 3. `lein run`
 
+You can also `lein test` to check if it works without starting a Minecraft server..
+
+TODOs
+
+* specify port
+
 ## Contributing
 
 1. `lein cloverage` to run test and get test coverage. Make sure your code is covered.
