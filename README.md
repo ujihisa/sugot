@@ -15,6 +15,12 @@ Clojure + Spigot minecraft server
 
 1. `lein cloverage` to run test and get test coverage. Make sure your code is covered.
 
+### Coding Convention
+
+* Don't abbreviate names for vars (e.g. prefer `player` to `p`) of your main concern
+    * You can abbreviate them if they aren't the main concern of the function
+* Avoid naming colision, and for that you can abbreviate. (e.g. prefer `fmt` to `format`)
+
 ## FAQ
 
 * Do I have to `lein uberjar`?
