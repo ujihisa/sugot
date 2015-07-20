@@ -15,4 +15,5 @@
   :main ^:skip-aot sugot.core
   :target-path "target/%s"
   :min-lein-version "2.5.0"
-  :jvm-opts ["-XX:MaxPermSize=128M"])
+  :jvm-opts ["-XX:MaxPermSize=128M"]
+  :plugins [[lein-cloverage "1.0.6"]])

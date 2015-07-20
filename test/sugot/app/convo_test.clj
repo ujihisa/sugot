@@ -8,14 +8,11 @@
 (deftest AsyncPlayerChatEvent-test
   (testing "AsyncPlayerChatEvent is nice"
     (let [player (reify org.bukkit.entity.Player
-                   #_ (getName [this] "dummy-player")
-                   #_ (getMaxHealth [this] 20)
-                   #_ (getMaxHealth [this] 20.0))]
-      (prn player)
-      #_ (AsyncPlayerChatEvent (org.bukkit.event.player.AsyncPlayerChatEvent. true player "a" (java.util.HashSet.))))
+                   (getName [this] "dummy-player"))]
+      (AsyncPlayerChatEvent (org.bukkit.event.player.AsyncPlayerChatEvent. true player "a" (java.util.HashSet.))))
     #_ "TODO add assertions"))
 
-(defn fixture [f]
+#_ (defn fixture [f]
   (future (Main/main (make-array String 0)))
 
   ; call `f` once server is ready.

@@ -11,6 +11,10 @@ Clojure + Spigot minecraft server
     * Leave username/password empty
 3. `lein run`
 
+## Contributing
+
+1. `lein cloverage` to run test and get test coverage. Make sure your code is covered.
+
 ## FAQ
 
 * Do I have to `lein uberjar`?
