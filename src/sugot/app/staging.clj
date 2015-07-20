@@ -7,8 +7,8 @@
 
 (defn PlayerLoginEvent [event]
   (let [player (-> event .getPlayer)]
-    (l/post-lingr (format "<%s> logged in." (.getName player)))))
+    (l/post-lingr (format "[LOGIN] %s logged in." (.getName player)))))
 
 (defn PlayerQuitEvent [event]
   (let [player (-> event .getPlayer)]
-    (l/post-lingr (format "<%s> logged out" (.getName player)))))
+    (l/post-lingr (format "[LOGOUT] %s logged out" (.getName player)))))
