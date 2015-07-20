@@ -4,7 +4,9 @@
   (:require [sugot.events]))
 
 (defn apps []
-  (into #{}
+  ; So far I didn't find the way how to automatically collects all namespaces.
+  #{'sugot.app.convo 'sugot.app.staging}
+  #_ (into #{}
         (for [ns- (all-ns)
               :when (.startsWith (-> ns- ns-name name) "sugot.app.")]
           (ns-name ns-))))
