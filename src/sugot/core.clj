@@ -50,12 +50,16 @@
     (-> pm (.registerEvent event-type listener priority executor dummy-sugot-plugin))))
 
 (defn register-all [pm]
-  ; gather events, and register them
-  (doseq [app (apps)
-          :let [_ (require app)]
-          [klass fs] (listeners app)
-          f fs]
-    (register-event pm klass f)))
+  (try
+    ; gather events, and register them
+    (doseq [app (apps)
+            :let [_ (require app)]
+            [klass fs] (listeners app)
+            f fs]
+      (register-event pm klass f))
+    (catch Exception e
+      (-> e .printStackTrace)
+      (System/exit 1))))
 
 (defn -main [& args]
   (future (Main/main (make-array String 0)))
