@@ -1,9 +1,7 @@
 (ns sugot.app.staging
   (:require [clojure.string :as s]
             [sugot.lib :as l]
-            [clj-http.client]
-            ; just for now
-            [sugot.app.convo]))
+            [clj-http.client]))
 
 (defn PlayerLoginEvent [event]
   (let [player (-> event .getPlayer)]

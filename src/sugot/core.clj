@@ -1,6 +1,7 @@
 (ns sugot.core
   (:import [org.bukkit.craftbukkit Main]
-           [org.bukkit Bukkit])
+           [org.bukkit Bukkit]
+           [org.bukkit.event Listener])
   (:require [sugot.events]))
 
 (defn apps []
@@ -46,7 +47,7 @@
     (setNaggable [boolean canNag] nil)))
 
 (defn register-event [pm event-type f]
-  (let [listener (reify org.bukkit.event.Listener)
+  (let [listener (reify Listener)
         executor (reify org.bukkit.plugin.EventExecutor
                    (execute [this listener event]
                      (f event)))
