@@ -9,3 +9,7 @@
 * Relays to Lingr
     * Relay from Lingr is done by dynmap
 * (NOT IMPLEMENTED YET) Chat message replacements
+
+## app/staging
+
+* Anything misc is here until it finds a good spot.

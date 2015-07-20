@@ -4,10 +4,11 @@
 
 (defn apps []
   ; So far I didn't find the way how to automatically collects all namespaces.
-  #{'sugot.app.convo})
+  #{'sugot.app.convo 'sugot.app.staging})
 
 (def bukkit-events
-  {"AsyncPlayerChatEvent" org.bukkit.event.player.AsyncPlayerChatEvent})
+  {"AsyncPlayerChatEvent" org.bukkit.event.player.AsyncPlayerChatEvent
+   "PlayerLoginEvent" org.bukkit.event.player.PlayerLoginEvent})
 
 (defn listeners [ns-symbol]
   ; the ns-symbol has to be `require`d in advance.
