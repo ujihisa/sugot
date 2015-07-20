@@ -18,3 +18,19 @@ pom.xml.asc
 
 myrepo
 eula.txt
+banned-ips.json
+banned-players.json
+bukkit.yml
+commands.yml
+help.yml
+logs/
+ops.json
+permissions.yml
+plugins/
+server.properties
+spigot.yml
+usercache.json
+whitelist.json
+world/
+world_nether/
+world_the_end/

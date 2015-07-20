@@ -30,4 +30,4 @@
     (Thread/sleep 100)
     (System/exit 0)))
 
-(use-fixtures :once fixture)
+#_ (use-fixtures :once fixture)
