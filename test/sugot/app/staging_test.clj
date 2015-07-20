@@ -25,4 +25,4 @@
   ; after
   )
 
-(use-fixtures :each f)
+(use-fixtures :each fixture)

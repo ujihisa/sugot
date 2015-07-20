@@ -5,7 +5,7 @@
 
 (deftest apps-test
   (testing "List up all app symbols under src/sugot/app dir"
-    (is (= (apps) #{'sugot.app.convo 'sugot.app.staging}))))
+    (is (contains? (apps) 'sugot.app.convo))))
 
 (deftest listeners-test
   (testing "List of all event functions, and returns them as listeners for given app"
