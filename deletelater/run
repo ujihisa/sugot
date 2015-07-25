@@ -1,2 +1,0 @@
-#!/bin/bash -ex
-exec java -XX:MaxPermSize=128M -cp ~/spigot/spigot-1.8.7.jar:./deletelater-0.1.0-SNAPSHOT-standalone.jar deletelater.core
