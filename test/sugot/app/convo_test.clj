@@ -6,6 +6,9 @@
             [sugot.app.convo :refer :all]))
 
 (deftest AsyncPlayerChatEvent-test
+  (testing "english->hiragana"
+    (is (= 1 1)))
+
   (testing "AsyncPlayerChatEvent is nice"
     (let [player (reify org.bukkit.entity.Player
                    (getName [this] "dummy-player"))]
