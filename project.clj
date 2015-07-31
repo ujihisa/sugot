@@ -4,8 +4,8 @@
   :license {:name "GPL3 or any later versions"
             :url "http://www.gnu.org/licenses/gpl-3.0.en.html"}
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [org.spigotmc/spigot-api "1.8.7-R0.1-SNAPSHOT"]
-                 [org.spigotmc/spigot "1.8.7"]
+                 [org.spigotmc/spigot-api "1.8.8-R0.1-SNAPSHOT"]
+                 [org.spigotmc/spigot "1.8.8"]
                  [clj-http "2.0.0"]]
   :repositories {"org.bukkit"
                  "http://repo.bukkit.org/content/groups/public/"
