@@ -12,7 +12,3 @@
     (is (= (listeners 'sugot.app.convo)
            {org.bukkit.event.player.AsyncPlayerChatEvent
             [#'sugot.app.convo/AsyncPlayerChatEvent]}))))
-
-(deftest start-test
-  (testing "FIXME, I fail."
-    (is (= 0 1) "pending")))
