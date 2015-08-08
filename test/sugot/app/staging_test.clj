@@ -19,6 +19,13 @@
       (PlayerQuitEvent (org.bukkit.event.player.PlayerQuitEvent. player "dummy-message")))
     #_ "TODO add assertions"))
 
+(deftest PlayerBedEnterEvent-test
+  (testing "PlayerBedEnterEvent is nice"
+    (let [player (reify org.bukkit.entity.Player
+                   (getName [this] "dummy-player"))]
+      (PlayerBedEnterEvent (org.bukkit.event.player.PlayerBedEnterEvent. player "dummy-message")))
+    #_ "TODO add assertions"))
+
 (defn fixture [f]
   ; before
   (f)
