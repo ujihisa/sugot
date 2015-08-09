@@ -1,6 +1,6 @@
 (ns sugot.lib
   (:require [clj-http.client])
-  (:import [org.bukkit ChatColor]))
+  (:import [org.bukkit ChatColor Bukkit Material]))
 
 (def bot-verifier (System/getenv "BOT_VERIFIER"))
 
@@ -19,3 +19,25 @@
     (try
       (post-lingr* msg)
       (catch Exception e (-> e .printStackTrace)))))
+
+(def ^:dynamic *dummy-plugin*
+  (delay (-> (Bukkit/getPluginManager) (.getPlugin "dynmap"))))
+
+(defn
+  ^{:doc "Convert from seconds to ticks"
+    :tag Long
+    :test (fn []
+            (assert (= 100 (sec 5))))}
+  sec [n]
+  (int (* 20 n)))
+
+(defn later* [tick f]
+  (let [f* (fn []
+             (try
+               (f)
+               (catch Exception e (.printStackTrace e))))]
+    (.runTaskLater
+      (Bukkit/getScheduler) @*dummy-plugin* f* tick)))
+
+(defmacro later [tick & exps]
+  `(later* ~tick (fn [] ~@exps)))

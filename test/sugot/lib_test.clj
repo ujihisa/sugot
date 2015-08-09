@@ -1,6 +1,6 @@
-(ns sugot.util-test
+(ns sugot.lib-test
   (:require [clojure.test :refer :all]
-            [sugot.util :refer :all]))
+            [sugot.lib :refer :all]))
 
 (deftest sec-test
   (testing "TODO"
