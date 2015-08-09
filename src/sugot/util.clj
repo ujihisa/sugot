@@ -17,8 +17,8 @@
              (try
                (f)
                (catch Exception e (.printStackTrace e))))]
-    (.scheduleSyncDelayedTask
-      (Bukkit/getScheduler) *dummy-plugin* f* tick)))
+    (.runTaskLater
+      (Bukkit/getScheduler) @*dummy-plugin* f* tick)))
 
 (defmacro later [tick & exps]
   `(later* ~tick (fn [] ~@exps)))
