@@ -75,4 +75,4 @@
     (if server
       (let [pm (-> server .getPluginManager)]
         (register-all pm))
-      (recur (try (Bukkit/getServer) (catch Exception e nil))))) )
+      (recur (try (Bukkit/getServer) (catch Exception e nil))))))
