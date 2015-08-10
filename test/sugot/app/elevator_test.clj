@@ -45,7 +45,7 @@
                                  (mocks/location "anywhere" 10 20 30)))]
     coll))
 
-(deftest raise-elevator-test
+(deftest move-elevator-test
   #_ (defrecord Elevator [loc-plate loc-bar base-type base-data])
   (let [elevator (Elevator. (mocks/location "anywhere" 50 60 70)
                             (mocks/location "anywhere" 50 60 71)
@@ -53,7 +53,7 @@
                             0)]
     (with-redefs [b/set-block! (constantly :ok)]
       ; TODO real tests
-      (is (= 1 (raise-elevator elevator))))))
+      (is (true? (move-elevator elevator 1))))))
 
 (deftest PlayerMoveEvent-test
   (let [loc (mocks/location "anywhere" 10 20 30 block-map)
@@ -67,7 +67,7 @@
     (with-redefs [l/set-cancelled (constantly :o)
                   l/send-message (constantly :ok)
                   jumping-directly-above? (constantly true)
-                  raise-elevator (constantly 5)
+                  move-elevator (constantly true)
                   l/teleport (constantly :okkk)]
       (is (= :okkk (PlayerMoveEvent event))))))
 

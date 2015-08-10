@@ -44,25 +44,26 @@
                        (-> from .getBlock .getType)))
        (not (-> from .getBlock .isLiquid))))
 
-(defn raise-elevator
+(defn move-elevator
   "Raise the given elevator as an side effect,
   and returns new location y-diff where player should teleport."
-  [elevator]
+  [elevator ydiff]
   (doseq [x (range -1 2)
           z (range -1 2)]
-    (b/set-block! (b/from-loc (:loc-plate elevator) x 0 z)
+    (b/set-block! (b/from-loc (:loc-plate elevator) x (dec ydiff) z)
                   (:base-type elevator)
                   (:base-data elevator))
-    (b/set-block! (b/from-loc (:loc-plate elevator) x -1 z)
+    (b/set-block! (b/from-loc (:loc-plate elevator) x (- ydiff 2) z)
                   Material/AIR
                   0))
-  (b/set-block! (b/from-loc (:loc-plate elevator) 0 1 0)
+  (b/set-block! (b/from-loc (:loc-plate elevator) 0 ydiff 0)
                 Material/STONE_PLATE
                 1)
-  (b/set-block! (b/from-loc (:loc-bar elevator) 0 -1 0)
+  (b/set-block! (b/from-loc (:loc-bar elevator) 0 (- ydiff 2) 0)
                 Material/IRON_FENCE
                 0)
-  1)
+  ; TODO
+  true)
 
 (defn PlayerMoveEvent [event]
   (let [player (.getPlayer event)
@@ -73,9 +74,10 @@
         (l/set-cancelled event)
         (l/send-message player (format "[ELEVATOR] going up. %s"
                                        (prn-str elevator)))
-        (when-let [y-diff (raise-elevator elevator)]
-          (l/teleport player (doto (.getLocation player)
-                               (.add 0 y-diff 0))))))))
+        (let [y-diff 1]
+          (when (move-elevator elevator y-diff)
+            (l/teleport player (doto (.getLocation player)
+                                 (.add 0 (+ 0.01 y-diff) 0)))))))))
 
 (defn PlayerToggleSneakEvent [event]
   (let [player (.getPlayer event)
