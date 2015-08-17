@@ -9,6 +9,7 @@ Clojure + Spigot minecraft server
 1. Prepare `spigot-1.8.8.jar` https://www.spigotmc.org/wiki/buildtools/
 2. Install it with `lein deploy localrepo1 org.spigotmc/spigot 1.8.8 spigot-1.8.8.jar`
     * Leave username/password empty
+    * or make `~/.lein/credentials.clj` https://github.com/technomancy/leiningen/blob/master/doc/DEPLOY.md
 3. `lein run`
 
 You can also `lein test` to check if it works without starting a Minecraft server..
