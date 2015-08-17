@@ -12,7 +12,7 @@
                  "spigot-repo"
                  "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
                  "localrepo1"
-                 "file:myrepo"}
+                 "file://myrepo"}
   :main ^:skip-aot sugot.core
   :target-path "target/%s"
   :min-lein-version "2.5.0"

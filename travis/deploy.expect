@@ -2,8 +2,8 @@
 
 set timeout 5
 spawn lein deploy localrepo1 org.spigotmc/spigot 1.8.8 spigot-1.8.8.jar
-expect "Username:"
-send "\n"
-expect "Password:"
-send "\n"
+#expect "Username:"
+#send "\n"
+#expect "Password:"
+#send "\n"
 interact
