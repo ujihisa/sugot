@@ -6,10 +6,10 @@
   (testing "PlayerLoginEvent is nice"
     (let [player (reify org.bukkit.entity.Player
                    (getName [this] "dummy-player"))
-          ^java.net.InetAddress  address nil
+          address nil
           result #_PlayerLoginEvent.Result nil
           ^java.net.InetAddress real-address nil]
-      (PlayerLoginEvent (org.bukkit.event.player.PlayerLoginEvent. player "dummy-hostname" address result "dummy-message" real-address)))
+      (PlayerLoginEvent (org.bukkit.event.player.PlayerLoginEvent. player "dummy-hostname" ^java.net.InetAddress address result "dummy-message" real-address)))
     #_ "TODO add assertions"))
 
 (deftest PlayerQuitEvent-test
@@ -22,8 +22,9 @@
 (deftest PlayerBedEnterEvent-test
   (testing "PlayerBedEnterEvent is nice"
     (let [player (reify org.bukkit.entity.Player
-                   (getName [this] "dummy-player"))]
-      (PlayerBedEnterEvent (org.bukkit.event.player.PlayerBedEnterEvent. player "dummy-message")))
+                   (getName [this] "dummy-player"))
+          ^org.bukkit.block.Block block nil]
+      (PlayerBedEnterEvent (org.bukkit.event.player.PlayerBedEnterEvent. player block)))
     #_ "TODO add assertions"))
 
 (defn fixture [f]
