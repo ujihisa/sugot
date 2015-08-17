@@ -11,5 +11,5 @@
         message (-> event .getMessage)
         fmt (-> event .getFormat)
         msg (format fmt (-> player .getName) message)]
-    (Bukkit/broadcastMessage msg)
+    #_ (Bukkit/broadcastMessage msg)
     (l/post-lingr msg)))
