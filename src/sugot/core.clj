@@ -52,8 +52,8 @@
         executor (reify org.bukkit.plugin.EventExecutor
                    (execute [this listener event]
                      (cond
-                       (instance? event org.bukkit.event.player.PlayerEvent)
-                       (f event {:name "test"} #_(-> event .getPlayer m/Player->P))
+                       (instance? org.bukkit.event.player.PlayerEvent event)
+                       (f event (-> event .getPlayer m/Player->P))
                        :else
                        (f event))))
         priority org.bukkit.event.EventPriority/NORMAL]
