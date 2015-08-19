@@ -11,27 +11,21 @@
              (PlayerLoginEvent nil (P. "dummy-player" nil nil)))))))
 
 (deftest PlayerQuitEvent-test
-  (testing "PlayerQuitEvent is nice"
-    (let [player (reify org.bukkit.entity.Player
-                   (getName [this] "dummy-player"))]
-      (PlayerQuitEvent (org.bukkit.event.player.PlayerQuitEvent. player "dummy-message")
-                       (P. "dummy-player" nil nil)))
-    #_ "TODO add assertions"))
+  (testing "notifies to lingr"
+    (with-redefs [l/post-lingr (fn [msg] {:msg msg})]
+      (is (= {:msg "[LOGOUT] dummy-player logged out."}
+             (PlayerQuitEvent nil (P. "dummy-player" nil nil)))))))
 
 (deftest PlayerBedEnterEvent-test
-  (testing "PlayerBedEnterEvent is nice"
-    (let [player (reify org.bukkit.entity.Player
-                   (getName [this] "dummy-player"))
-          ^org.bukkit.block.Block block nil]
-      ; TODO
-      ; Bukkit/broadcastMessage fails with NPE...
-      #_(PlayerBedEnterEvent (org.bukkit.event.player.PlayerBedEnterEvent. player block)))
-    #_ "TODO add assertions"))
+  (testing "notifies to lingr "
+    (with-redefs [l/post-lingr (fn [msg] {:msg msg})]
+      (is (= {:msg "[BED] dummy-player went to bed."}
+             (PlayerBedEnterEvent nil (P. "dummy-player" nil nil)))))))
 
-(defn fixture [f]
-  ; before
-  (f)
-  ; after
-  )
-
-(use-fixtures :each fixture)
+; (defn fixture [f]
+;   ; before
+;   (f)
+;   ; after
+;   )
+; 
+; (use-fixtures :each fixture)
