@@ -53,7 +53,7 @@
                    (execute [this listener event]
                      (cond
                        (instance? event org.bukkit.event.player.PlayerEvent)
-                       (f event (-> event .getPlayer m/Player->P))
+                       (f event {:name "test"} #_(-> event .getPlayer m/Player->P))
                        :else
                        (f event))))
         priority org.bukkit.event.EventPriority/NORMAL]
