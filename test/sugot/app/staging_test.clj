@@ -1,6 +1,7 @@
 (ns sugot.app.staging-test
   (:require [clojure.test :refer :all]
-            [sugot.app.staging :refer :all]))
+            [sugot.app.staging :refer :all])
+  (:import [sugot.models P Loc]))
 
 (deftest PlayerLoginEvent-test
   (testing "PlayerLoginEvent is nice"
@@ -9,14 +10,16 @@
           address nil
           result #_PlayerLoginEvent.Result nil
           ^java.net.InetAddress real-address nil]
-      (PlayerLoginEvent (org.bukkit.event.player.PlayerLoginEvent. player "dummy-hostname" ^java.net.InetAddress address result "dummy-message" real-address)))
+      (PlayerLoginEvent (org.bukkit.event.player.PlayerLoginEvent. player "dummy-hostname" ^java.net.InetAddress address result "dummy-message" real-address)
+                        (P. "dummy-player" nil nil)))
     #_ "TODO add assertions"))
 
 (deftest PlayerQuitEvent-test
   (testing "PlayerQuitEvent is nice"
     (let [player (reify org.bukkit.entity.Player
                    (getName [this] "dummy-player"))]
-      (PlayerQuitEvent (org.bukkit.event.player.PlayerQuitEvent. player "dummy-message")))
+      (PlayerQuitEvent (org.bukkit.event.player.PlayerQuitEvent. player "dummy-message")
+                       (P. "dummy-player" nil nil)))
     #_ "TODO add assertions"))
 
 (deftest PlayerBedEnterEvent-test
