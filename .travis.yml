@@ -1,10 +1,6 @@
 language: c
 
-before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install expect
-
-script: sh ./travis/test.sh
+script: ./travis/test.sh
 
 after_success:
   - lein cloverage --coveralls && curl -F 'json_file=@target/coverage/coveralls.json' "https://coveralls.io/api/v1/jobs"
