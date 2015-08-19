@@ -11,12 +11,12 @@
                        (replacefirst-go "be" "べ" "benri"))))}
   [from to s-all]
   (if (.startsWith s-all from)
-    [to (.substring s-all (count to))]
+    [to (.substring s-all (count from))]
     [nil s-all]))
 
 (def romaji-table
   [["ka" "か"] ["ki" "き"] ["ku" "く"] ["ke" "け"] ["ko" "こ"]
-   ; add more here
+   ["sa" "さ"] ["shi" "し"] ["su" "す"] ["se" "せ"] ["so" "そ"]
    ;["a" "あ"] ["i" "い"] ["u" "う"] ["e" "え"] ["o" "お"]
    ["n" "ん"]])
 
@@ -43,9 +43,7 @@
         (recur (str memo (first s)) (.substring s 1))))))
 
 (defn AsyncPlayerChatEvent [event p]
-  (let [message (-> event .getMessage)
-        fmt (-> event .getFormat)
-        msg (format fmt (:name p) message)]
-    (l/post-lingr (english->hiragana msg))))
-
-(prn (english->hiragana "benri"))
+  (let [message (-> event .getMessage english->hiragana)
+        fmt (-> event .getFormat)]
+    (.setMessage event message)
+    (l/post-lingr (format fmt (:name p) message))))
