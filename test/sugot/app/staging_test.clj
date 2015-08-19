@@ -1,18 +1,14 @@
 (ns sugot.app.staging-test
   (:require [clojure.test :refer :all]
-            [sugot.app.staging :refer :all])
+            [sugot.app.staging :refer :all]
+            [sugot.lib :as l])
   (:import [sugot.models P Loc]))
 
 (deftest PlayerLoginEvent-test
-  (testing "PlayerLoginEvent is nice"
-    (let [player (reify org.bukkit.entity.Player
-                   (getName [this] "dummy-player"))
-          address nil
-          result #_PlayerLoginEvent.Result nil
-          ^java.net.InetAddress real-address nil]
-      (PlayerLoginEvent (org.bukkit.event.player.PlayerLoginEvent. player "dummy-hostname" ^java.net.InetAddress address result "dummy-message" real-address)
-                        (P. "dummy-player" nil nil)))
-    #_ "TODO add assertions"))
+  (testing "notifies to lingr"
+    (with-redefs [l/post-lingr (fn [msg] {:msg msg})]
+      (is (= {:msg "[LOGIN] dummy-player logged in."}
+             (PlayerLoginEvent nil (P. "dummy-player" nil nil)))))))
 
 (deftest PlayerQuitEvent-test
   (testing "PlayerQuitEvent is nice"
