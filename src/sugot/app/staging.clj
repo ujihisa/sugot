@@ -3,14 +3,11 @@
             [sugot.lib :as l]
             [clj-http.client]))
 
-(defn PlayerLoginEvent [event]
-  (let [player (-> event .getPlayer)]
-    (l/post-lingr (format "[LOGIN] %s logged in." (.getName player)))))
+(defn PlayerLoginEvent [event p]
+  (l/post-lingr (format "[LOGIN] %s logged in." (:name p))))
 
-(defn PlayerQuitEvent [event]
-  (let [player (-> event .getPlayer)]
-    (l/post-lingr (format "[LOGOUT] %s logged out." (.getName player)))))
+(defn PlayerQuitEvent [event p]
+  (l/post-lingr (format "[LOGOUT] %s logged out." (:name p))))
 
-(defn PlayerBedEnterEvent [event]
-  (let [player (-> event .getPlayer)]
-    (l/post-lingr (format "[BED] %s went to bed." (.getName player)))))
+(defn PlayerBedEnterEvent [event p]
+  (l/post-lingr (format "[BED] %s went to bed." (:name p))))

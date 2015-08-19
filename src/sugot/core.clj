@@ -2,7 +2,8 @@
   (:import [org.bukkit.craftbukkit Main]
            [org.bukkit Bukkit]
            [org.bukkit.event Listener])
-  (:require [sugot.events]))
+  (:require [sugot.events]
+            [sugot.models :as m]))
 
 (defn apps []
   ; So far I didn't find the way how to automatically collects all namespaces.
@@ -50,7 +51,11 @@
   (let [listener (reify Listener)
         executor (reify org.bukkit.plugin.EventExecutor
                    (execute [this listener event]
-                     (f event)))
+                     (cond
+                       (instance? event org.bukkit.event.player.PlayerEvent)
+                       (f event (-> event .getPlayer m/Player->P))
+                       :else
+                       (f event))))
         priority org.bukkit.event.EventPriority/NORMAL]
     (-> pm (.registerEvent event-type listener priority executor dummy-sugot-plugin))))
 

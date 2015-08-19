@@ -6,10 +6,9 @@
 (defn- english->hiragana [english-str]
   english-str)
 
-(defn AsyncPlayerChatEvent [event]
-  (let [player (-> event .getPlayer)
-        message (-> event .getMessage)
+(defn AsyncPlayerChatEvent [event p]
+  (let [message (-> event .getMessage)
         fmt (-> event .getFormat)
-        msg (format fmt (-> player .getName) message)]
+        msg (format fmt (:name p) message)]
     #_ (Bukkit/broadcastMessage msg)
     (l/post-lingr msg)))
