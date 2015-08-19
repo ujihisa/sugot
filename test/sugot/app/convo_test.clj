@@ -1,6 +1,7 @@
 (ns sugot.app.convo-test
   (:require [clojure.test :refer :all]
             [sugot.app.convo :refer :all]
+            [sugot.lib :as l]
             [sugot.models])
   (:import [org.bukkit.craftbukkit Main]
            [org.bukkit Bukkit]
@@ -12,11 +13,10 @@
     (is (= 1 1)))
 
   (testing "AsyncPlayerChatEvent is nice"
-    (let [player (reify org.bukkit.entity.Player
-                   (getName [this] "dummy-player"))]
-      (AsyncPlayerChatEvent (org.bukkit.event.player.AsyncPlayerChatEvent. true player "a" (java.util.HashSet.))
-                            (P. "dummy-player" nil player)))
-    #_ "TODO add assertions"))
+    (with-redefs [l/post-lingr (fn [msg] {:msg msg})]
+      (is (= {:msg "<dummy-player> a"}
+             (AsyncPlayerChatEvent (org.bukkit.event.player.AsyncPlayerChatEvent. true nil "a" (java.util.HashSet.))
+                                   (P. "dummy-player" nil nil)))))))
 
 #_ (defn fixture [f]
   (future (Main/main (make-array String 0)))
