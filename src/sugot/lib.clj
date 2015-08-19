@@ -4,7 +4,7 @@
 
 (def bot-verifier (System/getenv "BOT_VERIFIER"))
 
-(defn post-lingr* [msg]
+(defn post-lingr-sync [msg]
   (when bot-verifier
     (clj-http.client/post
       "http://lingr.com/api/room/say"
@@ -17,7 +17,7 @@
 (defn post-lingr [msg]
   (future
     (try
-      (post-lingr* msg)
+      (post-lingr-sync msg)
       (catch Exception e (-> e .printStackTrace)))))
 
 (def ^:dynamic *dummy-plugin*
@@ -31,7 +31,7 @@
   sec [n]
   (int (* 20 n)))
 
-(defn later* [tick f]
+(defn later-fn [tick f]
   (let [f* (fn []
              (try
                (f)
@@ -40,4 +40,4 @@
       (Bukkit/getScheduler) @*dummy-plugin* f* tick)))
 
 (defmacro later [tick & exps]
-  `(later* ~tick (fn [] ~@exps)))
+  `(later-fn ~tick (fn [] ~@exps)))
