@@ -51,10 +51,9 @@
   (let [listener (reify Listener)
         executor (reify org.bukkit.plugin.EventExecutor
                    (execute [this listener event]
-                     (cond
-                       (instance? org.bukkit.event.player.PlayerEvent event)
+                     (condp instance?
+                       org.bukkit.event.player.PlayerEvent
                        (f event (-> event .getPlayer m/Player->P))
-                       :else
                        (f event))))
         priority org.bukkit.event.EventPriority/NORMAL]
     (-> pm (.registerEvent event-type listener priority executor dummy-sugot-plugin))))
