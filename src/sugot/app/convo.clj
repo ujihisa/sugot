@@ -46,6 +46,6 @@
   (let [message (-> event .getMessage)
         fmt (-> event .getFormat)
         msg (format fmt (:name p) message)]
-    (l/post-lingr msg)))
+    (l/post-lingr (english-hiragana msg))))
 
 (prn (english->hiragana "benri"))
