@@ -14,6 +14,12 @@
     [to (.substring s-all (count from))]
     [nil s-all]))
 
+; TODO use this as a word, not as a letter
+(def word-table
+  [["benri" "便利"] ["dropper" "泥(・ω・)ﾉ■ ｯﾊﾟ"] ["hopper" "穂(・ω・)ﾉ■ ｯﾊﾟ"]
+   ["thx" "格別のご愛顧を賜り心よりお礼申し上げます"]
+   ["yw" "いえいえ、こちらこそこれもひとえに皆々様のご支援・ご協力あってのことと心より感謝しております"]])
+
 (def romaji-table
   [["ka" "か"] ["ki" "き"] ["ku" "く"] ["ke" "け"] ["ko" "こ"]
    ["sa" "さ"] ["shi" "し"] ["su" "す"] ["se" "せ"] ["so" "そ"]
