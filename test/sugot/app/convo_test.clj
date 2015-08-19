@@ -8,6 +8,13 @@
            [org.bukkit.entity Player]
            [sugot.models Loc P]))
 
+(deftest replacefirst-go-test
+  (testing "a word"
+    (is (= [nil "benri"]
+           (@#'sugot.app.convo/replacefirst-go "n" "ん" "benri")))
+    (is (= ["べ" "nri"]
+           (@#'sugot.app.convo/replacefirst-go "be" "べ" "benri")))))
+
 (deftest AsyncPlayerChatEvent-test
   (testing "english->hiragana"
     (is (= 1 1)))
