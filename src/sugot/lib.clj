@@ -20,6 +20,9 @@
       (post-lingr-sync msg)
       (catch Exception e (-> e .printStackTrace)))))
 
+(defn broadcast [msg]
+  (Bukkit/broadcastMessage msg))
+
 (def ^:dynamic *dummy-plugin*
   (delay (-> (Bukkit/getPluginManager) (.getPlugin "dynmap"))))
 

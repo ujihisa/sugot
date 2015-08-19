@@ -10,4 +10,6 @@
   (l/post-lingr (format "[LOGOUT] %s logged out." (:name p))))
 
 (defn PlayerBedEnterEvent [event p]
-  (l/post-lingr (format "[BED] %s went to bed." (:name p))))
+  (let [msg (format "[BED] %s went to bed." (:name p))]
+    (l/broadcast msg)
+    (l/post-lingr msg)))
