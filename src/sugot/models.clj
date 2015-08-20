@@ -1,7 +1,8 @@
 (ns sugot.models
-  (:import [org.bukkit Material Location]
+  (:import [org.bukkit Bukkit Material Location]
            [org.bukkit.block Block]
-           [org.bukkit.entity Player]))
+           [org.bukkit.entity Player]
+           [org.bukkit.inventory ItemStack]))
 
 ; Represents Location
 (defrecord Loc [^String world-name ^double x ^double y ^double z])
@@ -23,8 +24,29 @@
       (Location->Loc (.getLocation player))
       player))
 
+(defn Block->B [^Block block]
+  (B. (.getType block)
+      (.getData block)
+      (Location->Loc (.getLocation block))
+      block))
+
+#_ (defn block-at [^Loc loc]
+  (-> loc :orig .getBlock Block->B))
+
 (defn block-set [^B b ^Material btype ^Byte data]
   (let [block (:orig b)]
     (.setType block btype)
     (.setData block data))
   nil)
+
+(defn player-all []
+  (seq (map Player->P (Bukkit/getOnlinePlayers))))
+
+(defn block-set-virtual
+  [^B b ^Material btype data]
+  {:pre [(instance? Byte data)]}
+  (doseq [p (player-all)]
+    (.sendBlockChange (:orig p) ^Location (-> b :orig .getLocation) ^Material btype data)))
+
+(defn block-break [^B b]
+  (.breakNaturally b (ItemStack. Material/DIAMOND_PICKAXE 1)))

@@ -23,6 +23,10 @@
 (defn broadcast [msg]
   (Bukkit/broadcastMessage msg))
 
+(defn broadcast-and-post-lingr [msg]
+  (broadcast msg)
+  (post-lingr msg))
+
 (def ^:dynamic *dummy-plugin*
   (delay (-> (Bukkit/getPluginManager) (.getPlugin "dynmap"))))
 

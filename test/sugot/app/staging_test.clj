@@ -17,9 +17,8 @@
              (PlayerQuitEvent nil (P. "dummy-player" nil nil)))))))
 
 (deftest PlayerBedEnterEvent-test
-  (testing "notifies to lingr "
-    (with-redefs [l/post-lingr (fn [msg] {:post-lingr msg})
-                  l/broadcast (fn [msg] {:broadcast msg})]
+  (testing "notifies both to lingr and server"
+    (with-redefs [l/broadcast-and-post-lingr (fn [msg] {:post-lingr msg})]
       ; TODO test if braodcast is also called
       (is (= {:post-lingr "[BED] dummy-player went to bed."}
              (PlayerBedEnterEvent nil (P. "dummy-player" nil nil)))))))
