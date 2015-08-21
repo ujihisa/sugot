@@ -19,9 +19,9 @@
   (testing "english->hiragana"
     (is (= 1 1)))
 
-  (testing "AsyncPlayerChatEvent is nice"
+  (testing "notifies to lingr, after converting"
     (with-redefs [l/post-lingr (fn [msg] {:msg msg})]
-      (is (= {:msg "<dummy-player> a"}
+      (is (= {:msg "<dummy-player> あ"}
              (AsyncPlayerChatEvent (org.bukkit.event.player.AsyncPlayerChatEvent. true nil "a" (java.util.HashSet.))
                                    (P. "dummy-player" nil nil)))))))
 
