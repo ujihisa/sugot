@@ -49,13 +49,12 @@
 
 (defn register-event [pm event-type f]
   (let [listener (reify Listener)
-        executor (cond
-                   (.isAssignableFrom event-type org.bukkit.event.player.PlayerEvent)
+        executor (condp #(.isAssignableFrom event-type %)
+                   org.bukkit.event.player.PlayerEvent
                    (reify org.bukkit.plugin.EventExecutor
                      (execute [this listener event]
                        (when (instance? event-type event)
                          (f event (-> event .getPlayer m/Player->P)))))
-                   :else
                    (reify org.bukkit.plugin.EventExecutor
                      (execute [this listener event]
                        (when (instance? event-type event)
