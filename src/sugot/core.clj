@@ -7,7 +7,7 @@
 
 (defn apps []
   ; So far I didn't find the way how to automatically collects all namespaces.
-  #{'sugot.app.convo 'sugot.app.staging}
+  #{'sugot.app.convo 'sugot.app.staging 'sugot.app.playlog}
   #_ (into #{}
         (for [ns- (all-ns)
               :when (.startsWith (-> ns- ns-name name) "sugot.app.")]
