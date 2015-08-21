@@ -54,6 +54,8 @@
                      (condp instance? event
                        org.bukkit.event.player.PlayerEvent
                        (f event (-> event .getPlayer m/Player->P))
+                       org.bukkit.event.entity.EntityEvent
+                       (f event nil) ; TODO
                        (f event))))
         priority org.bukkit.event.EventPriority/NORMAL]
     (-> pm (.registerEvent event-type listener priority executor dummy-sugot-plugin))))
