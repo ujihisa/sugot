@@ -51,7 +51,7 @@
   (let [listener (reify Listener)
         executor (reify org.bukkit.plugin.EventExecutor
                    (execute [this listener event]
-                     (when (.isAssignableFrom event event-type)
+                     (when (.isAssignableFrom event-type event)
                        (f event (-> event .getPlayer m/Player->P)))
                      #_ (condp instance? event
                        org.bukkit.event.player.PlayerEvent
