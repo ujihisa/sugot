@@ -13,5 +13,5 @@
 (defn PlayerBedEnterEvent [event p]
   (l/broadcast-and-post-lingr (format "[BED] %s went to bed." (:name p))))
 
-(defn PlayerDeathEvent [event p]
+#_ (defn PlayerDeathEvent [event p]
   (l/broadcast-and-post-lingr (format "[DEATH] %s" (.getDeathMessage event))))
