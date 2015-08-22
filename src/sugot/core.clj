@@ -12,7 +12,7 @@
         :let [fname (.getName file)]
         :when (.endsWith fname ".clj")
         :let [syn-fname (format "'sugot.app.%s" (.replace fname ".clj" ""))]]
-    (symbol syn-fname))
+    (eval (read-string syn-fname)))
   ; So far I didn't find the way how to automatically collects all namespaces.
   #_ #{'sugot.app.convo 'sugot.app.staging 'sugot.app.playlog}
   #_ (into #{}
