@@ -5,9 +5,12 @@
            [org.bukkit.event.entity CreatureSpawnEvent$SpawnReason]))
 
 (defn CreatureSpawnEvent [event]
-  (let [entity-type (.getEntityType event)
-        reason (.getSpawnReason event)]
-    (case reason
-      CreatureSpawnEvent$SpawnReason$NATURAL
-      :wow-natural
-      nil)))
+  (let [entity (.getEntity event)
+        reason (.getSpawnReason event)
+        l (.getLocation event)]
+    ; You can't use `case` for Java enum
+    (condp = reason
+      CreatureSpawnEvent$SpawnReason/NATURAL
+      (when (<= 100 (.getY l))
+        (.setCancelled event true))
+      :else)))
