@@ -4,8 +4,8 @@
   (:import [org.bukkit Bukkit]
            [org.bukkit.event.entity CreatureSpawnEvent$SpawnReason]))
 
-#_ (defn CreatureSpawnEvent [event]
-  (let [entity-type (.getEntityType event)
+(defn CreatureSpawnEvent [event]
+  #_ (let [entity-type (.getEntityType event)
         reason (.getSpawnReason event)]
     (case reason
       CreatureSpawnEvent$SpawnReason$NATURAL
