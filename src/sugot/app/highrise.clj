@@ -1,4 +1,4 @@
-(ns sugot.highrise
+(ns sugot.app.highrise
   (:require [clojure.string :as s]
             [sugot.lib :as l])
   (:import [org.bukkit Bukkit]

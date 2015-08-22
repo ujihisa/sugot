@@ -1,4 +1,4 @@
-(ns sugot.highrise-test
+(ns sugot.app.highrise-test
   (:require [clojure.test :refer :all]
             [sugot.app.highrise :refer :all]
             [sugot.lib :as l])
