@@ -6,13 +6,15 @@
             [sugot.models :as m]))
 
 (defn apps []
-  (for [file (file-seq (clojure.java.io/file
-                         (str (System/getProperty "user.dir") "/src/sugot/app/")))
-        :when (.isFile file)
-        :let [fname (.getName file)]
-        :when (.endsWith fname ".clj")
-        :let [syn-fname (format "'sugot.app.%s" (.replace fname ".clj" ""))]]
-    (eval (read-string syn-fname))))
+  (into
+    #{}
+    (for [file (file-seq (clojure.java.io/file
+                           (str (System/getProperty "user.dir") "/src/sugot/app/")))
+          :when (.isFile file)
+          :let [fname (.getName file)]
+          :when (.endsWith fname ".clj")
+          :let [syn-fname (format "'sugot.app.%s" (.replace fname ".clj" ""))]]
+      (eval (read-string syn-fname)))))
 
 (def bukkit-events
   (into {} (for [event  sugot.events/all]

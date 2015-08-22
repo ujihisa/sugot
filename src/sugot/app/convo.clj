@@ -1,7 +1,7 @@
 (ns sugot.app.convo
-  (:import [org.bukkit Bukkit])
   (:require [clojure.string :as s]
-            [sugot.lib :as l]))
+            [sugot.lib :as l])
+  (:import [org.bukkit Bukkit]))
 
 (defn- replacefirst-go
   ^{:doc "remove `to` from the beginning part of `s-all`, and
