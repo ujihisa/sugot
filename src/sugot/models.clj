@@ -50,3 +50,12 @@
 
 (defn block-break [^B b]
   (.breakNaturally b (ItemStack. Material/DIAMOND_PICKAXE 1)))
+
+(def operations
+  {:block-break (fn [^B b]
+                  (.breakNaturally (:orig b)
+                                   (ItemStack. Material/DIAMOND_PICKAXE 1)))
+   :block-set! (fn [^B b ^Material btype ^Byte data]
+                 (let [block (:orig b)]
+                   (.setType block btype)
+                   (.setData block data)))})
