@@ -12,13 +12,7 @@
         :let [fname (.getName file)]
         :when (.endsWith fname ".clj")
         :let [syn-fname (format "'sugot.app.%s" (.replace fname ".clj" ""))]]
-    (eval (read-string syn-fname)))
-  ; So far I didn't find the way how to automatically collects all namespaces.
-  #_ #{'sugot.app.convo 'sugot.app.staging 'sugot.app.playlog}
-  #_ (into #{}
-        (for [ns- (all-ns)
-              :when (.startsWith (-> ns- ns-name name) "sugot.app.")]
-          (ns-name ns-))))
+    (eval (read-string syn-fname))))
 
 (def bukkit-events
   (into {} (for [event  sugot.events/all]
