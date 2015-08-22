@@ -5,7 +5,7 @@
   NOTE: This doesn't run very often just for performance"
   [event p]
   (when (and (= 0 (rand-int 10))
-             (= "world" (-> :loc :world-name)))
+             (= "world" (-> p :loc :world-name)))
     (let [x (-> p :loc :x)
           z (-> p :loc :z)]
       (cond
