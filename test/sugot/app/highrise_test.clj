@@ -4,20 +4,29 @@
             [sugot.lib :as l])
   (:import [org.bukkit Location]))
 
-(defn- create-entity [l entity-class]
-  #_ (let [world (.getWorld l)]
-    (.spawn world l entity-class)))
+(defrecord SugotWorld [^String getName])
 
-(declare world)
-#_ (def world
-  (org.bukkit.Bukkit/getWorld "world"))
+(defrecord SugotLocation [^SugotWorld getWorld getX getY getZ])
+
+(defprotocol SugotCreatureSpawnEvent
+  (getEntity [this])
+  (getSpawnReason [this])
+  (getLocation [this])
+  (isCancelled [this])
+  (setCancelled [this bool]))
 
 (deftest a-test
   (testing "prevent spawning monster at high space"
-    (let [entity (create-entity (comment Location. world 0 0 0) org.bukkit.entity.Zombie)
+    (let [entity nil
           reason org.bukkit.event.entity.CreatureSpawnEvent$SpawnReason/NATURAL
-          event (org.bukkit.event.entity.CreatureSpawnEvent. entity reason)]
-      #_ (is (= 0
+          world (SugotWorld. "world")
+          event (reify SugotCreatureSpawnEvent
+                  (getEntity [this] entity)
+                  (getSpawnReason [this] reason)
+                  (getLocation [this] (SugotLocation. world 0 0 0))
+                  (isCancelled [this] true)
+                  (setCancelled [this bool] nil))]
+      (is (= true
              (do
                (CreatureSpawnEvent event)
                (.isCancelled event)))))))
