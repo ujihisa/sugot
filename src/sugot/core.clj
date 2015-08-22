@@ -6,8 +6,15 @@
             [sugot.models :as m]))
 
 (defn apps []
+  (for [file (file-seq (clojure.java.io/file
+                         (str (System/getProperty "user.dir") "/src/sugot/app/")))
+        :when (.isFile file)
+        :let [fname (.getName file)]
+        :when (.endsWith fname ".clj")
+        :let [syn-fname (format "'sugot.app.%s" (.replace fname ".clj" ""))]]
+    (symbol syn-fname))
   ; So far I didn't find the way how to automatically collects all namespaces.
-  #{'sugot.app.convo 'sugot.app.staging 'sugot.app.playlog}
+  #_ #{'sugot.app.convo 'sugot.app.staging 'sugot.app.playlog}
   #_ (into #{}
         (for [ns- (all-ns)
               :when (.startsWith (-> ns- ns-name name) "sugot.app.")]
