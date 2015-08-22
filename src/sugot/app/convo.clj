@@ -23,7 +23,7 @@
 
 (def english-words
   "To keep them as words untranslated"
-  (for [word ["go" "raa" "zombie"]]
+  (for [word ["go" "raa" "zombie" "home" "page"]]
     [(re-pattern (str #"\b" word #"\b"))]))
 
 (def romaji-table
@@ -36,7 +36,12 @@
    ["ya" "や"] ["yu" "ゆ"] ["yo" "よ"]
    ["ra" "ら"] ["ri" "り"] ["ru" "る"] ["re" "れ"] ["ro" "ろ"]
    ["wa" "わ"] ["wo" "を"] ["n" "ん"]
-   ["a" "あ"] ["i" "い"] ["u" "う"] ["e" "え"] ["o" "お"]])
+   ["ga" "が"] ["gi" "ぎ"] ["gu" "ぐ"] ["ge" "げ"] ["go" "ご"]
+   ["za" "ざ"] ["ji" "じ"] ["zu" "ず"] ["ze" "ぜ"] ["zo" "ぞ"]
+   ["da" "だ"] ["di" "ぢ"] ["du" "づ"] ["de" "で"] ["do" "ど"]
+   ["ba" "ば"] ["bi" "び"] ["bu" "ぶ"] ["be" "べ"] ["bo" "ぼ"]
+   ;["a" "あ"] ["i" "い"] ["u" "う"] ["e" "え"] ["o" "お"]
+   ])
 
 (defn- consume1
   ^{:test (fn []
