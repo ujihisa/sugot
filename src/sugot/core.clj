@@ -13,7 +13,9 @@
           :when (.isFile file)
           :let [fname (.getName file)]
           :when (.endsWith fname ".clj")
-          :let [syn-fname (format "'sugot.app.%s" (.replace fname ".clj" ""))]]
+          :let [syn-fname (format "'sugot.app.%s" (-> fname
+                                                    (.replace ".clj" "")
+                                                    (.replaceAll "_" "-")))]]
       (eval (read-string syn-fname)))))
 
 (def bukkit-events
