@@ -89,3 +89,8 @@
       (let [pm (-> server .getPluginManager)]
         (register-all pm))
       (recur (try (Bukkit/getServer) (catch Exception e nil))))))
+
+; If you have ~/.sugot-init.clj, sugot.core will include it
+(try
+  (load-file (format "%s/.sugot-init.clj" (System/getenv "HOME")))
+  (catch java.io.FileNotFoundException e nil))
