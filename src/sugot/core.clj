@@ -91,8 +91,8 @@
       (-> e .printStackTrace)
       (System/exit 1))))
 
-#_ (defn register-all-commands [^org.bukkit.command.CommandMap command-map]
-  (let [commands (for [app @all-apps
+(defn register-all-commands [^org.bukkit.command.CommandMap command-map]
+  #_ (let [commands (for [app @all-apps
                        [fname-sym f] (ns-interns app)
                        :when (= "sugot-on-command" (name fname-sym))]
                    f)
@@ -113,7 +113,7 @@
       (let [pm (-> server .getPluginManager)
             command-map (-> server .getCommandMap)]
         (register-all-events pm)
-        #_ (register-all-commands command-map))
+        (register-all-commands command-map))
       (recur (try (Bukkit/getServer) (catch Exception e nil))))))
 
 ; If you have ~/.sugot-init.clj, sugot.core will include it
