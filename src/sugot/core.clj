@@ -92,16 +92,17 @@
       (System/exit 1))))
 
 (defn register-all-commands [^org.bukkit.command.CommandMap command-map]
-  #_ (let [commands (for [app @all-apps
+  (let [commands (for [app @all-apps
                        [fname-sym f] (ns-interns app)
                        :when (= "sugot-on-command" (name fname-sym))]
                    f)
         aggregated-command
-        (proxy [org.bukkit.command.PluginCommand] ["sugot" dummy-sugot-plugin]
+        (proxy [org.bukkit.command.defaults.BukkitCommand] ["sugot"]
           (execute [this sender command-label args]
-            (doseq [c commands]
+            (prn :execute sender command-label args)
+            #_ (doseq [c commands]
               (c sender args))))]
-    (prn commands)))
+    (.register command-map "sugot" aggregated-command)))
 
 (defn -main [& args]
   (future (Main/main (make-array String 0)))
