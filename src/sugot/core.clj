@@ -67,17 +67,29 @@
         priority org.bukkit.event.EventPriority/NORMAL]
     (-> pm (.registerEvent event-type listener priority executor dummy-sugot-plugin))))
 
-(defn register-all [pm]
+(defn register-all-events [pm]
   (try
     ; gather events, and register them
     (doseq [app (apps)
-            :let [_ (require app)]
+            :let [_ (require app :reload)]
             [klass fs] (listeners app)
             f fs]
       (register-event pm klass f))
     (catch Exception e
       (-> e .printStackTrace)
       (System/exit 1))))
+
+#_ (defn register-all-commands [^org.bukkit.command.CommandMap command-map]
+  (let [commands (for [app (apps)
+                       [fname-sym f] (ns-interns app)
+                       :when (= "sugot-on-command" (name fname-sym))]
+                   f)
+        aggregated-command
+        (proxy [org.bukkit.command.PluginCommand] ["sugot" dummy-sugot-plugin]
+          (execute [this sender command-label args]
+            (doseq [c commands]
+              (c sender args))))]
+    (prn commands)))
 
 (defn -main [& args]
   (future (Main/main (make-array String 0)))
@@ -86,8 +98,10 @@
   (loop [server nil]
     (Thread/sleep 100)
     (if server
-      (let [pm (-> server .getPluginManager)]
-        (register-all pm))
+      (let [pm (-> server .getPluginManager)
+            command-map (-> server .getCommandMap)]
+        (register-all-events pm)
+        #_ (register-all-commands command-map))
       (recur (try (Bukkit/getServer) (catch Exception e nil))))))
 
 ; If you have ~/.sugot-init.clj, sugot.core will include it
