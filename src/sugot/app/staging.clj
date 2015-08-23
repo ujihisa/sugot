@@ -3,8 +3,8 @@
             [sugot.lib :as l]))
 
 (defn PlayerBedEnterEvent [event p]
-  #_ (l/later (l/sec 2)
-           (let [world (-> event .getPlayer .getLocation .getWorld)]
-             (when (< 12541 (.getTime world) 23458)
-               #_ (l/broadcast "[BED] Good morning!")
-               (.setTime world 0)))))
+  (let [player (:orig p)
+        world (-> player .getLocation .getWorld)]
+    (when (< 12541 (.getTime world) 23458)
+      (l/broadcast "[BED] Good morning!")
+      (.setTime world 0))))
