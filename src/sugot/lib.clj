@@ -27,6 +27,9 @@
   (broadcast msg)
   (post-lingr msg))
 
+(defn send-message [player s]
+  (.sendMessage player (str s)))
+
 (def ^:dynamic *dummy-plugin*
   (delay (-> (Bukkit/getPluginManager) (.getPlugin "dynmap"))))
 
