@@ -5,18 +5,30 @@
   (:require [sugot.events]
             [sugot.models :as m]))
 
-(defn apps []
-  (into
-    #{}
-    (for [file (file-seq (clojure.java.io/file
-                           (str (System/getProperty "user.dir") "/src/sugot/app/")))
-          :when (.isFile file)
-          :let [fname (.getName file)]
-          :when (.endsWith fname ".clj")
-          :let [syn-fname (format "'sugot.app.%s" (-> fname
-                                                    (.replace ".clj" "")
-                                                    (.replaceAll "_" "-")))]]
-      (eval (read-string syn-fname)))))
+(def all-apps (ref #{}))
+
+(defn reload-all-apps []
+  (letfn [(get-all-apps []
+            (for [file
+                  (file-seq
+                    (clojure.java.io/file
+                      (str (System/getProperty "user.dir")
+                           "/src/sugot/app/")))
+                  :when (.isFile file)
+                  :let [fname (.getName file)]
+                  :when (.endsWith fname ".clj")
+                  :let [syn-fname
+                        (format
+                          "'sugot.app.%s"
+                          (-> fname
+                            (.replace ".clj" "")
+                            (.replaceAll "_" "-")))]]
+              (eval (read-string syn-fname))))]
+    (let [latest-all-apps (into #{} (get-all-apps))]
+      (doseq [app latest-all-apps]
+        (require app :reload))
+      (dosync
+        (ref-set all-apps latest-all-apps)))))
 
 (def bukkit-events
   (into {} (for [event  sugot.events/all]
@@ -70,8 +82,8 @@
 (defn register-all-events [pm]
   (try
     ; gather events, and register them
-    (doseq [app (apps)
-            :let [_ (require app :reload)]
+    (reload-all-apps)
+    (doseq [app @all-apps
             [klass fs] (listeners app)
             f fs]
       (register-event pm klass f))
@@ -80,7 +92,7 @@
       (System/exit 1))))
 
 #_ (defn register-all-commands [^org.bukkit.command.CommandMap command-map]
-  (let [commands (for [app (apps)
+  (let [commands (for [app @all-apps
                        [fname-sym f] (ns-interns app)
                        :when (= "sugot-on-command" (name fname-sym))]
                    f)

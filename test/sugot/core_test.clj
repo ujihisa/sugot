@@ -3,7 +3,7 @@
             [sugot.core :refer :all]
             [sugot.app.convo]))
 
-(deftest apps-test
+#_ (deftest apps-test
   (testing "List up all app symbols under src/sugot/app dir"
     (is (contains? (apps) 'sugot.app.convo))))
 
