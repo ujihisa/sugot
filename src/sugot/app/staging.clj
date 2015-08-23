@@ -3,8 +3,11 @@
             [sugot.lib :as l]))
 
 (defn PlayerBedEnterEvent [event p]
-  (let [player (:orig p)
+  #_ (let [player (:orig p)
         world (-> player .getLocation .getWorld)]
     (when (< 12541 (.getTime world) 23458)
-      (l/broadcast "[BED] Good morning!")
+      (l/broadcast-and-post-lingr "[BED] Good morning!")
       (.setTime world 0))))
+
+(defn PlayerLoginEvent [event p]
+  (.setSleepingIgnored (:orig p) true))
