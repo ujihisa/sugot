@@ -102,7 +102,10 @@
             (prn :ok)
             #_ (prn :execute sender command-label args)
             #_ (doseq [c commands]
-              (c sender args))))]
+              (c sender args)))
+          #_ (instanceEval []
+            (set! (.description aggregated-command) "")
+            (set! (.usageMessage aggregated-command) "")))]
     (.register command-map "sugot" aggregated-command)))
 
 (defn -main [& args]
@@ -115,7 +118,7 @@
       (let [pm (-> server .getPluginManager)
             command-map (-> server .getCommandMap)]
         (register-all-events pm)
-        (register-all-commands command-map))
+        #_ (register-all-commands command-map))
       (recur (try (Bukkit/getServer) (catch Exception e nil))))))
 
 ; If you have ~/.sugot-init.clj, sugot.core will include it
