@@ -19,15 +19,7 @@
       (print "|")
       (doseq [z (range (apply min zs) (inc (apply max zs)))]
         (print (get table [x 0 z] "  ")))
-      (println "|")))
-  #_ (let [[min* max* (loop [min* nil max* nil coll (seq table)]
-                     (if (empty? coll)
-                       [min* max*]
-                       (let [[[x y z] value] (first coll)
-                             min* (if min*
-
-                                    min*)]
-                         (recur min* max* (rest coll)))))]]))
+      (println "|"))))
 
 (defn line
   "https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm"
