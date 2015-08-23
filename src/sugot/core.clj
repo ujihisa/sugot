@@ -99,7 +99,8 @@
         aggregated-command
         (proxy [org.bukkit.command.defaults.BukkitCommand] ["sugot"]
           (execute [sender command-label args]
-            (prn :execute sender command-label args)
+            (prn :ok)
+            #_ (prn :execute sender command-label args)
             #_ (doseq [c commands]
               (c sender args))))]
     (.register command-map "sugot" aggregated-command)))
