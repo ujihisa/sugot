@@ -125,3 +125,8 @@
 (try
   (load-file (format "%s/.sugot-init.clj" (System/getenv "HOME")))
   (catch java.io.FileNotFoundException e nil))
+
+; manual update
+#_ (register-event (-> (Bukkit/getServer) .getPluginManager)
+                org.bukkit.event.block.BlockDamageEvent
+                #'sugot.app.staging/BlockDamageEvent)
