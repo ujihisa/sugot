@@ -98,7 +98,7 @@
                    f)
         aggregated-command
         (proxy [org.bukkit.command.defaults.BukkitCommand] ["sugot"]
-          (execute [this sender command-label args]
+          (execute [sender command-label args]
             (prn :execute sender command-label args)
             #_ (doseq [c commands]
               (c sender args))))]
