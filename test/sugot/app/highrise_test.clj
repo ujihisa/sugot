@@ -1,9 +1,9 @@
 (ns sugot.app.highrise-test
   (:require [clojure.test :refer :all]
             [sugot.app.highrise :refer :all]
-            [sugot.lib :as l]
-            [sugot.models :as m])
-  (:import [org.bukkit Location]))
+            [sugot.lib :as l])
+  (:import [org.bukkit Location]
+           [sugot.models SugotWorld SugotLocation]))
 
 (defprotocol SugotCreatureSpawnEvent
   (getEntity [this])
@@ -16,12 +16,12 @@
   (testing "prevent spawning monster at high space"
     (let [entity nil
           reason org.bukkit.event.entity.CreatureSpawnEvent$SpawnReason/NATURAL
-          world (m/SugotWorld. "world")
+          world (SugotWorld. "world")
           cancelled (ref false)
           event (reify SugotCreatureSpawnEvent
                   (getEntity [this] entity)
                   (getSpawnReason [this] reason)
-                  (getLocation [this] (m/SugotLocation. world 0 120 0))
+                  (getLocation [this] (SugotLocation. world 0 120 0))
                   (setCancelled [this bool]
                     (dosync
                       (ref-set cancelled true))))]

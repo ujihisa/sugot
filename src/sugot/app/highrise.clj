@@ -9,8 +9,9 @@
         reason (.getSpawnReason event)
         l (.getLocation event)]
     ; You can't use `case` for Java enum
-    (condp = reason
-      CreatureSpawnEvent$SpawnReason/NATURAL
-      (when (<= 100 (.getY l))
-        (.setCancelled event true))
-      :else)))
+    (when (= "world" (-> l .getWorld .getName))
+      (condp = reason
+        CreatureSpawnEvent$SpawnReason/NATURAL
+        (when (<= 100 (.getY l))
+          (.setCancelled event true))
+        :else))))
