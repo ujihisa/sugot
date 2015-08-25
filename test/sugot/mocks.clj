@@ -43,3 +43,6 @@
   (getLocation [this])
   (isCancelled [this])
   (setCancelled [this bool]))
+
+(defprotocol SugotPlayerMoveEvent
+  (getTo [this]))
