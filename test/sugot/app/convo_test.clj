@@ -2,7 +2,8 @@
   (:require [clojure.test :refer :all]
             [sugot.app.convo :refer :all]
             [sugot.lib :as l]
-            [sugot.models])
+            [sugot.models]
+            [sugot.mocks :as mocks])
   (:import [org.bukkit.craftbukkit Main]
            [org.bukkit Bukkit]
            [org.bukkit.entity Player]
@@ -22,8 +23,10 @@
   (testing "notifies to lingr, after converting"
     (with-redefs [l/post-lingr (fn [msg] {:msg msg})]
       (is (= {:msg "<dummy-player> あ"}
-             (AsyncPlayerChatEvent (org.bukkit.event.player.AsyncPlayerChatEvent. true nil "a" (java.util.HashSet.))
-                                   (P. "dummy-player" nil nil)))))))
+             (AsyncPlayerChatEvent
+               (org.bukkit.event.player.AsyncPlayerChatEvent.
+                 true (mocks/player "dummy-player") "a" (java.util.HashSet.))
+               nil))))))
 
 #_ (defn fixture [f]
   (future (Main/main (make-array String 0)))

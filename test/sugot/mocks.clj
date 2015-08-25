@@ -37,6 +37,13 @@
     ; TODO getBlock
     (getBlock [this] nil)))
 
+(defprotocol SugotPlayer
+  (getName [this]))
+
+(defn player [name]
+  (reify SugotPlayer
+    (getName [this] name)))
+
 (defprotocol CreatureSpawnEvent
   (getEntity [this])
   (getSpawnReason [this])
