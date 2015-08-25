@@ -4,7 +4,7 @@
             [sugot.lib :as l]
             [sugot.mocks :as mocks])
   (:import [org.bukkit Location]
-           [sugot.models SugotWorld SugotLocation]))
+           [sugot.mocks SugotWorld]))
 
 (deftest a-test
   (testing "prevent spawning monster at high space"
@@ -15,7 +15,7 @@
           event (reify mocks/CreatureSpawnEvent
                   (getEntity [this] entity)
                   (getSpawnReason [this] reason)
-                  (getLocation [this] (SugotLocation. world 0 120 0))
+                  (getLocation [this] (mocks/location world 0 120 0))
                   (setCancelled [this bool]
                     (dosync
                       (ref-set cancelled true))))]

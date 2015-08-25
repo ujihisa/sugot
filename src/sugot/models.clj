@@ -59,7 +59,3 @@
                  (let [block (:orig b)]
                    (.setType block btype)
                    (.setData block data)))})
-
-(defrecord SugotWorld [^String getName])
-
-(defrecord SugotLocation [^SugotWorld getWorld getX getY getZ])
