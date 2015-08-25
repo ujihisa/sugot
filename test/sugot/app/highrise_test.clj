@@ -3,14 +3,13 @@
             [sugot.app.highrise :refer :all]
             [sugot.lib :as l]
             [sugot.mocks :as mocks])
-  (:import [org.bukkit Location]
-           [sugot.mocks SugotWorld]))
+  (:import [org.bukkit Location]))
 
 (deftest a-test
   (testing "prevent spawning monster at high space"
     (let [entity nil
           reason org.bukkit.event.entity.CreatureSpawnEvent$SpawnReason/NATURAL
-          world (SugotWorld. "world")
+          world (mocks/world "world")
           cancelled (ref false)
           event (reify mocks/CreatureSpawnEvent
                   (getEntity [this] entity)

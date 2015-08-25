@@ -4,14 +4,13 @@
             [sugot.lib :as l]
             [sugot.models :as m]
             [sugot.mocks :as mocks])
-  (:import [sugot.models P]
-           [sugot.mocks SugotWorld]))
+  (:import [sugot.models P]))
 
 (defrecord SugotPlayerMoveEvent [getTo])
 
 (deftest PlayerMoveEvent-test
   (testing "send-message for the player if it's very far"
-    (let [l (mocks/location (SugotWorld.  "world") 400 50 0)
+    (let [l (mocks/location (mocks/world "world") 400 50 0)
           event (SugotPlayerMoveEvent. l)
           p (P. "dummy-player" nil nil)]
       (with-redefs [rand-int (fn [_] 0)

@@ -10,7 +10,12 @@
     (getType [this] type)
     (getData [this] data)))
 
-(defrecord SugotWorld [^String getName])
+(defprotocol SugotWorld
+  (getName [this]))
+
+(defn world [name]
+  (reify SugotWorld
+    (getName [this] name)))
 
 (defprotocol SugotLocation
   (getWorld [this])
@@ -21,7 +26,7 @@
   (add [this x y z])
   (getBlock [this]))
 
-(defn location [^SugotWorld world x y z]
+(defn location [world x y z]
   (reify SugotLocation
     (getWorld [this] world)
     (getX [this] x)
