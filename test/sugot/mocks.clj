@@ -1,6 +1,9 @@
 (ns sugot.mocks
   (:import [org.bukkit Material]))
 
+(defprotocol Name
+  (getName [this]))
+
 (defprotocol SugotBlock
   (getType [this])
   (getData [this]))
@@ -10,11 +13,8 @@
     (getType [this] type)
     (getData [this] data)))
 
-(defprotocol SugotWorld
-  (getName [this]))
-
 (defn world [name]
-  (reify SugotWorld
+  (reify Name
     (getName [this] name)))
 
 (defprotocol SugotLocation
@@ -37,11 +37,8 @@
     ; TODO getBlock
     (getBlock [this] nil)))
 
-(defprotocol SugotPlayer
-  (getName [this]))
-
 (defn player [name]
-  (reify SugotPlayer
+  (reify Name
     (getName [this] name)))
 
 (defprotocol CreatureSpawnEvent

@@ -16,6 +16,12 @@
     (is (= ["べ" "nri"]
            (@#'sugot.app.convo/replacefirst-go "be" "べ" "benri")))))
 
+(defprotocol SugotAsyncPlayerChatEvent
+  (getPlayer [this])
+  (getMessage [this])
+  (getFormat [this])
+  (setMessage [this msg]))
+
 (deftest AsyncPlayerChatEvent-test
   (testing "english->hiragana"
     (is (= 1 1)))
@@ -24,8 +30,11 @@
     (with-redefs [l/post-lingr (fn [msg] {:msg msg})]
       (is (= {:msg "<dummy-player> あ"}
              (AsyncPlayerChatEvent
-               (org.bukkit.event.player.AsyncPlayerChatEvent.
-                 true (mocks/player "dummy-player") "a" (java.util.HashSet.))
+               (reify SugotAsyncPlayerChatEvent
+                 (getPlayer [this] (mocks/player "dummy-player"))
+                 (getMessage [this] "a")
+                 (getFormat [this] "<%s> %s")
+                 (setMessage [this msg]))
                nil))))))
 
 #_ (defn fixture [f]
