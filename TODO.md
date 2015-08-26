@@ -1,5 +1,3 @@
-* Player系eventのpの有無の混在
-    * いまはcore.cljでtry/catchで力技で解決してる
 * Elevator
 * Hardcoreのmob巻き込み (そして戻り位置の修正)
 * Hardcoreの鯖再起動の挙動

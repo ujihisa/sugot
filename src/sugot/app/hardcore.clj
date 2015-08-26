@@ -32,6 +32,20 @@
   nil)
 
 ; key: ^String playername, value: ^Long timestamp msec
+(def came-from (atom {}))
+
+(defn- leave-hardcore! [player]
+  (let [to (some identity [(.getBedSpawnLocation player)
+                           (.getSpawnLocation (Bukkit/getWorld "world"))])]
+    (.teleport player to)))
+
+(defn PlayerLoginEvent [event]
+  (let [player (.getPlayer event)]
+    (when (and (in-hardcore? player)
+               (not (contains? @came-from (.getName player))))
+      (leave-hardcore! player))))
+
+; key: ^String playername, value: ^Long timestamp msec
 (def enter-time-all (atom {}))
 
 (defn EntityDamageEvent [event]
@@ -328,18 +342,16 @@
 
 (defn leave-hardcore [player]
   {:pre [(in-hardcore? (.getLocation player))]}
-  (let [to (some identity [(.getBedSpawnLocation player)
-                           (.getSpawnLocation (Bukkit/getWorld "world"))])]
-    (l/broadcast-and-post-lingr (format "[HARDCORE] %s left from the hardcore world."
-                                        (.getName player)))
-    (.teleport player to)
-    (try
-      (when-let [enter-time (get @enter-time-all (.getName player))]
-        (l/broadcast-and-post-lingr
-          (format "[HARDCORE] Record: %s"
-                  (format-from-msec
-                    (- (System/currentTimeMillis) enter-time)))))
-      (catch Exception e (.printStackTrace e)))))
+  (leave-hardcore!)
+  (l/broadcast-and-post-lingr (format "[HARDCORE] %s left from the hardcore world."
+                                      (.getName player)))
+  (try
+    (when-let [enter-time (get @enter-time-all (.getName player))]
+      (l/broadcast-and-post-lingr
+        (format "[HARDCORE] Record: %s"
+                (format-from-msec
+                  (- (System/currentTimeMillis) enter-time)))))
+    (catch Exception e (.printStackTrace e))))
 
 (defn PlayerInteractEvent [event]
   (try
