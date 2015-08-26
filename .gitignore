@@ -36,3 +36,11 @@ world_nether/
 world_the_end/
 localrepo1
 spigot
+
+BuildData/
+BuildTools.log.txt
+Bukkit/
+CraftBukkit/
+Spigot/
+apache-maven-3.2.5/
+work/

@@ -6,8 +6,8 @@ Clojure + Spigot minecraft server
 
 ## How to run the minecraft server
 
-1. Prepare `spigot-1.8.8.jar` https://www.spigotmc.org/wiki/buildtools/
-2. Install it with `lein deploy localrepo1 org.spigotmc/spigot 1.8.8 spigot-1.8.8.jar`
+1. Run `prepare.sh`
+2. Change `eula=false` to `eula=true` in the eula.txt
 3. `lein run`
 
 You can also `lein test` to check if it works without starting a Minecraft server..
