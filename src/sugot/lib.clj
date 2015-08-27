@@ -51,3 +51,8 @@
 
 (defmacro later [tick & exps]
   `(later-fn ~tick (fn [] ~@exps)))
+
+(defn set-display-name [item-stack s]
+  (let [item-meta (.getItemMeta item-stack)]
+    (.setDisplayName item-meta s)
+    (.setItemMeta item-stack item-meta)))

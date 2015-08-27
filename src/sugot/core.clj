@@ -3,7 +3,26 @@
            [org.bukkit Bukkit]
            [org.bukkit.event Listener])
   (:require [sugot.events]
-            [sugot.models :as m]))
+            [sugot.models :as m]
+            [sugot.lib :as l]))
+
+; TODO move these data out, or at least declarative
+(defn register-all-recipes []
+  (Bukkit/resetRecipes)
+  (let [item-stack (doto (org.bukkit.inventory.ItemStack. org.bukkit.Material/DIAMOND 1)
+                     (.addUnsafeEnchantment org.bukkit.enchantments.Enchantment/DURABILITY 1)
+                     (l/set-display-name "Alloy"))
+        recipe (-> (org.bukkit.inventory.ShapedRecipe. item-stack)
+                 (.shape (into-array ["a" "b"]))
+                 (.setIngredient \a org.bukkit.Material/GOLD_NUGGET)
+                 (.setIngredient \b org.bukkit.Material/IRON_INGOT))]
+    (Bukkit/addRecipe recipe))
+  (let [item-stack (doto (org.bukkit.inventory.ItemStack. org.bukkit.Material/CACTUS 1))
+        recipe (-> (org.bukkit.inventory.ShapedRecipe. item-stack)
+                 (.shape (into-array ["aa" "aa" "aa"]))
+                 (.setIngredient \a org.bukkit.Material/LEAVES))]
+    (Bukkit/addRecipe recipe)))
+#_ (register-all-recipes)
 
 (def all-apps (ref #{}))
 
@@ -118,6 +137,7 @@
       (let [pm (-> server .getPluginManager)
             command-map (-> server .getCommandMap)]
         (register-all-events pm)
+        (register-all-recipes)
         #_ (register-all-commands command-map))
       (recur (try (Bukkit/getServer) (catch Exception e nil))))))
 
