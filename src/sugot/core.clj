@@ -16,7 +16,7 @@
 
     ; TODO autoload
     (require 'sugot.app.alloy)
-    (doseq [recipe (sugot.app.alloy/recipes)]
+    (doseq [recipe ((ns-resolve 'sugot.app.alloy 'recipes))]
       (Bukkit/addRecipe recipe))))
 #_ (register-all-recipes)
 
