@@ -19,6 +19,9 @@
 (defn BlockDamageEvent [event]
   (when-let [player (.getPlayer event)]
     (let [block (.getBlock event)]
+      #_ (when (= Material/THIN_GLASS (.getType block))
+        (.playSound (.getWorld (.getLocation player)) (.getLocation player)
+                    org.bukkit.Sound/ZOMBIE_METAL 0.5 2))
       (when (elevator? player block)
         (.setCancelled event true)
         (l/send-message player "(WIP) elevator yay")))))
