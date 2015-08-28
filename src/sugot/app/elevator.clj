@@ -28,11 +28,13 @@
         (l/send-message player "(WIP) elevator yay")))))
 
 (defn PlayerInteractEvent [event]
-  (when-let [player (.getPlayer event)]
-    (let [action (.getAction event)
-          block-face (.getBlockFace event)
-          block (.getClickedBlock event)]
-      (condp = action
-        Action/PHYSICAL
-        (l/send-message player (prn-str {:block-face block-face :block block}))
-        nil))))
+  (when-not (.isCancelled event)
+    (prn :event event)
+    (when-let [player (.getPlayer event)]
+      (let [action (.getAction event)
+            block-face (.getBlockFace event)
+            block (.getClickedBlock event)]
+        (condp = action
+          Action/PHYSICAL
+          (l/send-message player (prn-str {:block-face block-face :block block}))
+          nil)))))

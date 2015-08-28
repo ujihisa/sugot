@@ -5,6 +5,7 @@
             [sugot.mocks :as mocks]))
 
 (defprotocol SugotPlayerInteractEvent
+  (isCancelled [this])
   (getPlayer [this])
   (getAction [this])
   (getBlockFace [this])
@@ -12,6 +13,7 @@
 
 (deftest PlayerInteractEvent-test
   (let [event (reify SugotPlayerInteractEvent
+                (isCancelled [this] false)
                 (getPlayer [this] 1)
                 (getAction [this] 1)
                 (getBlockFace [this] 1)
