@@ -17,3 +17,7 @@
                    Material/SAND Material/LOG Material/LOG_2}
                  (.getType block))
       (nonpolish-stone? block)))
+
+(defn from-loc [loc x y z]
+  (.getBlock (doto (.clone l)
+               (.add 0 -1 0))))

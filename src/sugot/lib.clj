@@ -2,7 +2,7 @@
   (:require [clj-http.client])
   (:import [org.bukkit ChatColor Bukkit Material]))
 
-(def bot-verifier (System/getenv "BOT_VERIFIER"))
+(def ^:private bot-verifier (System/getenv "BOT_VERIFIER"))
 
 (defn post-lingr-sync [msg]
   (when bot-verifier
@@ -18,7 +18,7 @@
   (future
     (try
       (post-lingr-sync msg)
-      (catch Exception e (-> e .printStackTrace)))))
+      (catch Exception e (.printStackTrace e)))))
 
 (defn broadcast [msg]
   (Bukkit/broadcastMessage msg))
@@ -28,6 +28,7 @@
   (post-lingr msg))
 
 (defn send-message [player s]
+  {:pre [player]}
   (.sendMessage player (str s)))
 
 (def ^:dynamic *dummy-plugin*
