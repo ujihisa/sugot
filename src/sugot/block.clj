@@ -20,4 +20,4 @@
 
 (defn from-loc [loc x y z]
   (.getBlock (doto (.clone loc)
-               (.add 0 -1 0))))
+               (.add x y z))))

@@ -14,6 +14,6 @@
       (condp = reason
         CreatureSpawnEvent$SpawnReason/NATURAL
         (when (or (<= 100 (.getY l))
-                  (b/polish-stone? (b//from-loc l 0 -1 0)))
+                  (b/polish-stone? (b/from-loc l 0 -1 0)))
           (.setCancelled event true))
         :else))))

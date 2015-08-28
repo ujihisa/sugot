@@ -9,3 +9,12 @@
     (is (natural-block? (mocks/block Material/DIRT 0)))
     (is (natural-block? (mocks/block Material/STONE 0)))
     (is (not (natural-block? (mocks/block Material/STONE 2))))))
+
+(deftest from-loc-test
+  (let [loc (mocks/location "world" 10 20 30
+                            {[10 21 32] (mocks/block Material/DIRT 0)})
+        result (from-loc loc 0 1 2)]
+    (is (= 30 (.getZ loc)) "Make sure there's no side effect")
+    (is result)
+    (is (= Material/DIRT (.getType result)))
+    (is (= 0 (.getData result)))))

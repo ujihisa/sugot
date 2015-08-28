@@ -4,12 +4,13 @@
 (defprotocol Name
   (getName [this]))
 
-(defprotocol SugotBlock
+(defprotocol ^:private SugotBlock
   (getType [this])
   (getData [this]))
 
 (defn block [^Material type ^Byte data]
-  (reify SugotBlock
+  (reify
+    SugotBlock
     (getType [this] type)
     (getData [this] data)))
 
@@ -26,16 +27,32 @@
   (add [this x y z])
   (getBlock [this]))
 
-(defn location [world x y z]
-  (reify SugotLocation
-    (getWorld [this] world)
-    (getX [this] x)
-    (getY [this] y)
-    (getZ [this] z)
-    (clone [this] this)
-    (add [this x0 y0 z0] (location world (+ x x0) (+ y y0) (+ z z0)))
-    ; TODO getBlock
-    (getBlock [this] nil)))
+(defn location
+  ([world x y z]
+    (location world x y z {}))
+  ([world x y z block-map]
+    (let [state (atom {:x x :y y :z z})]
+      (reify SugotLocation
+        (getWorld [this] world)
+        (getX [this] (:x @state))
+        (getY [this] (:y @state))
+        (getZ [this] (:z @state))
+        (clone [this]
+          (location world
+                    (.getX this)
+                    (.getY this)
+                    (.getZ this)
+                    block-map))
+        (add [this x0 y0 z0]
+          (swap! state (fn [coll]
+                         (conj coll {:x (+ (:x coll) x0)
+                                     :y (+ (:y coll) y0)
+                                     :z (+ (:z coll) z0)})))
+          nil)
+        (getBlock [this]
+          (get block-map [(.getX this)
+                          (.getY this)
+                          (.getZ this)]))))))
 
 (defn player [name]
   (reify Name
