@@ -30,9 +30,6 @@
       (Location->Loc (.getLocation block))
       block))
 
-#_ (defn block-at [^Loc loc]
-  (-> loc :orig .getBlock Block->B))
-
 (defn block-set [^B b ^Material btype ^Byte data]
   (let [block (:orig b)]
     (.setType block btype)

@@ -19,5 +19,5 @@
       (nonpolish-stone? block)))
 
 (defn from-loc [loc x y z]
-  (.getBlock (doto (.clone l)
+  (.getBlock (doto (.clone loc)
                (.add 0 -1 0))))
