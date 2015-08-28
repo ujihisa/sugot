@@ -27,7 +27,7 @@
         (.setCancelled event true)
         (l/send-message player "(WIP) elevator yay")))))
 
-(defn PlayerInteractEvent [event]
+#_ (defn PlayerInteractEvent [event]
   #_ (when-not (.isCancelled event)
     (prn :event event)
     (when-let [player (.getPlayer event)]
