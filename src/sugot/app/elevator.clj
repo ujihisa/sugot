@@ -10,7 +10,7 @@
   SugotCancellable)
 
 (defn elevator? [player block]
-  (when (= Material/GOLD_BLOCK (.getType block))
+  #_ (when (= Material/GOLD_BLOCK (.getType block))
     (let [pl (.getLocation player)
           bl (.getLocation block)]
       (and (= (dec (int (.getY pl)))
@@ -28,11 +28,11 @@
         (l/send-message player "(WIP) elevator yay")))))
 
 (defn PlayerInteractEvent [event]
-  (let [player (.getPlayer event)
-        action (.getAction event)
-        block-face (.getBlockFace event)
-        block (.getClickedBlock event)]
-    (condp = action
-      Action/PHYSICAL
-      (l/send-message player (prn-str {:block-face block-face :block block}))
-      nil)))
+  (when-let [player (.getPlayer event)]
+    (let [action (.getAction event)
+          block-face (.getBlockFace event)
+          block (.getClickedBlock event)]
+      (condp = action
+        Action/PHYSICAL
+        (l/send-message player (prn-str {:block-face block-face :block block}))
+        nil))))
