@@ -1,6 +1,7 @@
 (ns sugot.app.elevator
   (:require [sugot.lib :as l])
-  (:import [org.bukkit Material]))
+  (:import [org.bukkit Material]
+           [org.bukkit.event.block Action]))
 
 (defprotocol SugotCancellable
   (setCancelled [this bool]))
@@ -16,7 +17,7 @@
               (int (.getY bl)))
            (> 5 )))))
 
-(defn BlockDamageEvent [event]
+#_ (defn BlockDamageEvent [event]
   (when-let [player (.getPlayer event)]
     (let [block (.getBlock event)]
       #_ (when (= Material/THIN_GLASS (.getType block))
@@ -25,3 +26,13 @@
       (when (elevator? player block)
         (.setCancelled event true)
         (l/send-message player "(WIP) elevator yay")))))
+
+(defn PlayerInteractEvent [event]
+  (let [player (.getPlayer event)
+        action (.getAction event)
+        block-face (.getBlockFace event)
+        block (.getClickedBlock event)]
+    (condp = action
+      Action/PHYSICAL
+      (l/send-message player (prn-str {:block-face block-face :block block}))
+      nil)))
