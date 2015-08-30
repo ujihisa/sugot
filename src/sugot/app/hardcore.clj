@@ -340,9 +340,9 @@
       :else
       (format "%d seconds" seconds))))
 
-(defn leave-hardcore [player]
+(defn leave-hardcore-with-message [player]
   {:pre [(in-hardcore? (.getLocation player))]}
-  (leave-hardcore!)
+  (leave-hardcore! player)
   (l/broadcast-and-post-lingr (format "[HARDCORE] %s left from the hardcore world."
                                       (.getName player)))
   (try
@@ -381,5 +381,5 @@
           (leave-satisfy? player)
           (do
             (.setItemInHand player (ItemStack. Material/PAPER 1))
-            (leave-hardcore player))))))
+            (leave-hardcore-with-message player))))))
     (catch Exception e (.printStackTrace e))))
