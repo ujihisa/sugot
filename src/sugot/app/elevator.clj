@@ -39,7 +39,7 @@
           (l/send-message player (prn-str {:block-face block-face :block block}))
           nil)))))
 
-(defn PlayerMoveEvent [event]
+#_ (defn PlayerMoveEvent [event]
   (let [player (.getPlayer event)
         from (.getFrom event)
         to (.getTo event)
