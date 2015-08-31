@@ -67,7 +67,7 @@
   (instance? org.bukkit.entity.Player entity))
 
 (defn EntityDamageEvent [event]
-  (when-let [player (let [e (.getEntity)]
+  (when-let [player (let [e (.getEntity event)]
                       (when (player? e)
                         e))]
     (l/send-message player (prn-str :here (-> player .getLocation (b/from-loc 0 0 0) .getType)
