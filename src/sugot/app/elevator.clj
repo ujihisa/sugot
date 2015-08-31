@@ -40,7 +40,7 @@
           nil)))))
 
 (defn PlayerMoveEvent [event]
-  #_ (let [player (.getPlayer event)
+  (let [player (.getPlayer event)
         from (.getFrom event)
         to (.getTo event)
         jumping? (and

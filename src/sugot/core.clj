@@ -88,16 +88,6 @@
                          (f event (-> event .getPlayer m/Player->P))
                          (catch Exception _
                            (f event))))))
-                 #_(condp #(.isAssignableFrom %1 %2) event-type
-                   org.bukkit.event.player.PlayerEvent
-                   (reify org.bukkit.plugin.EventExecutor
-                     (execute [this listener event]
-                       (when (instance? event-type event)
-                         (f event (-> event .getPlayer m/Player->P)))))
-                   (reify org.bukkit.plugin.EventExecutor
-                     (execute [this listener event]
-                       (when (instance? event-type event)
-                         (f event)))))
         priority org.bukkit.event.EventPriority/NORMAL]
     (-> pm (.registerEvent event-type listener priority executor dummy-sugot-plugin))))
 
