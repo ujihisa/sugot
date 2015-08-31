@@ -63,7 +63,7 @@
       (= Material/STONE_PLATE (-> player .getLocation .getBlock .getType))
       (l/send-message player "[ELEVATOR] going down"))))
 
-(defn -player? [entity]
+(defn- player? [entity]
   (instance? org.bukkit.entity.Player entity))
 
 (defn EntityDamageEvent [event]
