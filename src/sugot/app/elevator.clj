@@ -38,3 +38,11 @@
           Action/PHYSICAL
           (l/send-message player (prn-str {:block-face block-face :block block}))
           nil)))))
+
+(defn PlayerMoveEvent [event]
+  (let [player (.getPlayer event)
+        from (.getFrom event)
+        to (.getTo event)
+        jumping? (and
+                   (< (.getY from) (.getY to)))]
+    (prn :player (.getName player) :jumping? jumping)))

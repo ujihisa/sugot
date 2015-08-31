@@ -66,4 +66,6 @@
   (setCancelled [this bool]))
 
 (defprotocol SugotPlayerMoveEvent
-  (getTo [this]))
+  (getPlayer [this])
+  (getTo [this])
+  (getFrom [this]))

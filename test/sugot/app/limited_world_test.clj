@@ -11,6 +11,8 @@
   (testing "send-message for the player if it's very far"
     (let [l (mocks/location (mocks/world "world") 400 50 0)
           event (reify SugotPlayerMoveEvent
+                  (getPlayer [this] nil)
+                  (getFrom [this] nil)
                   (getTo [this] l))
           p (P. "dummy-player" nil nil)]
       (with-redefs [rand-int (fn [_] 0)
