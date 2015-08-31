@@ -55,3 +55,9 @@
     (when (and (= Material/STONE_PLATE (-> from .getBlock .getType))
                (jumping-directly-above? player from to))
       (l/send-message player "[ELEVATOR] going up."))))
+
+(defn PlayerToggleSneakEvent [event]
+  (let [player (.getPlayer event)]
+    (when (.isSneaking event)
+      (= Material/STONE_PLATE (-> player .getLocation .getBlock .getType))
+      (l/send-message player "[ELEVATOR] going down"))))

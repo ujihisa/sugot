@@ -2,7 +2,8 @@
   (:require [clojure.test :refer :all]
             [sugot.app.elevator :refer :all]
             [sugot.lib :as l]
-            [sugot.mocks :as mocks]))
+            [sugot.mocks :as mocks])
+  (:import [sugot.mocks SugotPlayerToggleSneakEvent]))
 
 (defprotocol SugotPlayerInteractEvent
   (isCancelled [this])
@@ -20,3 +21,10 @@
                 (getClickedBlock [this] 1))]
     (with-redefs [l/send-message (fn [p m] :ok)]
       (is (= nil (PlayerInteractEvent event))))))
+
+(deftest PlayerToggleSneakEvent-test
+  (let [event (reify SugotPlayerToggleSneakEvent
+                (getPlayer [this] (mocks/player "dummy-player"))
+                (isSneaking [this] true))]
+    ; TODO actual test
+    ))

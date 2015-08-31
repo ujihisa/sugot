@@ -69,3 +69,7 @@
   (getPlayer [this])
   (getTo [this])
   (getFrom [this]))
+
+(defprotocol SugotPlayerToggleSneakEvent
+  (getPlayer [this])
+  (isSneaking [this]))
