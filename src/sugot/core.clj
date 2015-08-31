@@ -87,7 +87,7 @@
                        (try
                          (f event (-> event .getPlayer m/Player->P))
                          (catch Exception _
-                           (f event (-> event)))))))
+                           (f event))))))
                  #_(condp #(.isAssignableFrom %1 %2) event-type
                    org.bukkit.event.player.PlayerEvent
                    (reify org.bukkit.plugin.EventExecutor
