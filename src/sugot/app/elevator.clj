@@ -1,5 +1,6 @@
 (ns sugot.app.elevator
-  (:require [sugot.lib :as l])
+  (:require [sugot.lib :as l]
+            [sugot.block :as b])
   (:import [org.bukkit Material]
            [org.bukkit.event.block Action]))
 
@@ -61,3 +62,14 @@
     (when (.isSneaking event)
       (= Material/STONE_PLATE (-> player .getLocation .getBlock .getType))
       (l/send-message player "[ELEVATOR] going down"))))
+
+(defn -player? [entity]
+  (instance? org.bukkit.entity.Player entity))
+
+(defn EntityDamageEvent [event]
+  (when-let [player (let [e (.getEntity)]
+                      (when (player? e)
+                        e))]
+    (l/send-message player (prn-str :here (-> player .getLocation (b/from-loc 0 0 0) .getType)
+                                    :shita (-> player .getLocation (b/from-loc 0 -1 0) .getType)
+                                    :2shita (-> player .getLocation (b/from-loc 0 -2 0) .getType)))))
