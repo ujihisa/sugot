@@ -82,12 +82,12 @@
 (defn register-event [pm event-type f]
   (let [listener (reify Listener)
         executor (reify org.bukkit.plugin.EventExecutor
-                     (execute [this listener event]
-                       (when (instance? event-type event)
-                         (try
-                           (f event (-> event .getPlayer m/Player->P))
-                           (catch Exception _
-                             (f event (-> event)))))))
+                   (execute [this listener event]
+                     (when (instance? event-type event)
+                       (try
+                         (f event (-> event .getPlayer m/Player->P))
+                         (catch Exception _
+                           (f event (-> event)))))))
                  #_(condp #(.isAssignableFrom %1 %2) event-type
                    org.bukkit.event.player.PlayerEvent
                    (reify org.bukkit.plugin.EventExecutor
