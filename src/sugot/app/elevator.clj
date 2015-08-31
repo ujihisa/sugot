@@ -45,4 +45,5 @@
         to (.getTo event)
         jumping? (and
                    (< (.getY from) (.getY to)))]
-    (prn :player (.getName player) :jumping? jumping?)))
+    (when (= "ujm" (.getName player))
+      (l/send-message player (prn-str :player (.getName player) :jumping? jumping?)))))
