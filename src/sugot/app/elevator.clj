@@ -45,4 +45,4 @@
         to (.getTo event)
         jumping? (and
                    (< (.getY from) (.getY to)))]
-    (prn :player (.getName player) :jumping? jumping)))
+    (prn :player (.getName player) :jumping? jumping?)))
