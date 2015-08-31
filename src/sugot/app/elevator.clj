@@ -39,11 +39,19 @@
           (l/send-message player (prn-str {:block-face block-face :block block}))
           nil)))))
 
+(defn- jumping-directly-above? [player from to]
+  (and (< (.getY from) (.getY to))
+       (= (.getX from) (.getX to))
+       (= (.getZ from) (.getZ to))
+       (.isOnGround player)
+       (not (contains? #{Material/LADDER Material/VINE}
+                       (-> from .getBlock .getType)))
+       (not (-> from .getBlock .isLiquid))))
+
 (defn PlayerMoveEvent [event]
   (let [player (.getPlayer event)
         from (.getFrom event)
-        to (.getTo event)
-        jumping? (and
-                   (< (.getY from) (.getY to)))]
-    (when (= "ujm" (.getName player))
-      (l/send-message player (prn-str :player (.getName player) :jumping? jumping?)))))
+        to (.getTo event)]
+    (when (and (= Material/STONE_PLATE (-> from .getBlock .getType))
+               (jumping-directly-above? player from to))
+      (l/send-message player "[ELEVATOR] going up."))))
