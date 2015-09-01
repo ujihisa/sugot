@@ -58,7 +58,7 @@
   (reify Name
     (getName [this] name)))
 
-(defprotocol CreatureSpawnEvent
+(defprotocol SugotCreatureSpawnEvent
   (getEntity [this])
   (getSpawnReason [this])
   (getLocation [this])

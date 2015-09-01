@@ -11,7 +11,7 @@
           reason org.bukkit.event.entity.CreatureSpawnEvent$SpawnReason/NATURAL
           world (mocks/world "world")
           cancelled (ref false)
-          event (reify mocks/CreatureSpawnEvent
+          event (reify mocks/SugotCreatureSpawnEvent
                   (getEntity [this] entity)
                   (getSpawnReason [this] reason)
                   (getLocation [this] (mocks/location world 0 120 0))
