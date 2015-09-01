@@ -65,11 +65,14 @@
   (isCancelled [this])
   (setCancelled [this bool]))
 
-(defprotocol SugotPlayerMoveEvent
-  (getPlayer [this])
+(defprotocol Player
+  (getPlayer [this]))
+
+(defprotocol PlayerMoveEvent
+  ; Use with Player
   (getTo [this])
   (getFrom [this]))
 
-(defprotocol SugotPlayerToggleSneakEvent
-  (getPlayer [this])
+(defprotocol PlayerToggleSneakEvent
+  ; Use with Player
   (isSneaking [this]))

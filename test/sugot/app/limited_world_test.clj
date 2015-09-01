@@ -8,8 +8,10 @@
 (deftest PlayerMoveEvent-test
   (testing "send-message for the player if it's very far"
     (let [l (mocks/location (mocks/world "world") 400 50 0)
-          event (reify mocks/SugotPlayerMoveEvent
+          event (reify
+                  mocks/Player
                   (getPlayer [this] (mocks/player "dummy-player"))
+                  mocks/PlayerMoveEvent
                   (getFrom [this] nil)
                   (getTo [this] l))]
       (with-redefs [rand-int (fn [_] 0)

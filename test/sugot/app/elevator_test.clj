@@ -2,8 +2,7 @@
   (:require [clojure.test :refer :all]
             [sugot.app.elevator :refer :all]
             [sugot.lib :as l]
-            [sugot.mocks :as mocks])
-  (:import [sugot.mocks SugotPlayerToggleSneakEvent]))
+            [sugot.mocks :as mocks]))
 
 (defprotocol SugotPlayerInteractEvent
   (isCancelled [this])
@@ -23,8 +22,10 @@
       (is (= nil (PlayerInteractEvent event))))))
 
 (deftest PlayerToggleSneakEvent-test
-  (let [event (reify SugotPlayerToggleSneakEvent
+  (let [event (reify
+                mocks/Player
                 (getPlayer [this] (mocks/player "dummy-player"))
+                mocks/PlayerToggleSneakEvent
                 (isSneaking [this] true))]
     ; TODO actual test
     ))
