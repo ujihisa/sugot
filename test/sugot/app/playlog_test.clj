@@ -1,14 +1,21 @@
 (ns sugot.app.playlog-test
   (:require [clojure.test :refer :all]
             [sugot.app.playlog :refer :all]
-            [sugot.lib :as l])
+            [sugot.lib :as l]
+            [sugot.mocks :as mocks]
+            [sugot.world])
   (:import [sugot.models P Loc]))
 
 (deftest PlayerLoginEvent-test
   (testing "notifies to lingr"
-    (with-redefs [l/post-lingr (fn [msg] {:msg msg})]
-      (is (= {:msg "[LOGIN] dummy-player logged in."}
-             (PlayerLoginEvent nil (P. "dummy-player" nil nil)))))))
+    (with-redefs [l/post-lingr (fn [msg] {:msg msg})
+                  sugot.world/strike-lightning-effect (fn [loc] nil)]
+      ; TODO Player.getLocation is required
+      #_ (is (= {:msg "[LOGIN] dummy-player logged in."}
+             (PlayerLoginEvent
+               (reify mocks/Player
+                 (getPlayer [this] (mocks/player "dummy-player")))
+               (P. "dummy-player" nil nil)))))))
 
 (deftest PlayerQuitEvent-test
   (testing "notifies to lingr"

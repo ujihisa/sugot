@@ -2,9 +2,11 @@
   "Notifications mostly to lingr.
   This is not specific for notifications inside gameplay"
   (:require [clojure.string :as s]
-            [sugot.lib :as l]))
+            [sugot.lib :as l]
+            [sugot.world]))
 
 (defn PlayerLoginEvent [event p]
+  (sugot.world/strike-lightning-effect (.getLocation (.getPlayer event)))
   (l/post-lingr (format "[LOGIN] %s logged in." (:name p))))
 
 (defn PlayerQuitEvent [event p]
