@@ -3,13 +3,12 @@
             [sugot.app.limited-world :refer :all]
             [sugot.lib :as l]
             [sugot.models :as m]
-            [sugot.mocks :as mocks])
-  (:import [sugot.mocks SugotPlayerMoveEvent]))
+            [sugot.mocks :as mocks]))
 
 (deftest PlayerMoveEvent-test
   (testing "send-message for the player if it's very far"
     (let [l (mocks/location (mocks/world "world") 400 50 0)
-          event (reify SugotPlayerMoveEvent
+          event (reify mocks/SugotPlayerMoveEvent
                   (getPlayer [this] (mocks/player "dummy-player"))
                   (getFrom [this] nil)
                   (getTo [this] l))]
