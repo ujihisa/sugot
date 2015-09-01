@@ -70,6 +70,18 @@
   (when-let [player (let [e (.getEntity event)]
                       (when (player? e)
                         e))]
-    (l/send-message player (prn-str :here (-> player .getLocation (b/from-loc 0 0 0) .getType)
-                                    :shita (-> player .getLocation (b/from-loc 0 -1 0) .getType)
-                                    :2shita (-> player .getLocation (b/from-loc 0 -2 0) .getType)))))
+    (when (= org.bukkit.event.entity.EntityDamageEvent$DamageCause/FALL (.getCause event))
+      (when (< 0 (-> player .getVelocity .getY))
+        (.setCancelled event true))
+      #_ (l/send-message player (prn-str (-> player .getVelocity .getY)))
+      #_ (let [block (-> player .getLocation .getBlock)]
+        (when (= Material/PISTON_MOVING_PIECE (.getType block))
+          (l/send-message player
+                          #_ (prn-str :here (-> player .getLocation (b/from-loc 0 0 0) .getType .name)
+                                   (-> player .getLocation (b/from-loc 0 0 0) .getData)
+                                   :shita (-> player .getLocation (b/from-loc 0 -1 0) .getType .name)
+                                   (-> player .getLocation (b/from-loc 0 -1 0) .getData))
+                          (prn-str (.getData block)
+                                   (-> block .getState)
+                                   (-> block .getState .getData)
+                                   (-> block .getState .getRawData))))))))
