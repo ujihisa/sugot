@@ -59,9 +59,10 @@
 
 (defn PlayerToggleSneakEvent [event]
   (let [player (.getPlayer event)]
-    (when (.isSneaking event)
-      (= Material/STONE_PLATE (-> player .getLocation .getBlock .getType)
-         (l/send-message player "[ELEVATOR] going down")))))
+    (when (and
+            (.isSneaking event)
+            (= Material/STONE_PLATE (-> player .getLocation .getBlock .getType)))
+      (l/send-message player "[ELEVATOR] going down"))))
 
 (defn- player? [entity]
   (instance? org.bukkit.entity.Player entity))
