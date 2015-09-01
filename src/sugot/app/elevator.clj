@@ -42,8 +42,8 @@
 
 (defn- jumping-directly-above? [player from to]
   (and (< (.getY from) (.getY to))
-       (= (.getX from) (.getX to))
-       (= (.getZ from) (.getZ to))
+       (< (- (Math/abs (.getX from)) (Math/abs (.getX to))) 0.1)
+       (< (- (Math/abs (.getZ from)) (Math/abs (.getZ to))) 0.1)
        (.isOnGround player)
        (not (contains? #{Material/LADDER Material/VINE}
                        (-> from .getBlock .getType)))
@@ -55,6 +55,7 @@
         to (.getTo event)]
     (when (and (= Material/STONE_PLATE (-> from .getBlock .getType))
                (jumping-directly-above? player from to))
+      (.setCancelled event true)
       (l/send-message player "[ELEVATOR] going up."))))
 
 (defn PlayerToggleSneakEvent [event]
