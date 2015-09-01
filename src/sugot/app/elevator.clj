@@ -55,7 +55,7 @@
         to (.getTo event)]
     (when (and (= Material/STONE_PLATE (-> from .getBlock .getType))
                (jumping-directly-above? player from to))
-      (.setCancelled event true)
+      #_ (.setCancelled event true)
       (l/send-message player "[ELEVATOR] going up."))))
 
 (defn PlayerToggleSneakEvent [event]
