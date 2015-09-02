@@ -23,4 +23,4 @@
             (= "world" (-> l .getWorld .getName))
             (= CreatureSpawnEvent$SpawnReason/NATURAL reason)
             (instance? org.bukkit.entity.Slime entity))
-      (.setSize entity (inc (.getSize entity))))))
+      (.setSize entity (+ 2 (.getSize entity))))))
