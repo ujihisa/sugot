@@ -69,12 +69,12 @@
   (instance? org.bukkit.entity.Player entity))
 
 (defn EntityDamageEvent [event]
-  (when-let [player (let [e (.getEntity event)]
-                      (when (player? e)
-                        e))]
+  (let [entity (.getEntity event)
+        player (when (player? entity)
+                 entity)]
     (when (= org.bukkit.event.entity.EntityDamageEvent$DamageCause/FALL (.getCause event))
       #_ (l/send-message player (str (format "%.2f" (-> player .getVelocity .getY))))
-      (when (< 0 (-> player .getVelocity .getY))
+      (when (< 0 (-> entity .getVelocity .getY))
         (.setCancelled event true))
       #_ (l/send-message player (prn-str (-> player .getVelocity .getY)))
       #_ (let [block (-> player .getLocation .getBlock)]
