@@ -57,3 +57,12 @@
   (let [item-meta (.getItemMeta item-stack)]
     (.setDisplayName item-meta s)
     (.setItemMeta item-stack item-meta)))
+
+(defn consume-item [player]
+  {:pre [player
+         (.getItemInHand player)]}
+  (let [item-stack (.getItemInHand player)
+        amount (.getAmount item-stack)]
+    (if (= 1 amount)
+      (.setItemInHand ujm nil)
+      (.setAmount item-stack (dec amount)))))

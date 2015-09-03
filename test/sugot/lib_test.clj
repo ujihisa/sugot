@@ -22,3 +22,7 @@
   ; TODO how to test this?
   (testing "nanido"
     (is (= 1 1))))
+
+(deftest consume-item-test
+  ;TODO
+  )
