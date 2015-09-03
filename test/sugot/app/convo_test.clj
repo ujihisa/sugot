@@ -29,5 +29,4 @@
                  (getPlayer [this] (mocks/player "dummy-player"))
                  (getMessage [this] "a")
                  (getFormat [this] "<%s> %s")
-                 (setMessage [this msg]))
-               nil))))))
+                 (setMessage [this msg]))))))))

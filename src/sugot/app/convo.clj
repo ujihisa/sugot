@@ -65,7 +65,7 @@
         (recur (str memo left) right)
         (recur (str memo (first s)) (.substring s 1))))))
 
-(defn AsyncPlayerChatEvent [event _]
+(defn AsyncPlayerChatEvent [event]
   (let [message (-> event .getMessage english->hiragana)
         player (.getPlayer event)
         fmt (-> event .getFormat)]
