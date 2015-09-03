@@ -56,7 +56,7 @@
   (when (seq score)
     (let [[pitchkey interval] (first score)]
       (when pitchkey
-        (play-sound loc org.bukkit.Sound/NOTE_PIANO 1 (pitchkey notes))
+        (sugot.world/play-sound loc org.bukkit.Sound/NOTE_PIANO 1 (pitchkey notes))
         #_ (play-sound loc org.bukkit.Sound/NOTE_PLING 1 (pitchkey notes)))
       (sugot.lib/later (if (zero? interval)
                          0
