@@ -25,4 +25,4 @@
 
 (deftest consume-item-test
   ;TODO
-  )
+  (is true))
