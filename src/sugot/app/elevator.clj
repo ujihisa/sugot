@@ -4,10 +4,10 @@
   (:import [org.bukkit Material]
            [org.bukkit.event.block Action]))
 
-(defprotocol SugotCancellable
+#_ (defprotocol SugotCancellable
   (setCancelled [this bool]))
 
-(defrecord SugotBlockDamageEvent [getPlayer getBlock]
+#_ (defrecord SugotBlockDamageEvent [getPlayer getBlock]
   SugotCancellable)
 
 (defn elevator? [player block]

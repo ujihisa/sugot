@@ -5,15 +5,15 @@
             [sugot.lib :as l]
             [sugot.world]))
 
-(defn PlayerLoginEvent [event p]
+(defn PlayerLoginEvent [event]
   (sugot.world/strike-lightning-effect (.getLocation (.getPlayer event)))
-  (l/post-lingr (format "[LOGIN] %s logged in." (:name p))))
+  (l/post-lingr (format "[LOGIN] %s logged in." (.getName (.getPlayer event)))))
 
-(defn PlayerQuitEvent [event p]
-  (l/post-lingr (format "[LOGOUT] %s logged out." (:name p))))
+(defn PlayerQuitEvent [event]
+  (l/post-lingr (format "[LOGOUT] %s logged out." (.getName (.getPlayer event)))))
 
-(defn PlayerBedEnterEvent [event p]
-  (l/broadcast-and-post-lingr (format "[BED] %s went to bed." (:name p))))
+(defn PlayerBedEnterEvent [event]
+  (l/broadcast-and-post-lingr (format "[BED] %s went to bed." (.getName (.getPlayer event)))))
 
 (defn PlayerDeathEvent [event]
   (l/broadcast-and-post-lingr (format "[DEATH] %s" (.getDeathMessage event))))

@@ -3,8 +3,7 @@
             [sugot.app.playlog :refer :all]
             [sugot.lib :as l]
             [sugot.mocks :as mocks]
-            [sugot.world])
-  (:import [sugot.models P Loc]))
+            [sugot.world]))
 
 (deftest PlayerLoginEvent-test
   (testing "notifies to lingr"
@@ -21,14 +20,16 @@
   (testing "notifies to lingr"
     (with-redefs [l/post-lingr (fn [msg] {:msg msg})]
       (is (= {:msg "[LOGOUT] dummy-player logged out."}
-             (PlayerQuitEvent nil (P. "dummy-player" nil nil)))))))
+             (PlayerQuitEvent (reify mocks/Player
+                                (getPlayer [this] (mocks/player "dummy-player")))))))))
 
 (deftest PlayerBedEnterEvent-test
   (testing "notifies both to lingr and server"
     (with-redefs [l/broadcast-and-post-lingr (fn [msg] {:post-lingr msg})]
       ; TODO test if braodcast is also called
       (is (= {:post-lingr "[BED] dummy-player went to bed."}
-             (PlayerBedEnterEvent nil (P. "dummy-player" nil nil)))))))
+             (PlayerBedEnterEvent (reify mocks/Player
+                                    (getPlayer [this] (mocks/player "dummy-player")))))))))
 
 ; TODO TODO TODO
 #_ (deftest PlayerDeathEvent-test
