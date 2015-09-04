@@ -267,7 +267,9 @@
 
 (defn enter-hardcore [living-entity]
   {:pre [(hardcore-world)]}
-  (let [init-loc
+  (let [before-loc (.getLocation living-entity)
+
+        init-loc
         (Location.
           (hardcore-world) 0.5 (inc (.getHighestBlockYAt (hardcore-world) 0 0)) 0.5)]
     (.teleport living-entity init-loc)
@@ -277,6 +279,7 @@
                 (.getName living-entity)
                 (.getSeed (hardcore-world))
                 (.name (.getBiome (hardcore-world) 0 0))))
+      (swap! came-from assoc (.getName living-entity) before-loc)
       (swap! enter-time-all assoc (.getName living-entity) (System/currentTimeMillis)))))
 
 (defn enter-satisfy? [player]
