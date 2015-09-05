@@ -7,8 +7,23 @@
   (testing "clj-http.client/post should be called"
     (with-redefs [sugot.lib/bot-verifier "dummy-bot-verifier"
                   clj-http.client/post (fn [& args] args)]
-      (is (= ["http://lingr.com/api/room/say" {:form-params {:room "mcujm", :bot 'sugoicraft, :text "hello", :bot_verifier "dummy-bot-verifier"}}]
+      (is (= ["http://lingr.com/api/room/say"
+              {:form-params {:room "mcujm", :bot 'sugoicraft, :text "hello", :bot_verifier "dummy-bot-verifier"}}]
              (post-lingr-sync "hello"))))))
+
+(deftest post-lingr-test
+  (with-redefs [sugot.lib/post-lingr-sync (fn [& expr] nil)]
+    (is (future? (post-lingr "hello")))))
+
+(deftest broadcast-test
+  ; Nothing to do
+  )
+
+(deftest broadcast-and-post-lingr-test
+  (with-redefs [broadcast (fn [msg] nil)
+                post-lingr (fn [msg] [:called msg])]
+    (is (= [:called "hello"]
+           (broadcast-and-post-lingr "hello")))))
 
 (deftest sec-test
   (testing "with int"
