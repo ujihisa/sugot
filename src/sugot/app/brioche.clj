@@ -5,6 +5,9 @@
            [org.bukkit Material Sound]
            [org.bukkit.enchantments Enchantment]))
 
+(defn give-exp [player value]
+  (.setExp player (+ value (.getExp player))))
+
 (defn PlayerItemConsumeEvent [event]
   (let [player (.getPlayer event)
         item-stack (.getItem event)]
@@ -13,7 +16,7 @@
       (let [msg (format "<%s> Qu'ils mangent de la brioche." (.getName player))]
         (l/broadcast msg))
       (sugot.world/play-sound (.getLocation player) Sound/EAT 0.8 2.0)
-      (.setExp player (+ 0.30 (.getExp player))))))
+      (give-exp player 0.30))))
 
 (defn recipes []
   (let [item-stack (doto (ItemStack. Material/BREAD 1)

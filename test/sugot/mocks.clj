@@ -54,9 +54,18 @@
                           (.getY this)
                           (.getZ this)]))))))
 
-(defn player [name]
-  (reify Name
-    (getName [this] name)))
+(defprotocol Location
+  (getLocation [this]))
+
+(defn player
+  ([name]
+    (player name nil))
+  ([name loc]
+    (reify
+      Name
+      (getName [this] name)
+      Location
+      (getLocation [this] loc))))
 
 (defprotocol Cancel
   (isCancelled [this])
