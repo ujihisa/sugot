@@ -5,20 +5,36 @@
             [sugot.mocks :as mocks])
   (:import [org.bukkit Location]))
 
-(deftest a-test
-  (testing "prevent spawning monster at high space"
-    (let [entity nil
-          reason org.bukkit.event.entity.CreatureSpawnEvent$SpawnReason/NATURAL
-          world (mocks/world "world")
-          cancelled (ref false)
-          event (reify mocks/SugotCreatureSpawnEvent
-                  (getEntity [this] entity)
-                  (getSpawnReason [this] reason)
-                  (getLocation [this] (mocks/location world 0 120 0))
-                  (setCancelled [this bool]
-                    (dosync
-                      (ref-set cancelled true))))]
-      (is (= true
-             (do
-               (CreatureSpawnEvent event)
-               @cancelled))))))
+(deftest CreatureSpawnEvent-test
+  (let [reason org.bukkit.event.entity.CreatureSpawnEvent$SpawnReason/NATURAL
+        world (mocks/world "world")]
+    (testing "prevent spawning monster at high space"
+      (is (let [cancelled (ref false)
+                event (reify
+                        mocks/SugotCreatureSpawnEvent
+                        (getEntity [this] nil)
+                        (getSpawnReason [this] reason)
+                        (getLocation [this] (mocks/location world 0 120 0))
+                        mocks/Cancel
+                        (setCancelled [this bool]
+                          (dosync
+                            (ref-set cancelled true)))
+                        (isCancelled [this]
+                          @cancelled))]
+            (CreatureSpawnEvent event)
+            (.isCancelled event))))
+    #_ (testing "prevent spawning on polished stone"
+      (is (let [cancelled (ref false)
+                event (reify
+                        mocks/SugotCreatureSpawnEvent
+                        (getEntity [this] nil)
+                        (getSpawnReason [this] reason)
+                        (getLocation [this] (mocks/location world 0 60 0))
+                        mocks/Cancel
+                        (setCancelled [this bool]
+                          (dosync
+                            (ref-set cancelled true)))
+                        (isCancelled [this]
+                          @cancelled))]
+            (CreatureSpawnEvent event)
+            (.isCancelled event))))))

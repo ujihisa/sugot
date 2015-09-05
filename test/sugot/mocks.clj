@@ -58,12 +58,15 @@
   (reify Name
     (getName [this] name)))
 
-(defprotocol SugotCreatureSpawnEvent
-  (getEntity [this])
-  (getSpawnReason [this])
-  (getLocation [this])
+(defprotocol Cancel
   (isCancelled [this])
   (setCancelled [this bool]))
+
+(defprotocol SugotCreatureSpawnEvent
+  ; Use with Cancel
+  (getEntity [this])
+  (getSpawnReason [this])
+  (getLocation [this]))
 
 (defprotocol Player
   (getPlayer [this]))
