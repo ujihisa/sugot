@@ -21,3 +21,8 @@
 (defn from-loc [loc x y z]
   (.getBlock (doto (.clone loc)
                (.add x y z))))
+
+(defn set-block [target-block btype bdata]
+  {:pre [(= Material/AIR (.getType target-block))]}
+  (.setType target-block btype)
+  (.setData target-block bdata))

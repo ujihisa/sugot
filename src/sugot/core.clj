@@ -141,5 +141,5 @@
 
 ; manual update
 #_ (register-event (-> (Bukkit/getServer) .getPluginManager)
-                org.bukkit.event.block.BlockDamageEvent
-                #'sugot.app.staging/BlockDamageEvent)
+                org.bukkit.event.player.PlayerInteractEvent
+                #'sugot.app.staging/PlayerInteractEvent)

@@ -1,8 +1,11 @@
 (ns sugot.app.staging
   (:require [clojure.string :as s]
             [sugot.lib :as l]
+            [sugot.block :as b]
             [sugot.world])
-  (:import [org.bukkit.event.entity CreatureSpawnEvent$SpawnReason]))
+  (:import [org.bukkit Material Sound]
+           [org.bukkit.event.entity CreatureSpawnEvent$SpawnReason]
+           [org.bukkit.event.block Action]))
 
 (defn PlayerLoginEvent [event]
   (.setSleepingIgnored (.getPlayer event) true))
@@ -56,8 +59,8 @@
   (when (seq score)
     (let [[pitchkey interval] (first score)]
       (when pitchkey
-        (sugot.world/play-sound loc org.bukkit.Sound/NOTE_PIANO 1 (pitchkey notes))
-        #_ (play-sound loc org.bukkit.Sound/NOTE_PLING 1 (pitchkey notes)))
+        #_ (sugot.world/play-sound loc org.bukkit.Sound/NOTE_PIANO 1 (pitchkey notes))
+        (sugot.world/play-sound loc org.bukkit.Sound/NOTE_PLING 1 (pitchkey notes)))
       (sugot.lib/later (if (zero? interval)
                          0
                          (long (/ 32 interval)))
@@ -79,7 +82,31 @@
                                 [:C1 8] [:B1 8] [:A1 8] [:G0 8]
                                 [:F0 8] [:B1 8] [:A1 8] [:G0 8]
                                 [:A1 8] [:G0 8] [:F0 8] [:E0 8]
-                                [:D0 8]; [:G0 8] [:F0 8] [:E0 8]
-                                ;[:F0 8] [:E0 8] [:D0 8] [:C0 8]
-                                ;[:H0 8]
+                                [:D0 8] [:G0 8] [:F0 8] [:E0 8]
+                                [:F0 8] [:E0 8] [:D0 8] [:C0 8]
+                                [:H0 8]
                                 ])))
+
+(defn PlayerInteractEvent [event]
+  (when-let [player (.getPlayer event)]
+    (let [action (.getAction event)
+          block (.getClickedBlock event) ]
+      (when (and (= Action/RIGHT_CLICK_BLOCK action)
+                 (= Material/SOIL (.getType block))
+                 (.isSneaking player))
+        (when-let [item-in-hand (.getItemInHand player)]
+          (when (= Material/SEEDS (.getType item-in-hand))
+            (let [targets
+                  (for [x (range -2 3)
+                        z (range -2 3)
+                        :let [b (b/from-loc (.getLocation block) x 0 z)
+                              b-above (b/from-loc (.getLocation block) x 1 z)]
+                        :when (and (= Material/SOIL (.getType b))
+                                   (= Material/AIR (.getType b-above)))]
+                    b-above)]
+              (when (seq targets)
+                (sugot.world/play-sound (.getLocation player)
+                                        Sound/CAT_MEOW 0.8 1.5))
+              (doseq [b-above (take (.getAmount item-in-hand) targets)]
+                (b/set-block b-above Material/CROPS (byte 0))
+                (l/consume-item player)))))))))
