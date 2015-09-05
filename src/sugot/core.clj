@@ -16,7 +16,10 @@
 
     ; TODO autoload
     (require 'sugot.app.alloy)
-    (doseq [recipe ((ns-resolve 'sugot.app.alloy 'recipes))]
+    (require 'sugot.app.brioche)
+    (doseq [recipes [((ns-resolve 'sugot.app.alloy 'recipes))
+                     ((ns-resolve 'sugot.app.brioche 'recipes))]
+            recipe recipes]
       (Bukkit/addRecipe recipe))))
 #_ (register-all-recipes)
 
@@ -141,5 +144,5 @@
 
 ; manual update
 #_ (register-event (-> (Bukkit/getServer) .getPluginManager)
-                org.bukkit.event.player.PlayerInteractEvent
-                #'sugot.app.staging/PlayerInteractEvent)
+                org.bukkit.event.player.PlayerItemConsumeEvent
+                #'sugot.app.brioche/PlayerItemConsumeEvent)
