@@ -171,6 +171,6 @@
     (if (Bukkit/unloadWorld "hardcore" false)
       (do
         ; TODO remove the dir
-        :unloaded)
+        :successfully-unloaded)
       :unload-failed)
     :precondition-failed))
