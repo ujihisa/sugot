@@ -26,13 +26,13 @@
                (instance? org.bukkit.entity.Monster entity)
                (= CreatureSpawnEvent$SpawnReason/NATURAL reason))
       (dotimes [_ 2]
-        (let [monster
-              (sugot.world/spawn (doto (.clone l)
-                                   (.add 0.0 0.5 0.0))
-                                 (class entity))]
-          (when-let [players (filter in-hardcore?
-                                     (map #(.getLocation %) (Bukkit/getOnlinePlayers)))]
-            (.setTarget monster (rand-nth players))))))))
+        (l/later 0 (let [monster
+                         (sugot.world/spawn (doto (.clone l)
+                                              (.add 0.0 0.5 0.0))
+                                            (class entity))]
+                     (when-let [players (filter in-hardcore?
+                                                (map #(.getLocation %) (Bukkit/getOnlinePlayers)))]
+                       (.setTarget monster (rand-nth players)))))))))
 
 #_ (def interesting-seeds
   [#_7352190906321318631 ; http://epicminecraftseeds.com/stronghold-in-ravine-1-8x/
