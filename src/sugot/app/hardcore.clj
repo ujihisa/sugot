@@ -25,9 +25,15 @@
                (in-hardcore? l)
                (instance? org.bukkit.entity.Monster entity)
                (= CreatureSpawnEvent$SpawnReason/NATURAL reason))
-      (sugot.world/spawn (doto (.clone l)
-                           (.add 0.0 0.5 0.0))
-                         (class entity)))))
+      (dotimes [_ 2]
+        (let [monster
+              (sugot.world/spawn (doto (.clone l)
+                                   (.add 0.0 0.5 0.0))
+                                 (class entity))]
+          (when-let [player
+                     (rand-nth (filter in-hardcore?
+                                       (map #(.getLocation %) (Bukkit/getOnlinePlayers))))]
+            (.target monster player)))))))
 
 (def interesting-seeds
   [7352190906321318631 ; http://epicminecraftseeds.com/stronghold-in-ravine-1-8x/
@@ -40,7 +46,8 @@
   {:pre [(not (hardcore-world-exist?))]}
   (let [world-creator (-> (WorldCreator. "hardcore")
                         (.copy (Bukkit/getWorld "world"))
-                        (.seed (rand-int 10000)))
+                        (.seed #_(rand-int 8000000000000000000)
+                               (first interesting-seeds)))
         hardcore-world (.createWorld world-creator)]
     (.setTime hardcore-world 21000)
     (let [spawn-loc (.getSpawnLocation hardcore-world)
@@ -59,7 +66,7 @@
   (let [hardcore-world (world)
         spawn-loc (.getSpawnLocation hardcore-world)]
     (.teleport player spawn-loc)
-    #_ (l/broadcast-and-post-lingr
+    (l/broadcast-and-post-lingr
       (format "[HARDCORE] %s entered to hardcore world. (seed: %d)"
               (.getName player)
               (.getSeed hardcore-world)))))
