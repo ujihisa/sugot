@@ -13,6 +13,9 @@
 (defn in-hardcore? [loc]
   (= "hardcore" (.getName (.getWorld loc))))
 
+(defn BlockPlaceEvent [event]
+  nil)
+
 (defn CreatureSpawnEvent [event]
   (let [entity (.getEntity event)
         reason (.getSpawnReason event)
@@ -76,6 +79,8 @@
       (when (and
               (contains? #{Action/RIGHT_CLICK_AIR Action/RIGHT_CLICK_BLOCK} action)
               (enter-satisfy? player))
+        ; TODO Replace current item with Map for this world
+        #_ (.setItemInHand player (ItemStack. ))
         (l/send-message player "[HARDCORE] OK")
         (when-not (hardcore-world-exist?)
           (create))
@@ -89,3 +94,11 @@
     (Bukkit/unloadWorld "hardcore" false)
     ; TODO remove the dir
     ))
+
+(defn return-back [player]
+  {:pre [(in-hardcore? (.getLocation player))]}
+  (let [to (some identity [(.getBedSpawnLocation player)
+                           (.getSpawnLocation (Bukkit/getWorld "world"))])]
+    (l/broadcast-and-post-lingr (format "[HARDCORE] %s returns back to the original world."
+                                        (.getName player)))
+    (.teleport player to)))
