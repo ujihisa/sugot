@@ -5,7 +5,7 @@
   "You can't go very far.
   NOTE: This doesn't run very often just for performance"
   [event]
-  (when (and (= 0 (rand-int 10))
+  #_ (when (and (= 0 (rand-int 10))
              (= "world" (-> event .getTo .getWorld .getName)))
     (let [x (-> event .getTo .getX)
           z (-> event .getTo .getZ)
