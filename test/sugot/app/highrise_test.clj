@@ -14,6 +14,7 @@
                         mocks/SugotCreatureSpawnEvent
                         (getEntity [this] nil)
                         (getSpawnReason [this] reason)
+                        mocks/Location
                         (getLocation [this] (mocks/location world 0 120 0))
                         mocks/Cancel
                         (setCancelled [this bool]
@@ -29,6 +30,7 @@
                         mocks/SugotCreatureSpawnEvent
                         (getEntity [this] nil)
                         (getSpawnReason [this] reason)
+                        mocks/Location
                         (getLocation [this] (mocks/location world 0 60 0))
                         mocks/Cancel
                         (setCancelled [this bool]

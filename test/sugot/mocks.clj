@@ -72,10 +72,9 @@
   (setCancelled [this bool]))
 
 (defprotocol SugotCreatureSpawnEvent
-  ; Use with Cancel
+  ; Use with Cancel and Location
   (getEntity [this])
-  (getSpawnReason [this])
-  (getLocation [this]))
+  (getSpawnReason [this]))
 
 (defprotocol Player
   (getPlayer [this]))
