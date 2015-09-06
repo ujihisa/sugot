@@ -30,8 +30,8 @@
                          (sugot.world/spawn (doto (.clone l)
                                               (.add 0.0 0.5 0.0))
                                             (class entity))]
-                     (when-let [players (filter in-hardcore?
-                                                (map #(.getLocation %) (Bukkit/getOnlinePlayers)))]
+                     (when-let [players (filter #(in-hardcore? (.getLocation %))
+                                                (Bukkit/getOnlinePlayers))]
                        (.setTarget monster (rand-nth players)))))))))
 
 #_ (def interesting-seeds
@@ -53,8 +53,8 @@
           x (.getX spawn-loc)
           z (.getZ spawn-loc)
           highest-y (.getHighestBlockYAt hardcore-world x z)]
-      #_ (.setSpawnLocation hardcore-world x (inc highest-y) z)
-      #_ (l/later 0
+      (.setSpawnLocation hardcore-world x (inc highest-y) z)
+      (l/later 0
                (b/set-block (.getBlockAt hardcore-world x highest-y z)
                             Material/OBSIDIAN 0)
                (b/set-block (.getBlockAt hardcore-world x (inc highest-y) z)
@@ -90,8 +90,9 @@
         ; TODO Replace current item with Map for this world
         #_ (.setItemInHand player (ItemStack. ))
         (when-not (hardcore-world-exist?)
+          (l/broadcast "[HARDCORE] (Creating world...)")
           (create))
-        (l/send-message player "[HARDCORE] OK")
+        (l/send-message player "[HARDCORE] Go!")
         (enter player)))))
 
 (defn garbage-collection []
