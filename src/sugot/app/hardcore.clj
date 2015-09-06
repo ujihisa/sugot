@@ -30,10 +30,9 @@
               (sugot.world/spawn (doto (.clone l)
                                    (.add 0.0 0.5 0.0))
                                  (class entity))]
-          (when-let [player
-                     (rand-nth (filter in-hardcore?
-                                       (map #(.getLocation %) (Bukkit/getOnlinePlayers))))]
-            (.setTarget monster player)))))))
+          (when-let [players (filter in-hardcore?
+                                     (map #(.getLocation %) (Bukkit/getOnlinePlayers)))]
+            (.setTarget monster (rand-nth players))))))))
 
 #_ (def interesting-seeds
   [#_7352190906321318631 ; http://epicminecraftseeds.com/stronghold-in-ravine-1-8x/
@@ -46,7 +45,7 @@
   {:pre [(not (hardcore-world-exist?))]}
   (let [world-creator (-> (WorldCreator. "hardcore")
                         (.copy (Bukkit/getWorld "world"))
-                        (.seed (rand-int 8000000000000000000)
+                        (.seed (rand-int Integer/MAX_VALUE)
                                #_ (first interesting-seeds)))
         hardcore-world (.createWorld world-creator)]
     (.setTime hardcore-world 21000)
@@ -54,8 +53,8 @@
           x (.getX spawn-loc)
           z (.getZ spawn-loc)
           highest-y (.getHighestBlockYAt hardcore-world x z)]
-      (.setSpawnLocation hardcore-world x (inc highest-y) z)
-      (l/later 0
+      #_ (.setSpawnLocation hardcore-world x (inc highest-y) z)
+      #_ (l/later 0
                (b/set-block (.getBlockAt hardcore-world x highest-y z)
                             Material/OBSIDIAN 0)
                (b/set-block (.getBlockAt hardcore-world x (inc highest-y) z)
@@ -90,9 +89,9 @@
               (enter-satisfy? player))
         ; TODO Replace current item with Map for this world
         #_ (.setItemInHand player (ItemStack. ))
-        (l/send-message player "[HARDCORE] OK")
         (when-not (hardcore-world-exist?)
           (create))
+        (l/send-message player "[HARDCORE] OK")
         (enter player)))))
 
 (defn garbage-collection []
