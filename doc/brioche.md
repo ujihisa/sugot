@@ -2,13 +2,13 @@
 
 The recipe
 
-| Egg   | x |
-| ----- | - |
-| Bread | x |
+| Egg   | x  |
+| ----- | -- |
+| Bread | x  |
 
 
-| ------------- | ------------- |
 | First Header  | Second Header |
+| ------------- | ------------- |
 | Content Cell  | Content Cell  |
 
 This creates a brioche, which looks like an enchanted bread.
