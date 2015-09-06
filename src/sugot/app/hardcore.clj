@@ -25,6 +25,10 @@
 (defn BlockPlaceEvent [event]
   nil)
 
+(defn EntityDamageEvent [event]
+  (let [entity (.getEntity event)]
+    nil))
+
 (defn CreatureSpawnEvent [event]
   (let [entity (.getEntity event)
         reason (.getSpawnReason event)
