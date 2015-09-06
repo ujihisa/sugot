@@ -11,9 +11,9 @@
         l (.getLocation event)]
     ; You can't use `case` for Java enum
     (when (= "world" (-> l .getWorld .getName))
-      (condp = reason
-        CreatureSpawnEvent$SpawnReason/NATURAL
+      (when (contains? #{CreatureSpawnEvent$SpawnReason/NATURAL
+                         CreatureSpawnEvent$SpawnReason/REINFORCEMENTS}
+                       reason)
         (when (or (<= 100 (.getY l))
                   (b/polish-stone? (b/from-loc l 0 -1 0)))
-          (.setCancelled event true))
-        :else))))
+          (.setCancelled event true))))))
