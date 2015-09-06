@@ -2,8 +2,9 @@
 
 The recipe
 
-| Egg   | |
-| Bread | |
+| Egg   |   |
+| ----- | - |
+| Bread |   |
 
 This creates a brioche, which looks like an enchanted bread.
 
