@@ -27,19 +27,20 @@
   nil)
 
 (defn EntityDamageEvent [event]
-  (let [entity (.getEntity event)
-        cause (.getCause event)]
-    (prn :cause cause)
-    #_ (when (in-hardcore? (.getLocation entity))
-      (cond
-        (instance? ArmorStand entity)
-        (.setCancelled event true)
-
-        (instance? Monster entity)
-        (condp cause =
-          EntityDamageEvent$DamageCause/FIRE
+  (try
+    (let [entity (.getEntity event)
+          cause (.getCause event)]
+      (when (in-hardcore? (.getLocation entity))
+        (cond
+          (instance? ArmorStand entity)
           (.setCancelled event true)
-          nil)))))
+
+          (instance? Monster entity)
+          (condp = cause
+            EntityDamageEvent$DamageCause/FIRE_TICK
+            (.setCancelled event true)
+            nil))))
+    (catch Exception e (.printStackTrace e))))
 
 (defn CreatureSpawnEvent [event]
   (let [entity (.getEntity event)
