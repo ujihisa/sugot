@@ -27,7 +27,7 @@
   (let [hardcore-world (world)
         spawn-loc (.getSpawnLocation hardcore-world)]
     (.teleport player spawn-loc)
-    (l/broadcast-and-post-lingr
+    #_ (l/broadcast-and-post-lingr
       (format "[HARDCORE] %s entered to hardcore world. (seed: %d)"
               (.getName player)
               (.getSeed hardcore-world)))))
@@ -47,7 +47,10 @@
       (when (and
               (contains? #{Action/RIGHT_CLICK_AIR Action/RIGHT_CLICK_BLOCK} action)
               (enter-satisfy? player))
-        (l/send-message player "[HARDCORE] OK")))))
+        (l/send-message player "[HARDCORE] OK")
+        (when-not (exist?)
+          (create))
+        (enter player)))))
 
 #_ (defn TODO [player-name]
   (when-let [player (Bukkit/getPlayer player-name)]
