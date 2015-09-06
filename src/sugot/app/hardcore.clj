@@ -60,17 +60,16 @@
                (b/set-block (.getBlockAt hardcore-world x (inc highest-y) z)
                             Material/TORCH 0)))))
 
-(defn world []
+(defn hardcore-world []
   (Bukkit/getWorld "hardcore"))
 
-(defn enter [player]
-  (let [hardcore-world (world)
-        spawn-loc (.getSpawnLocation hardcore-world)]
+(defn enter-hardcore [player]
+  (let [spawn-loc (.getSpawnLocation (hardcore-world))]
     (.teleport player spawn-loc)
     (l/broadcast-and-post-lingr
       (format "[HARDCORE] %s entered to hardcore world. (seed: %d)"
               (.getName player)
-              (.getSeed hardcore-world)))))
+              (.getSeed (hardcore-world))))))
 
 (defn enter-satisfy? [player]
   (when-let [item-stack (.getItemInHand player)]
@@ -81,19 +80,43 @@
                                     (.getNearbyEntities player 0 0 0))]
         (= Material/PUMPKIN (.getType (.getHelmet armour-stand)))))))
 
+(defn leave-satisfy? [player]
+  (when-let [item-stack (.getItemInHand player)]
+    (when (and (in-hardcore? (.getLocation player))
+               (= Material/PAPER (.getType item-stack))
+               (= 1 (.getAmount item-stack)))
+      (when-let [armour-stand (some #(when (instance? ArmorStand %) %)
+                                    (.getNearbyEntities player 0 0 0))]
+        (= Material/PUMPKIN (.getType (.getHelmet armour-stand)))))))
+
+(defn leave-hardcore [player]
+  {:pre [(in-hardcore? (.getLocation player))]}
+  (let [to (some identity [(.getBedSpawnLocation player)
+                           (.getSpawnLocation (Bukkit/getWorld "world"))])]
+    (l/broadcast-and-post-lingr (format "[HARDCORE] %s left from the hardcore world."
+                                        (.getName player)))
+    (.teleport player to)))
+
 (defn PlayerInteractEvent [event]
   (when-let [player (.getPlayer event)]
     (let [action (.getAction event)]
-      (when (and
-              (contains? #{Action/RIGHT_CLICK_AIR Action/RIGHT_CLICK_BLOCK} action)
-              (enter-satisfy? player))
-        ; TODO Replace current item with Map for this world
-        #_ (.setItemInHand player (ItemStack. ))
-        (when-not (hardcore-world-exist?)
-          (l/broadcast "[HARDCORE] (Creating world...)")
-          (create))
-        (l/send-message player "[HARDCORE] Go!")
-        (enter player)))))
+      (when (contains? #{Action/RIGHT_CLICK_AIR Action/RIGHT_CLICK_BLOCK} action)
+        (cond
+          (enter-satisfy? player)
+          (do
+            ; TODO Replace current item with Map for this world
+            #_ (.setItemInHand player (ItemStack. ))
+            (when-not (hardcore-world-exist?)
+              (l/broadcast "[HARDCORE] (Creating world...)")
+              (create))
+            (l/send-message player "[HARDCORE] Go!")
+            (enter-hardcore player))
+
+          (leave-satisfy? player)
+          (do
+            ; TODO Replace current item with Paper for this world
+            #_ (.setItemInHand player (ItemStack. ))
+            (leave-hardcore player)))))))
 
 (defn garbage-collection []
   (when (and
@@ -103,11 +126,3 @@
     (Bukkit/unloadWorld "hardcore" false)
     ; TODO remove the dir
     ))
-
-(defn return-back [player]
-  {:pre [(in-hardcore? (.getLocation player))]}
-  (let [to (some identity [(.getBedSpawnLocation player)
-                           (.getSpawnLocation (Bukkit/getWorld "world"))])]
-    (l/broadcast-and-post-lingr (format "[HARDCORE] %s returns back to the original world."
-                                        (.getName player)))
-    (.teleport player to)))
