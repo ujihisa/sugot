@@ -6,7 +6,12 @@
            [org.bukkit.entity ArmorStand]
            [org.bukkit.event.block Action]
            [org.bukkit.event.entity CreatureSpawnEvent$SpawnReason]
-           [org.bukkit.inventory ItemStack]))
+           [org.bukkit.inventory ItemStack]
+           [org.bukkit.enchantments Enchantment]))
+
+(defn PlayerDropItemEvent [event]
+  (when (= "Magic Compass" (some-> event .getPlayer .getItemInHand .getItemMeta .getDisplayName))
+    (.setCancelled event true)))
 
 (defn- hardcore-world-exist? []
   (.isDirectory (clojure.java.io/as-file "hardcore")))
@@ -61,12 +66,14 @@
           init-y (.getHighestBlockYAt hardcore-world 0 0)]
       (.setSpawnLocation hardcore-world goal-x (inc goal-y) goal-z)
       (l/later 0
-               (b/set-block (.getBlockAt hardcore-world goal-x goal-y goal-z)
+               (b/set-block! (.getBlockAt hardcore-world goal-x (dec goal-y) goal-z)
                             Material/BEDROCK 0)
-               (b/set-block (.getBlockAt hardcore-world 0 init-y 0)
-                            Material/OBSIDIAN 0)
-               (b/set-block (.getBlockAt hardcore-world 0 init-y 0)
-                            Material/TORCH 0)))))
+               (doseq [x (range -1 2)
+                       z (range -1 2)]
+                 (b/set-block! (.getBlockAt hardcore-world x (dec init-y) z)
+                              Material/OBSIDIAN 0)
+                 (b/set-block! (.getBlockAt hardcore-world 0 init-y 0)
+                            Material/TORCH 0))))))
 
 (defn hardcore-world []
   (Bukkit/getWorld "hardcore"))
@@ -115,8 +122,10 @@
       (when (contains? #{Action/RIGHT_CLICK_AIR Action/RIGHT_CLICK_BLOCK} action)
         (cond
           (enter-satisfy? player)
-          (do
-            (.setItemInHand player (ItemStack. Material/COMPASS 1))
+          (let [compass (doto (ItemStack. Material/COMPASS 1)
+                          (.addUnsafeEnchantment Enchantment/DURABILITY 1)
+                          (l/set-display-name "Magic Compass"))]
+            (.setItemInHand player compass)
             (when-not (hardcore-world-exist?)
               (l/broadcast "[HARDCORE] (Creating world...)")
               (create))

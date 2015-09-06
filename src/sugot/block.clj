@@ -22,7 +22,10 @@
   (.getBlock (doto (.clone loc)
                (.add x y z))))
 
-(defn set-block [target-block btype bdata]
-  {:pre [(= Material/AIR (.getType target-block))]}
+(defn set-block! [target-block btype bdata]
   (.setType target-block btype)
   (.setData target-block bdata))
+
+(defn set-block [target-block btype bdata]
+  {:pre [(= Material/AIR (.getType target-block))]}
+  (set-block! target-block btype bdata))
