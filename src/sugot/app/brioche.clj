@@ -6,7 +6,8 @@
            [org.bukkit.enchantments Enchantment]))
 
 (defn give-exp [player value]
-  (.setExp player (+ value (.getExp player))))
+  (.setExp player (max 1.0
+                       (+ value (.getExp player)))))
 
 (defn PlayerItemConsumeEvent [event]
   (let [player (.getPlayer event)
