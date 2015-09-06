@@ -5,7 +5,8 @@
   (:import [org.bukkit Bukkit Server WorldCreator Material]
            [org.bukkit.entity ArmorStand]
            [org.bukkit.event.block Action]
-           [org.bukkit.event.entity CreatureSpawnEvent$SpawnReason]))
+           [org.bukkit.event.entity CreatureSpawnEvent$SpawnReason]
+           [org.bukkit.inventory ItemStack]))
 
 (defn- hardcore-world-exist? []
   (.isDirectory (clojure.java.io/as-file "hardcore")))
@@ -83,7 +84,7 @@
 (defn leave-satisfy? [player]
   (when-let [item-stack (.getItemInHand player)]
     (when (and (in-hardcore? (.getLocation player))
-               (= Material/PAPER (.getType item-stack))
+               (= Material/MAP (.getType item-stack))
                (= 1 (.getAmount item-stack)))
       (when-let [armour-stand (some #(when (instance? ArmorStand %) %)
                                     (.getNearbyEntities player 0 0 0))]
@@ -104,8 +105,7 @@
         (cond
           (enter-satisfy? player)
           (do
-            ; TODO Replace current item with Map for this world
-            #_ (.setItemInHand player (ItemStack. ))
+            (.setItemInHand player (ItemStack. Material/MAP 1))
             (when-not (hardcore-world-exist?)
               (l/broadcast "[HARDCORE] (Creating world...)")
               (create))
@@ -114,8 +114,7 @@
 
           (leave-satisfy? player)
           (do
-            ; TODO Replace current item with Paper for this world
-            #_ (.setItemInHand player (ItemStack. ))
+            (.setItemInHand player (ItemStack. Material/PAPER 1))
             (leave-hardcore player)))))))
 
 (defn garbage-collection []
