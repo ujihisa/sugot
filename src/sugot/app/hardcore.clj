@@ -10,8 +10,11 @@
            [org.bukkit.enchantments Enchantment]))
 
 (defn PlayerDropItemEvent [event]
-  (when (= "Magic Compass" (some-> event .getPlayer .getItemInHand .getItemMeta .getDisplayName))
-    (.setCancelled event true)))
+  (when (= "Magic Compass"
+           (some-> event
+                   .getItemDrop .getItemStack .getItemMeta .getDisplayName))
+    (.setCancelled event true)
+    (l/send-message (.getPlayer event) "[HARDCORE] You should keep it for going back home!")))
 
 (defn- hardcore-world-exist? []
   (.isDirectory (clojure.java.io/as-file "hardcore")))
