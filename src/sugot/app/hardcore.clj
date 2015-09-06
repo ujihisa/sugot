@@ -3,9 +3,10 @@
             [sugot.block :as b]
             [sugot.world])
   (:import [org.bukkit Bukkit Server WorldCreator Material Location]
-           [org.bukkit.entity ArmorStand]
+           [org.bukkit.entity ArmorStand Monster]
            [org.bukkit.event.block Action]
            [org.bukkit.event.entity CreatureSpawnEvent$SpawnReason]
+           [org.bukkit.event.entity EntityDamageEvent$DamageCause]
            [org.bukkit.inventory ItemStack]
            [org.bukkit.enchantments Enchantment]))
 
@@ -26,8 +27,19 @@
   nil)
 
 (defn EntityDamageEvent [event]
-  (let [entity (.getEntity event)]
-    nil))
+  (let [entity (.getEntity event)
+        cause (.getCause event)]
+    (prn :cause cause)
+    #_ (when (in-hardcore? (.getLocation entity))
+      (cond
+        (instance? ArmorStand entity)
+        (.setCancelled event true)
+
+        (instance? Monster entity)
+        (condp cause =
+          EntityDamageEvent$DamageCause/FIRE
+          (.setCancelled event true)
+          nil)))))
 
 (defn CreatureSpawnEvent [event]
   (let [entity (.getEntity event)
@@ -36,7 +48,7 @@
     ; You can't use `case` for Java enum
     (when (and (hardcore-world-exist?)
                (in-hardcore? l)
-               (instance? org.bukkit.entity.Monster entity)
+               (instance? Monster entity)
                (= CreatureSpawnEvent$SpawnReason/NATURAL reason))
       (dotimes [_ 2]
         (l/later 0 (let [monster
@@ -68,13 +80,19 @@
                                #_ (first interesting-seeds)))
         hardcore-world (.createWorld world-creator)]
     (.setTime hardcore-world 21000)
-    (let [[goal-x goal-z] (random-xz 50)
+    (let [[goal-x goal-z] (random-xz (+ 100 (rand-int 100)))
           goal-y (.getHighestBlockYAt hardcore-world goal-x goal-z)
           init-y (.getHighestBlockYAt hardcore-world 0 0)]
       (.setSpawnLocation hardcore-world goal-x (inc goal-y) goal-z)
       (l/later 0
                (b/set-block! (.getBlockAt hardcore-world goal-x (dec goal-y) goal-z)
                             Material/BEDROCK 0)
+               (-> (sugot.world/spawn (Location. hardcore-world
+                                                 (+ 0.5 goal-x)
+                                                 goal-y
+                                                 (+ 0.5 goal-z))
+                                      ArmorStand)
+                 (.setHelmet (ItemStack. Material/OBSIDIAN 1)))
                (doseq [x (range -1 2)
                        z (range -1 2)]
                  (b/set-block! (.getBlockAt hardcore-world x (dec init-y) z)
@@ -89,7 +107,7 @@
   {:pre [(hardcore-world)]}
   (let [init-loc
         (Location.
-          (hardcore-world) 0 (.getHighestBlockYAt (hardcore-world) 0 0) 0)]
+          (hardcore-world) 0.5 (inc (.getHighestBlockYAt (hardcore-world) 0 0)) 0.5)]
     (.teleport player init-loc)
     (l/broadcast-and-post-lingr
       (format "[HARDCORE] %s entered to hardcore world. (seed: \"%d\", biome: %s)"
@@ -113,7 +131,7 @@
                (= 1 (.getAmount item-stack)))
       (when-let [armour-stand (some #(when (instance? ArmorStand %) %)
                                     (.getNearbyEntities player 0 0 0))]
-        (= Material/PUMPKIN (.getType (.getHelmet armour-stand)))))))
+        (= Material/OBSIDIAN (.getType (.getHelmet armour-stand)))))))
 
 (defn leave-hardcore [player]
   {:pre [(in-hardcore? (.getLocation player))]}
@@ -145,10 +163,13 @@
             (leave-hardcore player)))))))
 
 (defn garbage-collection []
-  (when (and
+  (if (and
           (hardcore-world-exist?)
           (not (some in-hardcore?
                      (map #(.getLocation %) (Bukkit/getOnlinePlayers)))))
-    (Bukkit/unloadWorld "hardcore" false)
-    ; TODO remove the dir
-    ))
+    (if (Bukkit/unloadWorld "hardcore" false)
+      (do
+        ; TODO remove the dir
+        :unloaded)
+      :unload-failed)
+    :precondition-failed))
