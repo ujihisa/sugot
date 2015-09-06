@@ -20,7 +20,9 @@
   (doseq [recipes [((ns-resolve 'sugot.app.alloy 'recipes))
                    ((ns-resolve 'sugot.app.brioche 'recipes))]
           recipe recipes]
-    (Bukkit/addRecipe recipe)))
+    (when-not (Bukkit/addRecipe recipe)
+      (binding [*out* *err*]
+        (prn "Failed to Bukkit/addRecipe: " recipe)))))
 #_ (register-all-recipes)
 
 (def all-apps (ref #{}))

@@ -28,4 +28,4 @@
                 mocks/PlayerToggleSneakEvent
                 (isSneaking [this] true))]
     ; TODO actual test
-    ))
+    event))
