@@ -5,3 +5,6 @@
 
 (defn play-sound [loc sound volume pitch]
   (.playSound (.getWorld loc) loc sound volume pitch))
+
+(defn spawn [loc klass]
+  (.spawn (.getWorld loc) loc klass))

@@ -1,11 +1,37 @@
 (ns sugot.app.hardcore
-  (:require [sugot.lib :as l])
+  (:require [sugot.lib :as l]
+            [sugot.block :as b]
+            [sugot.world])
   (:import [org.bukkit Bukkit Server WorldCreator Material]
            [org.bukkit.entity ArmorStand]
-           [org.bukkit.event.block Action]))
+           [org.bukkit.event.block Action]
+           [org.bukkit.event.entity CreatureSpawnEvent$SpawnReason]))
 
 (defn exist? []
   (.isDirectory (clojure.java.io/as-file "hardcore")))
+
+(defn in-hardcore? [loc]
+  (= "hardcore" (.getName (.getWorld loc))))
+
+(defn CreatureSpawnEvent [event]
+  (let [entity (.getEntity event)
+        reason (.getSpawnReason event)
+        l (.getLocation event)]
+    ; You can't use `case` for Java enum
+    (when (and (exist?)
+               (in-hardcore? l)
+               (instance? org.bukkit.entity.Monster entity)
+               (= CreatureSpawnEvent$SpawnReason/NATURAL reason))
+      (sugot.world/spawn (doto (.clone l)
+                           (.add 0.0 0.5 0.0))
+                         (class entity)))))
+
+(def interesting-seeds
+  [7352190906321318631 ; http://epicminecraftseeds.com/stronghold-in-ravine-1-8x/
+   3083175 ; http://epicminecraftseeds.com/spawn-beside-jungle-temple/
+   516687594611420526 ; http://epicminecraftseeds.com/minecraft-village-seed-great-loot/
+   5574457897082764526 ; http://epicminecraftseeds.com/sweet-savanna-m-above-the-clouds-minecraft-1-8-seed/
+   ])
 
 (defn create []
   {:pre [(not (exist?))]}
@@ -13,12 +39,15 @@
                         (.copy (Bukkit/getWorld "world"))
                         (.seed (rand-int 10000)))
         hardcore-world (.createWorld world-creator)]
-    (.setTime hardcore-world 22000)
+    (.setTime hardcore-world 21000)
     (let [spawn-loc (.getSpawnLocation hardcore-world)
           x (.getX spawn-loc)
           z (.getZ spawn-loc)
           highest-y (.getHighestBlockYAt hardcore-world x z)]
-      (.setSpawnLocation hardcore-world x highest-y z))))
+      (b/set-block (.getBlockAt hardcore-world x highest-y z)
+                   Material/OBSIDIAN
+                   0)
+      (.setSpawnLocation hardcore-world x (inc highest-y) z))))
 
 (defn world []
   (Bukkit/getWorld "hardcore"))
@@ -34,7 +63,7 @@
 
 (defn enter-satisfy? [player]
   (when-let [item-stack (.getItemInHand player)]
-    (when (and (= "world" (.getWorld (.getLocation player)))
+    (when (and (= "world" (.getName (.getWorld (.getLocation player))))
                (= Material/PAPER (.getType item-stack))
                (= 1 (.getAmount item-stack)))
       (when-let [armour-stand (some #(when (instance? ArmorStand %) %)
