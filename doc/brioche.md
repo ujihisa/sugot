@@ -2,13 +2,12 @@
 
 The recipe
 
-| Egg   |   |
+| Egg   | . |
 | ----- | - |
-| Bread |   |
+| Bread | . |
 
 
 | First Header  | Second Header |
-| ------------- | ------------- |
 | Content Cell  | Content Cell  |
 | Content Cell  | Content Cell  |
 
