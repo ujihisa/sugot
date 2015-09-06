@@ -1,10 +1,10 @@
 # Brioche
 
-The recipe
+The recipe: [Egg](http://minecraft.gamepedia.com/Egg) and [Bread](http://minecraft.gamepedia.com/Bread).
 
 <table>
-<tr><td>[Egg](http://minecraft.gamepedia.com/Egg)</td><td></td></tr>
-<tr><td>[Bread](http://minecraft.gamepedia.com/Bread)</td><td></td></tr>
+<tr><td>Egg</td><td></td></tr>
+<tr><td>Bread</td><td></td></tr>
 </table>
 
 This creates a brioche, which looks like an enchanted bread.
