@@ -4,6 +4,7 @@
 
 ## Minor tweaks
 
+* [Alloy](./alloy.md)
 * [Brioche](./brioche.md)
 
 ## Major new stuff
