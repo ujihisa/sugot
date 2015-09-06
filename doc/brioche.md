@@ -2,14 +2,10 @@
 
 The recipe
 
-| Egg   | x  |
-| ----- | -- |
-| Bread | x  |
-
-
-| First Header  | Second Header |
-| ------------- | ------------- |
-| Content Cell  | Content Cell  |
+<table>
+<tr><td>Egg</td></td></tr>
+<tr><td>Bread</td></td></tr>
+</table>
 
 This creates a brioche, which looks like an enchanted bread.
 
