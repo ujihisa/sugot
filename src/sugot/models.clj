@@ -24,12 +24,6 @@
       (Location->Loc (.getLocation player))
       player))
 
-(defn Block->B [^Block block]
-  (B. (.getType block)
-      (.getData block)
-      (Location->Loc (.getLocation block))
-      block))
-
 (defn block-set [^B b ^Material btype ^Byte data]
   (let [block (:orig b)]
     (.setType block btype)
@@ -48,7 +42,7 @@
 (defn block-break [^B b]
   (.breakNaturally b (ItemStack. Material/DIAMOND_PICKAXE 1)))
 
-(def operations
+#_ (def operations
   {:block-break (fn [^B b]
                   (.breakNaturally (:orig b)
                                    (ItemStack. Material/DIAMOND_PICKAXE 1)))

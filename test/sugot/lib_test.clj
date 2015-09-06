@@ -38,6 +38,6 @@
   (testing "nanido"
     (is (= 1 1))))
 
-(deftest consume-item-test
+#_ (deftest consume-item-test
   ;TODO
   (is true))

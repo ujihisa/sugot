@@ -35,11 +35,11 @@
   (delay (-> (Bukkit/getPluginManager) (.getPlugin "dynmap"))))
 
 (defn
-  ^{:doc "Convert from seconds to ticks"
-    :tag Long
-    :test (fn []
-            (assert (= 100 (sec 5))))}
-  sec [n]
+  #_ {:test (fn []
+           (assert (= 100 (sec 5))))}
+  sec
+  "Convert from seconds to ticks"
+  [n]
   (int (* 20 n)))
 
 (defn later-fn [tick f]

@@ -8,19 +8,19 @@
 ; TODO move these data out, or at least declarative
 (defn register-all-recipes []
   (Bukkit/resetRecipes)
-  (let [item-stack (doto (org.bukkit.inventory.ItemStack. org.bukkit.Material/CACTUS 1))
+  (let [item-stack (org.bukkit.inventory.ItemStack. org.bukkit.Material/CACTUS 1)
         recipe (-> (org.bukkit.inventory.ShapedRecipe. item-stack)
                  (.shape (into-array ["aa" "aa" "aa"]))
                  (.setIngredient \a org.bukkit.Material/LEAVES))]
-    (Bukkit/addRecipe recipe)
+    (Bukkit/addRecipe recipe))
 
-    ; TODO autoload
-    (require 'sugot.app.alloy)
-    (require 'sugot.app.brioche)
-    (doseq [recipes [((ns-resolve 'sugot.app.alloy 'recipes))
-                     ((ns-resolve 'sugot.app.brioche 'recipes))]
-            recipe recipes]
-      (Bukkit/addRecipe recipe))))
+  ; TODO autoload
+  (require 'sugot.app.alloy)
+  (require 'sugot.app.brioche)
+  (doseq [recipes [((ns-resolve 'sugot.app.alloy 'recipes))
+                   ((ns-resolve 'sugot.app.brioche 'recipes))]
+          recipe recipes]
+    (Bukkit/addRecipe recipe)))
 #_ (register-all-recipes)
 
 (def all-apps (ref #{}))
