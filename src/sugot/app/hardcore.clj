@@ -33,11 +33,11 @@
           (when-let [player
                      (rand-nth (filter in-hardcore?
                                        (map #(.getLocation %) (Bukkit/getOnlinePlayers))))]
-            (.target monster player)))))))
+            (.setTarget monster player)))))))
 
-(def interesting-seeds
-  [7352190906321318631 ; http://epicminecraftseeds.com/stronghold-in-ravine-1-8x/
-   3083175 ; http://epicminecraftseeds.com/spawn-beside-jungle-temple/
+#_ (def interesting-seeds
+  [#_7352190906321318631 ; http://epicminecraftseeds.com/stronghold-in-ravine-1-8x/
+   #_ 3083175 ; http://epicminecraftseeds.com/spawn-beside-jungle-temple/
    516687594611420526 ; http://epicminecraftseeds.com/minecraft-village-seed-great-loot/
    5574457897082764526 ; http://epicminecraftseeds.com/sweet-savanna-m-above-the-clouds-minecraft-1-8-seed/
    ])
@@ -46,18 +46,20 @@
   {:pre [(not (hardcore-world-exist?))]}
   (let [world-creator (-> (WorldCreator. "hardcore")
                         (.copy (Bukkit/getWorld "world"))
-                        (.seed #_(rand-int 8000000000000000000)
-                               (first interesting-seeds)))
+                        (.seed (rand-int 8000000000000000000)
+                               #_ (first interesting-seeds)))
         hardcore-world (.createWorld world-creator)]
     (.setTime hardcore-world 21000)
     (let [spawn-loc (.getSpawnLocation hardcore-world)
           x (.getX spawn-loc)
           z (.getZ spawn-loc)
           highest-y (.getHighestBlockYAt hardcore-world x z)]
-      (b/set-block (.getBlockAt hardcore-world x highest-y z)
-                   Material/OBSIDIAN
-                   0)
-      (.setSpawnLocation hardcore-world x (inc highest-y) z))))
+      (.setSpawnLocation hardcore-world x (inc highest-y) z)
+      (l/later 0
+               (b/set-block (.getBlockAt hardcore-world x highest-y z)
+                            Material/OBSIDIAN 0)
+               (b/set-block (.getBlockAt hardcore-world x (inc highest-y) z)
+                            Material/TORCH 0)))))
 
 (defn world []
   (Bukkit/getWorld "hardcore"))
