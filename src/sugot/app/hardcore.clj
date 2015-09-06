@@ -136,6 +136,16 @@
                                     (.getNearbyEntities player 0 0 0))]
         (= Material/OBSIDIAN (.getType (.getHelmet armour-stand)))))))
 
+(defn dir-delete-recursively
+  "From https://gist.github.com/edw/5128978"
+  [fname]
+  (let [func (fn [func f]
+               (when (.isDirectory f)
+                 (doseq [f2 (.listFiles f)]
+                   (func func f2)))
+               (clojure.java.io/delete-file f))]
+    (func func (clojure.java.io/file fname))))
+
 (defn garbage-collection []
   (if (and
           (hardcore-world-exist?)
@@ -144,8 +154,10 @@
     (let [folder (.getWorldFolder (hardcore-world))]
       (if (Bukkit/unloadWorld "hardcore" false)
         (do
-          ; TODO remove the dir
-          (prn "you can remove" folder)
+          #_ (prn "you can remove" folder)
+          (try
+            (dir-delete-recursively (.getAbsolutePath folder))
+            (catch Exception e (.printStackTrace e)))
           :unloadWorld-succeeded)
         :unloadWorld-failed))
     :precondition-failed))
