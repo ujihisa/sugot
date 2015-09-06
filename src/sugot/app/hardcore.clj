@@ -68,6 +68,7 @@
    ])
 
 (defn random-xz [radius]
+  {:pre [(< 0 radius)]}
   (let [x (- (rand-int (* 2 radius)) radius)
         z (Math/round (* (Math/sqrt (- (* radius radius) (* x x)))
                          (rand-nth [1 -1])))]
@@ -82,24 +83,25 @@
         hardcore-world (.createWorld world-creator)]
     (.setTime hardcore-world 21000)
     (let [[goal-x goal-z] (random-xz (+ 100 (rand-int 100)))
-          goal-y (.getHighestBlockYAt hardcore-world goal-x goal-z)
-          init-y (.getHighestBlockYAt hardcore-world 0 0)]
+          goal-y (.getHighestBlockYAt hardcore-world goal-x goal-z)]
       (.setSpawnLocation hardcore-world goal-x (inc goal-y) goal-z)
       (l/later 0
-               (b/set-block! (.getBlockAt hardcore-world goal-x (dec goal-y) goal-z)
-                            Material/BEDROCK 0)
-               (-> (sugot.world/spawn (Location. hardcore-world
-                                                 (+ 0.5 goal-x)
-                                                 goal-y
-                                                 (+ 0.5 goal-z))
-                                      ArmorStand)
-                 (.setHelmet (ItemStack. Material/OBSIDIAN 1)))
-               (doseq [x (range -1 2)
-                       z (range -1 2)]
-                 (b/set-block! (.getBlockAt hardcore-world x (dec init-y) z)
-                              Material/OBSIDIAN 0)
-                 (b/set-block! (.getBlockAt hardcore-world 0 init-y 0)
-                            Material/TORCH 0))))))
+        (b/set-block! (.getBlockAt hardcore-world goal-x (dec goal-y) goal-z)
+                      Material/BEDROCK 0)
+        (-> (sugot.world/spawn (Location. hardcore-world
+                                          (+ 0.5 goal-x)
+                                          goal-y
+                                          (+ 0.5 goal-z))
+                               ArmorStand)
+          (.setHelmet (ItemStack. Material/OBSIDIAN 1)))))
+    (let [init-y (.getHighestBlockYAt hardcore-world 0 0)]
+      (l/later 0
+        (doseq [x (range -1 2)
+                z (range -1 2)]
+          (b/set-block! (.getBlockAt hardcore-world x (dec init-y) z)
+                        Material/OBSIDIAN 0)
+          (b/set-block! (.getBlockAt hardcore-world x init-y z)
+                        Material/TORCH 0))))))
 
 (defn hardcore-world []
   (Bukkit/getWorld "hardcore"))
@@ -134,13 +136,29 @@
                                     (.getNearbyEntities player 0 0 0))]
         (= Material/OBSIDIAN (.getType (.getHelmet armour-stand)))))))
 
+(defn garbage-collection []
+  (if (and
+          (hardcore-world-exist?)
+          (not (some in-hardcore?
+                     (map #(.getLocation %) (Bukkit/getOnlinePlayers)))))
+    (let [folder (.getWorldFolder (hardcore-world))]
+      (if (Bukkit/unloadWorld "hardcore" false)
+        (do
+          ; TODO remove the dir
+          (prn "you can remove" folder)
+          :unloadWorld-succeeded)
+        :unloadWorld-failed))
+    :precondition-failed))
+
 (defn leave-hardcore [player]
   {:pre [(in-hardcore? (.getLocation player))]}
   (let [to (some identity [(.getBedSpawnLocation player)
                            (.getSpawnLocation (Bukkit/getWorld "world"))])]
     (l/broadcast-and-post-lingr (format "[HARDCORE] %s left from the hardcore world."
                                         (.getName player)))
-    (.teleport player to)))
+    (.teleport player to)
+    (l/later 0
+      (garbage-collection))))
 
 (defn PlayerInteractEvent [event]
   (when-let [player (.getPlayer event)]
@@ -162,15 +180,3 @@
           (do
             (.setItemInHand player (ItemStack. Material/PAPER 1))
             (leave-hardcore player)))))))
-
-(defn garbage-collection []
-  (if (and
-          (hardcore-world-exist?)
-          (not (some in-hardcore?
-                     (map #(.getLocation %) (Bukkit/getOnlinePlayers)))))
-    (if (Bukkit/unloadWorld "hardcore" false)
-      (do
-        ; TODO remove the dir
-        :successfully-unloaded)
-      :unload-failed)
-    :precondition-failed))
