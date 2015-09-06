@@ -9,12 +9,11 @@
   (testing "notifies to lingr"
     (with-redefs [l/post-lingr (fn [msg] {:msg msg})
                   sugot.world/strike-lightning-effect (fn [loc] nil)]
-      ; TODO Player.getLocation is required
-      #_ (is (= {:msg "[LOGIN] dummy-player logged in."}
+      (is (= {:msg "[LOGIN] dummy-player logged in."}
              (PlayerLoginEvent
                (reify mocks/Player
-                 (getPlayer [this] (mocks/player "dummy-player")))
-               (P. "dummy-player" nil nil)))))))
+                 (getPlayer [this]
+                   (mocks/player "dummy-player" nil)))))))))
 
 (deftest PlayerQuitEvent-test
   (testing "notifies to lingr"
