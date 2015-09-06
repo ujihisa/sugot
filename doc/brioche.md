@@ -3,8 +3,8 @@
 The recipe
 
 <table>
-<tr><td>Egg</td></td></tr>
-<tr><td>Bread</td></td></tr>
+<tr><td>[Egg](http://minecraft.gamepedia.com/Egg)</td><td></td></tr>
+<tr><td>[Bread](http://minecraft.gamepedia.com/Bread)</td><td></td></tr>
 </table>
 
 This creates a brioche, which looks like an enchanted bread.
