@@ -108,13 +108,13 @@
     [x z]))
 
 (defn- rand-treasure []
-  (case (rand-int 24)
+  (case (rand-int 30)
     0 (ItemStack. Material/DIRT (inc (rand-int 32)))
     1 (ItemStack. Material/DIRT (inc (rand-int 32)))
     2 (ItemStack. Material/SAND (inc (rand-int 64)))
     3 (ItemStack. Material/STICK (inc (rand-int 64)))
-    4 (ItemStack. Material/RAW_FISH (inc (rand-int 10)) 0 (rand-int 4))
-    5 (ItemStack. Material/COOKED_FISH (inc (rand-int 10)) 0 (rand-int 2))
+    4 (ItemStack. Material/RAW_FISH (inc (rand-int 10)) (short 0) (byte (rand-int 4)))
+    5 (ItemStack. Material/COOKED_FISH (inc (rand-int 10)) (short 0) (byte (rand-int 2)))
     6 (ItemStack. Material/EMERALD (inc (rand-int 4)))
     7 (ItemStack. Material/ANVIL (inc (rand-int 4)))
     8 (ItemStack. Material/ARROW (inc (rand-int 64)))
@@ -135,10 +135,10 @@
     23 (ItemStack. Material/SLIME_BALL (inc (rand-int 5)))
     24 (ItemStack. Material/STRING (inc (rand-int 5)))
     25 (ItemStack. Material/APPLE (inc (rand-int 5)))
-    26 (ItemStack. Material/INK_SACK (inc (rand-int 4)) 0 (rand-int 16))
-    27 (ItemStack. Material/INK_SACK (inc (rand-int 4)) 0 (rand-int 16))
-    28 (ItemStack. Material/INK_SACK (inc (rand-int 4)) 0 (rand-int 16))
-    29 (ItemStack. Material/INK_SACK (inc (rand-int 4)) 0 (rand-int 16))
+    26 (ItemStack. Material/INK_SACK (inc (rand-int 4)) (short 0) (byte (rand-int 16)))
+    27 (ItemStack. Material/INK_SACK (inc (rand-int 4)) (short 0) (byte (rand-int 16)))
+    28 (ItemStack. Material/INK_SACK (inc (rand-int 4)) (short 0) (byte (rand-int 16)))
+    29 (ItemStack. Material/INK_SACK (inc (rand-int 4)) (short 0) (byte (rand-int 16)))
     nil))
 
 (defn- rand-treasures [min-n max-n]
@@ -148,7 +148,8 @@
 (defn create-treasure-chest [block]
   (b/set-block block Material/CHEST 0)
   (let [chest (.getBlock (.getLocation block))]
-    (doseq [item-stack (rand-treasures 3 8)]
+    (doseq [item-stack (rand-treasures 3 8)
+            :when item-stack]
       (b/add-chest-inventory chest (into-array [item-stack])))))
 
 (defn create []
