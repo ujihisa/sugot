@@ -3,7 +3,7 @@
             [sugot.block :as b]
             [sugot.world])
   (:import [org.bukkit Bukkit Server WorldCreator Material Location]
-           [org.bukkit.entity ArmorStand Monster]
+           [org.bukkit.entity ArmorStand Monster Blaze]
            [org.bukkit.event.block Action]
            [org.bukkit.event.entity CreatureSpawnEvent$SpawnReason]
            [org.bukkit.event.entity EntityDamageEvent$DamageCause]
@@ -42,6 +42,10 @@
             nil))))
     (catch Exception e (.printStackTrace e))))
 
+(defn- hardcore-players []
+  (seq (filter #(in-hardcore? (.getLocation %))
+               (Bukkit/getOnlinePlayers))))
+
 (defn CreatureSpawnEvent [event]
   (let [entity (.getEntity event)
         reason (.getSpawnReason event)
@@ -51,14 +55,23 @@
                (in-hardcore? l)
                (instance? Monster entity)
                (= CreatureSpawnEvent$SpawnReason/NATURAL reason))
-      (dotimes [_ 2]
-        (l/later 0 (let [monster
-                         (sugot.world/spawn (doto (.clone l)
-                                              (.add 0.0 0.5 0.0))
-                                            (class entity))]
-                     (when-let [players (filter #(in-hardcore? (.getLocation %))
-                                                (Bukkit/getOnlinePlayers))]
-                       (.setTarget monster (rand-nth players)))))))))
+      (l/later 0
+        (dotimes [_ 2]
+          (let [loc (doto (.clone l)
+                      (.add (rand-nth [-0.5 0.5]) 0.5 (rand-nth [-0.5 0.5])))
+                klass (if (= 0 (rand-int 10))
+                        Blaze
+                        (class entity))
+                monster
+                (sugot.world/spawn loc klass)]
+            (when-let [players (hardcore-players)]
+              (.setTarget monster (rand-nth players)))))))))
+
+(defn ProjectileLaunchEvent [event]
+  (let [projectile (.getEntity event)
+        shooter (.getShooter projectile)]
+    (if (instance? Blaze shooter)
+      (.setCancelled event true))))
 
 #_ (def interesting-seeds
   [#_7352190906321318631 ; http://epicminecraftseeds.com/stronghold-in-ravine-1-8x/
@@ -148,19 +161,19 @@
 
 (defn garbage-collection []
   (if (and
-          (hardcore-world-exist?)
-          (not (some in-hardcore?
-                     (map #(.getLocation %) (Bukkit/getOnlinePlayers)))))
-    (let [folder (.getWorldFolder (hardcore-world))]
-      (if (Bukkit/unloadWorld "hardcore" false)
-        (do
-          #_ (prn "you can remove" folder)
-          (try
-            (dir-delete-recursively (.getAbsolutePath folder))
-            (catch Exception e (.printStackTrace e)))
-          :unloadWorld-succeeded)
-        :unloadWorld-failed))
-    :precondition-failed))
+        (hardcore-world-exist?)
+        (empty? (hardcore-players)))
+    (if-let [hardcore-world (hardcore-world)]
+      (let [folder (.getWorldFolder hardcore-world)]
+        (if (Bukkit/unloadWorld "hardcore" false)
+          (do
+            (try
+              (dir-delete-recursively (.getAbsolutePath folder))
+              (catch Exception e (.printStackTrace e)))
+            :unloadWorld-succeeded)
+          :unloadWorld-failed))
+      :precondition-failed--weird)
+    :precondition-failed--normal))
 
 (defn leave-hardcore [player]
   {:pre [(in-hardcore? (.getLocation player))]}
