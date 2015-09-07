@@ -29,3 +29,9 @@
 (defn set-block [target-block btype bdata]
   {:pre [(= Material/AIR (.getType target-block))]}
   (set-block! target-block btype bdata))
+
+(defn add-chest-inventory [block item-stack]
+  {:pre [(= Material/CHEST (.getType block))]}
+  (let [chest (.getState block)
+        inventory (.getBlockInventory chest)]
+    (.addItem inventory item-stack)))

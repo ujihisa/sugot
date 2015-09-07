@@ -3,6 +3,7 @@
             [sugot.block :as b]
             [sugot.world])
   (:import [org.bukkit Bukkit Server WorldCreator Material Location]
+           [org.bukkit.block Biome]
            [org.bukkit.entity ArmorStand Monster Blaze Egg SmallFireball]
            [org.bukkit.event.block Action]
            [org.bukkit.event.entity CreatureSpawnEvent$SpawnReason]
@@ -96,6 +97,7 @@
    #_ 3083175 ; http://epicminecraftseeds.com/spawn-beside-jungle-temple/
    516687594611420526 ; http://epicminecraftseeds.com/minecraft-village-seed-great-loot/
    5574457897082764526 ; http://epicminecraftseeds.com/sweet-savanna-m-above-the-clouds-minecraft-1-8-seed/
+   1603402340 ; underwater
    ])
 
 (defn random-xz [radius]
@@ -105,6 +107,45 @@
                          (rand-nth [1 -1])))]
     [x z]))
 
+(defn- rand-treasure []
+  (case (rand-int 24)
+    0 (ItemStack. Material/DIRT (inc (rand-int 64)))
+    1 (ItemStack. Material/SAND (inc (rand-int 64)))
+    2 (ItemStack. Material/STICK (inc (rand-int 64)))
+    3 (ItemStack. Material/RAW_FISH (inc (rand-int 10)) 0 (rand-int 4))
+    4 (ItemStack. Material/RAW_FISH (inc (rand-int 10)) 0 (rand-int 4))
+    5 (ItemStack. Material/EMERALD (inc (rand-int 4)))
+    6 (ItemStack. Material/ANVIL (inc (rand-int 4)))
+    7 (ItemStack. Material/ARROW (inc (rand-int 64)))
+    8 (ItemStack. Material/BOAT (inc (rand-int 10)))
+    9 (ItemStack. Material/BRICK (inc (rand-int 64)))
+    10 (ItemStack. Material/COAL (inc (rand-int 64)))
+    11 (ItemStack. Material/COOKIE (inc (rand-int 64)))
+    12 (ItemStack. Material/DIAMOND (inc (rand-int 2)))
+    13 (ItemStack. Material/DIAMOND_HOE 1)
+    14 (ItemStack. Material/ENDER_CHEST 1)
+    15 (ItemStack. Material/ENDER_PEARL 1)
+    16 (ItemStack. Material/EXP_BOTTLE 1)
+    17 (ItemStack. Material/FLINT_AND_STEEL 1)
+    18 (ItemStack. Material/GOLD_INGOT (inc (rand-int 16)))
+    19 (ItemStack. Material/LAPIS_ORE (inc (rand-int 4)))
+    20 (ItemStack. Material/LOG (inc (rand-int 64)))
+    21 (ItemStack. Material/SADDLE (inc (rand-int 5)))
+    22 (ItemStack. Material/SLIME_BALL (inc (rand-int 5)))
+    23 (ItemStack. Material/STRING (inc (rand-int 5)))
+    24 (ItemStack. Material/APPLE (inc (rand-int 5)))
+    nil))
+
+(defn- rand-treasures [min-n max-n]
+  (for [_ (range (+ min-n (rand-int (inc (- max-n min-n)))))]
+    (rand-treasure)))
+
+(defn create-treasure-chest [block]
+  (b/set-block block Material/CHEST 0)
+  (let [chest (.getBlock (.getLocation block))]
+    (doseq [item-stack (rand-treasures 2 5)]
+      (b/add-chest-inventory chest item-stack))))
+
 (defn create []
   {:pre [(not (hardcore-world-exist?))]}
   (let [world-creator (-> (WorldCreator. "hardcore")
@@ -113,18 +154,6 @@
                                #_ (first interesting-seeds)))
         hardcore-world (.createWorld world-creator)]
     (.setTime hardcore-world 21000)
-    (let [[goal-x goal-z] (random-xz (+ 100 (rand-int 100)))
-          goal-y (.getHighestBlockYAt hardcore-world goal-x goal-z)]
-      (.setSpawnLocation hardcore-world goal-x (inc goal-y) goal-z)
-      (l/later 0
-        (b/set-block! (.getBlockAt hardcore-world goal-x (dec goal-y) goal-z)
-                      Material/BEDROCK 0)
-        (-> (sugot.world/spawn (Location. hardcore-world
-                                          (+ 0.5 goal-x)
-                                          goal-y
-                                          (+ 0.5 goal-z))
-                               ArmorStand)
-          (.setHelmet (ItemStack. Material/OBSIDIAN 1)))))
     (let [init-y (.getHighestBlockYAt hardcore-world 0 0)]
       (l/later 0
         (doseq [x (range -1 2)
@@ -132,7 +161,33 @@
           (b/set-block! (.getBlockAt hardcore-world x (dec init-y) z)
                         Material/OBSIDIAN 0)
           (b/set-block! (.getBlockAt hardcore-world x init-y z)
-                        Material/TORCH 0))))))
+                        Material/TORCH 0))))
+    (let [goal-distance
+          (let [init-biome (.getBiome hardcore-world 0 0)]
+            (if (contains? #{Biome/OCEAN Biome/DEEP_OCEAN} init-biome)
+              50
+              150))
+
+          [goal-x goal-z] (random-xz (+ goal-distance
+                                        -30
+                                        (rand-int 60)))
+
+          goal-y (.getHighestBlockYAt hardcore-world goal-x goal-z)]
+      (.setSpawnLocation hardcore-world goal-x (inc goal-y) goal-z)
+      (l/later 0
+        (b/set-block! (.getBlockAt hardcore-world goal-x (dec goal-y) goal-z)
+                      Material/BEDROCK 0)
+        (let [x (+ goal-x (rand-nth (remove zero? (range -5 6))))
+              y (dec goal-y)
+              z (+ goal-z (rand-nth (remove zero? (range -5 6))))]
+          (b/set-block! (.getBlockAt hardcore-world x y z) Material/AIR 0)
+          (create-treasure-chest (.getBlockAt hardcore-world x y z)))
+        (-> (sugot.world/spawn (Location. hardcore-world
+                                          (+ 0.5 goal-x)
+                                          goal-y
+                                          (+ 0.5 goal-z))
+                               ArmorStand)
+          (.setHelmet (ItemStack. Material/OBSIDIAN 1)))))))
 
 (defn hardcore-world []
   (Bukkit/getWorld "hardcore"))
@@ -204,7 +259,8 @@
       (garbage-collection))))
 
 (defn PlayerInteractEvent [event]
-  (when-let [player (.getPlayer event)]
+  (try
+    (when-let [player (.getPlayer event)]
     (let [action (.getAction event)]
       (when (contains? #{Action/RIGHT_CLICK_AIR Action/RIGHT_CLICK_BLOCK} action)
         (cond
@@ -222,4 +278,5 @@
           (leave-satisfy? player)
           (do
             (.setItemInHand player (ItemStack. Material/PAPER 1))
-            (leave-hardcore player)))))))
+            (leave-hardcore player))))))
+    (catch Exception e (.printStackTrace e))))
