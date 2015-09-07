@@ -135,10 +135,10 @@
     23 (ItemStack. Material/SLIME_BALL (inc (rand-int 5)))
     24 (ItemStack. Material/STRING (inc (rand-int 5)))
     25 (ItemStack. Material/APPLE (inc (rand-int 5)))
-    26 (ItemStack. Material/DYE (inc (rand-int 4)) 0 (rand-int 16))
-    27 (ItemStack. Material/DYE (inc (rand-int 4)) 0 (rand-int 16))
-    28 (ItemStack. Material/DYE (inc (rand-int 4)) 0 (rand-int 16))
-    29 (ItemStack. Material/DYE (inc (rand-int 4)) 0 (rand-int 16))
+    26 (ItemStack. Material/INK_SACK (inc (rand-int 4)) 0 (rand-int 16))
+    27 (ItemStack. Material/INK_SACK (inc (rand-int 4)) 0 (rand-int 16))
+    28 (ItemStack. Material/INK_SACK (inc (rand-int 4)) 0 (rand-int 16))
+    29 (ItemStack. Material/INK_SACK (inc (rand-int 4)) 0 (rand-int 16))
     nil))
 
 (defn- rand-treasures [min-n max-n]
