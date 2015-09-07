@@ -109,31 +109,36 @@
 
 (defn- rand-treasure []
   (case (rand-int 24)
-    0 (ItemStack. Material/DIRT (inc (rand-int 64)))
-    1 (ItemStack. Material/SAND (inc (rand-int 64)))
-    2 (ItemStack. Material/STICK (inc (rand-int 64)))
-    3 (ItemStack. Material/RAW_FISH (inc (rand-int 10)) 0 (rand-int 4))
+    0 (ItemStack. Material/DIRT (inc (rand-int 32)))
+    1 (ItemStack. Material/DIRT (inc (rand-int 32)))
+    2 (ItemStack. Material/SAND (inc (rand-int 64)))
+    3 (ItemStack. Material/STICK (inc (rand-int 64)))
     4 (ItemStack. Material/RAW_FISH (inc (rand-int 10)) 0 (rand-int 4))
-    5 (ItemStack. Material/EMERALD (inc (rand-int 4)))
-    6 (ItemStack. Material/ANVIL (inc (rand-int 4)))
-    7 (ItemStack. Material/ARROW (inc (rand-int 64)))
-    8 (ItemStack. Material/BOAT (inc (rand-int 10)))
-    9 (ItemStack. Material/BRICK (inc (rand-int 64)))
-    10 (ItemStack. Material/COAL (inc (rand-int 64)))
-    11 (ItemStack. Material/COOKIE (inc (rand-int 64)))
-    12 (ItemStack. Material/DIAMOND (inc (rand-int 2)))
-    13 (ItemStack. Material/DIAMOND_HOE 1)
-    14 (ItemStack. Material/ENDER_CHEST 1)
-    15 (ItemStack. Material/ENDER_PEARL 1)
-    16 (ItemStack. Material/EXP_BOTTLE 1)
-    17 (ItemStack. Material/FLINT_AND_STEEL 1)
-    18 (ItemStack. Material/GOLD_INGOT (inc (rand-int 16)))
-    19 (ItemStack. Material/LAPIS_ORE (inc (rand-int 4)))
-    20 (ItemStack. Material/LOG (inc (rand-int 64)))
-    21 (ItemStack. Material/SADDLE (inc (rand-int 5)))
-    22 (ItemStack. Material/SLIME_BALL (inc (rand-int 5)))
-    23 (ItemStack. Material/STRING (inc (rand-int 5)))
-    24 (ItemStack. Material/APPLE (inc (rand-int 5)))
+    5 (ItemStack. Material/COOKED_FISH (inc (rand-int 10)) 0 (rand-int 2))
+    6 (ItemStack. Material/EMERALD (inc (rand-int 4)))
+    7 (ItemStack. Material/ANVIL (inc (rand-int 4)))
+    8 (ItemStack. Material/ARROW (inc (rand-int 64)))
+    9 (ItemStack. Material/BOAT (inc (rand-int 10)))
+    10 (ItemStack. Material/BRICK (inc (rand-int 64)))
+    11 (ItemStack. Material/COAL (inc (rand-int 64)))
+    12 (ItemStack. Material/COOKIE (inc (rand-int 64)))
+    13 (ItemStack. Material/DIAMOND (inc (rand-int 2)))
+    14 (ItemStack. Material/DIAMOND_HOE 1)
+    15 (ItemStack. Material/ENDER_CHEST 1)
+    16 (ItemStack. Material/ENDER_PEARL 1)
+    17 (ItemStack. Material/EXP_BOTTLE 1)
+    18 (ItemStack. Material/FLINT_AND_STEEL 1)
+    19 (ItemStack. Material/GOLD_INGOT (inc (rand-int 16)))
+    20 (ItemStack. Material/BONE (inc (rand-int 16)))
+    21 (ItemStack. Material/LOG (inc (rand-int 64)))
+    22 (ItemStack. Material/SADDLE (inc (rand-int 5)))
+    23 (ItemStack. Material/SLIME_BALL (inc (rand-int 5)))
+    24 (ItemStack. Material/STRING (inc (rand-int 5)))
+    25 (ItemStack. Material/APPLE (inc (rand-int 5)))
+    26 (ItemStack. Material/DYE (inc (rand-int 4)) 0 (rand-int 16))
+    27 (ItemStack. Material/DYE (inc (rand-int 4)) 0 (rand-int 16))
+    28 (ItemStack. Material/DYE (inc (rand-int 4)) 0 (rand-int 16))
+    29 (ItemStack. Material/DYE (inc (rand-int 4)) 0 (rand-int 16))
     nil))
 
 (defn- rand-treasures [min-n max-n]
@@ -143,8 +148,8 @@
 (defn create-treasure-chest [block]
   (b/set-block block Material/CHEST 0)
   (let [chest (.getBlock (.getLocation block))]
-    (doseq [item-stack (rand-treasures 2 5)]
-      (b/add-chest-inventory chest item-stack))))
+    (doseq [item-stack (rand-treasures 3 8)]
+      (b/add-chest-inventory chest (into-array [item-stack])))))
 
 (defn create []
   {:pre [(not (hardcore-world-exist?))]}
@@ -162,24 +167,24 @@
                         Material/OBSIDIAN 0)
           (b/set-block! (.getBlockAt hardcore-world x init-y z)
                         Material/TORCH 0))))
-    (let [goal-distance
+    (let [[goal-distance chest-distance]
           (let [init-biome (.getBiome hardcore-world 0 0)]
-            (if (contains? #{Biome/OCEAN Biome/DEEP_OCEAN} init-biome)
-              50
-              150))
+            (get {Biome/OCEAN [100 5]
+                  Biome/DEEP_OCEAN 30 40}
+                 init-biome
+                 [150 5]))
 
-          [goal-x goal-z] (random-xz (+ goal-distance
-                                        -30
-                                        (rand-int 60)))
+          [goal-x goal-z] (random-xz (int (* goal-distance (rand-nth [0.7 0.8 0.9 1.0 1.1 1.2 1.3]))))
 
           goal-y (.getHighestBlockYAt hardcore-world goal-x goal-z)]
       (.setSpawnLocation hardcore-world goal-x (inc goal-y) goal-z)
       (l/later 0
         (b/set-block! (.getBlockAt hardcore-world goal-x (dec goal-y) goal-z)
                       Material/BEDROCK 0)
-        (let [x (+ goal-x (rand-nth (remove zero? (range -5 6))))
-              y (dec goal-y)
-              z (+ goal-z (rand-nth (remove zero? (range -5 6))))]
+        (let [x (+ goal-x (rand-nth (remove zero? (range (- chest-distance) (inc chest-distance)))))
+              z (+ goal-z (rand-nth (remove zero? (range (- chest-distance) (inc chest-distance)))))
+              y (+ (.getHighestBlockYAt hardcore-world x z) (rand-nth [-1 0]))]
+          (b/set-block! (.getBlockAt hardcore-world x (dec y) z) Material/WOOD 0)
           (b/set-block! (.getBlockAt hardcore-world x y z) Material/AIR 0)
           (create-treasure-chest (.getBlockAt hardcore-world x y z)))
         (-> (sugot.world/spawn (Location. hardcore-world
