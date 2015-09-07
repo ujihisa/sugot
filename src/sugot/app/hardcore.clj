@@ -170,7 +170,7 @@
     (let [[goal-distance chest-distance]
           (let [init-biome (.getBiome hardcore-world 0 0)]
             (get {Biome/OCEAN [100 5]
-                  Biome/DEEP_OCEAN 30 40}
+                  Biome/DEEP_OCEAN [30 40]}
                  init-biome
                  [150 5]))
 
