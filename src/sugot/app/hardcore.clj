@@ -3,7 +3,7 @@
             [sugot.block :as b]
             [sugot.world])
   (:import [org.bukkit Bukkit Server WorldCreator Material Location]
-           [org.bukkit.entity ArmorStand Monster Blaze]
+           [org.bukkit.entity ArmorStand Monster Blaze Egg SmallFireball]
            [org.bukkit.event.block Action]
            [org.bukkit.event.entity CreatureSpawnEvent$SpawnReason]
            [org.bukkit.event.entity EntityDamageEvent$DamageCause]
@@ -70,11 +70,26 @@
             (when-let [players (hardcore-players)]
               (.setTarget monster (rand-nth players)))))))))
 
+(defn- launch-projectile [source projectile velocity]
+  (.launchProjectile source projectile velocity))
+
 (defn ProjectileLaunchEvent [event]
-  (let [projectile (.getEntity event)
-        shooter (.getShooter projectile)]
-    (if (instance? Blaze shooter)
-      (.setCancelled event true))))
+  (try
+    (let [projectile (.getEntity event)
+          shooter (.getShooter projectile)]
+      (when (and
+              (instance? Blaze shooter)
+              (instance? SmallFireball projectile))
+        (when-let [target (.getTarget shooter)]
+          (.setCancelled event true)
+          (let [velocity
+                (.normalize (.getDirection
+                              (.subtract (.getLocation shooter)
+                                         (.getLocation target))))
+                #_ egg #_(launch-projectile shooter org.bukkit.entity.Arrow velocity)]
+            (.setVelocity shooter velocity)
+            #_ (.setBounce egg true)))))
+    (catch Exception e (.printStackTrace e))))
 
 #_ (def interesting-seeds
   [#_7352190906321318631 ; http://epicminecraftseeds.com/stronghold-in-ravine-1-8x/
