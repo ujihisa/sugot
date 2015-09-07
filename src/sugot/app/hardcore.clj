@@ -42,6 +42,9 @@
             nil))))
     (catch Exception e (.printStackTrace e))))
 
+(defn EntityDeathEvent [event]
+  )
+
 (defn- hardcore-players []
   (seq (filter #(in-hardcore? (.getLocation %))
                (Bukkit/getOnlinePlayers))))
@@ -59,7 +62,7 @@
         (dotimes [_ 2]
           (let [loc (doto (.clone l)
                       (.add (rand-nth [-0.5 0.5]) 0.5 (rand-nth [-0.5 0.5])))
-                klass (if (= 0 (rand-int 10))
+                klass (if (= 0 (rand-int 3))
                         Blaze
                         (class entity))
                 monster
