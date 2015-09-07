@@ -71,6 +71,18 @@
   (isCancelled [this])
   (setCancelled [this bool]))
 
+(defprotocol ItemDrop
+  (getItemDrop [this]))
+
+(defprotocol ItemStack
+  (getItemStack [this]))
+
+(defprotocol ItemMeta
+  (getItemMeta [this]))
+
+(defprotocol DisplayName
+  (getDisplayName [this]))
+
 (defprotocol SugotCreatureSpawnEvent
   ; Use with Cancel and Location
   (getEntity [this])
