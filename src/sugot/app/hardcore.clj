@@ -2,7 +2,7 @@
   (:require [sugot.lib :as l]
             [sugot.block :as b]
             [sugot.world])
-  (:import [org.bukkit Bukkit Server WorldCreator Material Location]
+  (:import [org.bukkit Bukkit Server WorldCreator Material Location Sound]
            [org.bukkit.block Biome]
            [org.bukkit.entity ArmorStand Monster Blaze Egg SmallFireball]
            [org.bukkit.event.block Action]
@@ -108,7 +108,7 @@
     [x z]))
 
 (defn- rand-treasure []
-  (case (rand-int 30)
+  (case (rand-int 33)
     0 (ItemStack. Material/DIRT (inc (rand-int 32)))
     1 (ItemStack. Material/DIRT (inc (rand-int 32)))
     2 (ItemStack. Material/SAND (inc (rand-int 64)))
@@ -139,6 +139,10 @@
     27 (ItemStack. Material/INK_SACK (inc (rand-int 4)) (short 0) (byte (rand-int 16)))
     28 (ItemStack. Material/INK_SACK (inc (rand-int 4)) (short 0) (byte (rand-int 16)))
     29 (ItemStack. Material/INK_SACK (inc (rand-int 4)) (short 0) (byte (rand-int 16)))
+    30 (ItemStack. Material/IRON_INGOT 1)
+    31 (ItemStack. Material/IRON_BARDING 1)
+    32 (ItemStack. Material/GOLD_BARDING 1)
+    33 (ItemStack. Material/DIAMOND_BARDING 1)
     nil))
 
 (defn- rand-treasures [min-n max-n]
@@ -152,14 +156,8 @@
             :when item-stack]
       (b/add-chest-inventory chest (into-array [item-stack])))))
 
-(defn create []
-  {:pre [(not (hardcore-world-exist?))]}
-  (let [world-creator (-> (WorldCreator. "hardcore")
-                        (.copy (Bukkit/getWorld "world"))
-                        (.seed (rand-int Integer/MAX_VALUE)
-                               #_ (first interesting-seeds)))
-        hardcore-world (.createWorld world-creator)]
-    (.setTime hardcore-world 21000)
+(defn- create-main-logic [hardcore-world]
+  (.setTime hardcore-world 21000)
     (let [init-y (.getHighestBlockYAt hardcore-world 0 0)]
       (l/later 0
         (doseq [x (range -1 2)
@@ -171,7 +169,7 @@
     (let [[goal-distance chest-distance]
           (let [init-biome (.getBiome hardcore-world 0 0)]
             (get {Biome/OCEAN [100 5]
-                  Biome/DEEP_OCEAN [30 40]}
+                  Biome/EXTREME_HILLS [90 5]}
                  init-biome
                  [150 5]))
 
@@ -193,7 +191,25 @@
                                           goal-y
                                           (+ 0.5 goal-z))
                                ArmorStand)
-          (.setHelmet (ItemStack. Material/OBSIDIAN 1)))))))
+          (.setHelmet (ItemStack. Material/OBSIDIAN 1))))))
+
+(declare garbage-collection)
+
+(defn create [num-retry]
+  {:pre [(not (hardcore-world-exist?))]}
+  (let [world-creator (-> (WorldCreator. "hardcore")
+                        (.copy (Bukkit/getWorld "world"))
+                        (.seed (rand-int Integer/MAX_VALUE)
+                               #_ (first interesting-seeds)))
+        hardcore-world (.createWorld world-creator)]
+    (if (and
+          (< 0 num-retry)
+          (contains? #{Biome/OCEAN Biome/DEEP_OCEAN} (.getBiome hardcore-world 0 0)))
+      (do
+        (l/broadcast "[HARDCORE] (It's an ocean. Retrying...)")
+        (garbage-collection)
+        (create (dec num-retry)))
+      (create-main-logic hardcore-world))))
 
 (defn hardcore-world []
   (Bukkit/getWorld "hardcore"))
@@ -271,15 +287,22 @@
       (when (contains? #{Action/RIGHT_CLICK_AIR Action/RIGHT_CLICK_BLOCK} action)
         (cond
           (enter-satisfy? player)
-          (let [compass (doto (ItemStack. Material/COMPASS 1)
-                          (.addUnsafeEnchantment Enchantment/DURABILITY 1)
-                          (l/set-display-name "Magic Compass"))]
-            (.setItemInHand player compass)
-            (when-not (hardcore-world-exist?)
-              (l/broadcast "[HARDCORE] (Creating world...)")
-              (create))
-            (l/send-message player "[HARDCORE] Go!")
-            (enter-hardcore player))
+          (do
+            ; effect
+            (let [loc (.getLocation player)]
+              (sugot.world/strike-lightning-effect loc)
+              (sugot.world/play-sound loc Sound/AMBIENCE_CAVE 1.0 1.0)
+              (sugot.world/play-sound loc Sound/AMBIENCE_CAVE 1.0 1.0))
+            ; main
+            (let [compass (doto (ItemStack. Material/COMPASS 1)
+                            (.addUnsafeEnchantment Enchantment/DURABILITY 1)
+                            (l/set-display-name "Magic Compass"))]
+              (.setItemInHand player compass)
+              (when-not (hardcore-world-exist?)
+                (l/broadcast "[HARDCORE] (Creating world...)")
+                (create 3))
+              (l/send-message player "[HARDCORE] Go!")
+              (enter-hardcore player)))
 
           (leave-satisfy? player)
           (do
