@@ -4,7 +4,7 @@
             [sugot.world])
   (:import [org.bukkit Bukkit Server WorldCreator Material Location Sound]
            [org.bukkit.block Biome]
-           [org.bukkit.entity ArmorStand Monster Blaze Egg SmallFireball]
+           [org.bukkit.entity ArmorStand Monster Blaze Egg SmallFireball Player LivingEntity]
            [org.bukkit.event.block Action]
            [org.bukkit.event.entity CreatureSpawnEvent$SpawnReason]
            [org.bukkit.event.entity EntityDamageEvent$DamageCause]
@@ -26,6 +26,9 @@
 
 (defn BlockPlaceEvent [event]
   nil)
+
+; key: ^String playername, value: ^Long timestamp msec
+(def enter-time-all (atom {}))
 
 (defn EntityDamageEvent [event]
   (try
@@ -168,10 +171,11 @@
                         Material/TORCH 0))))
     (let [[goal-distance chest-distance]
           (let [init-biome (.getBiome hardcore-world 0 0)]
-            (get {Biome/OCEAN [100 5]
+            (get {#_Biome/OCEAN #_[100 10]
+                  Biome/DESERT [250 10]
                   Biome/EXTREME_HILLS [90 5]}
                  init-biome
-                 [150 5]))
+                 [200 5]))
 
           [goal-x goal-z] (random-xz (int (* goal-distance (rand-nth [0.7 0.8 0.9 1.0 1.1 1.2 1.3]))))
 
@@ -182,7 +186,7 @@
                       Material/BEDROCK 0)
         (let [x (+ goal-x (rand-nth (remove zero? (range (- chest-distance) (inc chest-distance)))))
               z (+ goal-z (rand-nth (remove zero? (range (- chest-distance) (inc chest-distance)))))
-              y (+ (.getHighestBlockYAt hardcore-world x z) (rand-nth [-1 0]))]
+              y (+ (.getHighestBlockYAt hardcore-world x z) (rand-nth [-3 -2 -1 -1 -1 0]))]
           (b/set-block! (.getBlockAt hardcore-world x (dec y) z) Material/WOOD 0)
           (b/set-block! (.getBlockAt hardcore-world x y z) Material/AIR 0)
           (create-treasure-chest (.getBlockAt hardcore-world x y z)))
@@ -214,17 +218,19 @@
 (defn hardcore-world []
   (Bukkit/getWorld "hardcore"))
 
-(defn enter-hardcore [player]
+(defn enter-hardcore [living-entity]
   {:pre [(hardcore-world)]}
   (let [init-loc
         (Location.
           (hardcore-world) 0.5 (inc (.getHighestBlockYAt (hardcore-world) 0 0)) 0.5)]
-    (.teleport player init-loc)
-    (l/broadcast-and-post-lingr
-      (format "[HARDCORE] %s entered to hardcore world. (seed: \"%d\", biome: %s)"
-              (.getName player)
-              (.getSeed (hardcore-world))
-              (.name (.getBiome (hardcore-world) 0 0))))))
+    (.teleport living-entity init-loc)
+    (when (instance? Player living-entity)
+      (l/broadcast-and-post-lingr
+        (format "[HARDCORE] %s entered to hardcore world. (seed: \"%d\", biome: %s)"
+                (.getName living-entity)
+                (.getSeed (hardcore-world))
+                (.name (.getBiome (hardcore-world) 0 0))))
+      (swap! enter-time-all assoc (.getName living-entity) (System/currentTimeMillis)))))
 
 (defn enter-satisfy? [player]
   (when-let [item-stack (.getItemInHand player)]
@@ -270,6 +276,23 @@
       :precondition-failed--weird)
     :precondition-failed--normal))
 
+(defn- format-from-msec [msec]
+  (let [sec-total (/ msec 1000)
+        min-total (/ sec-total 60)
+        hour-total (/ min-total 60)
+        seconds (int (rem sec-total 60))
+        minutes (int (rem min-total 60))
+        hours (int hour-total)]
+    (cond
+      (and (< 0 hours) (< 0 minutes))
+      (format "%d hours %d minutes %d seconds" hours minutes seconds)
+
+      (< 0 minutes)
+      (format "%d minutes %d seconds" minutes seconds)
+
+      :else
+      (format "%d seconds" seconds))))
+
 (defn leave-hardcore [player]
   {:pre [(in-hardcore? (.getLocation player))]}
   (let [to (some identity [(.getBedSpawnLocation player)
@@ -277,8 +300,13 @@
     (l/broadcast-and-post-lingr (format "[HARDCORE] %s left from the hardcore world."
                                         (.getName player)))
     (.teleport player to)
-    (l/later 0
-      (garbage-collection))))
+    (try
+      (when-let [enter-time (get @enter-time-all (.getName player))]
+        (l/broadcast-and-post-lingr
+          (format "[HARDCORE] Record: %s"
+                  (format-from-msec
+                    (- (System/currentTimeMillis) enter-time)))))
+      (catch Exception e (.printStackTrace e)))))
 
 (defn PlayerInteractEvent [event]
   (try
@@ -294,6 +322,7 @@
               (sugot.world/play-sound loc Sound/AMBIENCE_CAVE 1.0 1.0)
               (sugot.world/play-sound loc Sound/AMBIENCE_CAVE 1.0 1.0))
             ; main
+            (garbage-collection)
             (let [compass (doto (ItemStack. Material/COMPASS 1)
                             (.addUnsafeEnchantment Enchantment/DURABILITY 1)
                             (l/set-display-name "Magic Compass"))]
@@ -301,7 +330,7 @@
               (when-not (hardcore-world-exist?)
                 (l/broadcast "[HARDCORE] (Creating world...)")
                 (create 3))
-              (l/send-message player "[HARDCORE] Go!")
+              ; TODO living entity
               (enter-hardcore player)))
 
           (leave-satisfy? player)
