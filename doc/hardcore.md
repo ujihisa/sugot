@@ -8,3 +8,7 @@
 4. Right-click there. You may need to jump.
 5. You should see a message. Welcome to the new world!
 
+How to return
+
+1. Find an armour stand with obsidian, located at what compass shows.
+2. Use the compass on the armour.
