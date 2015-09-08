@@ -111,7 +111,7 @@
     [x z]))
 
 (defn- rand-treasure []
-  (case (rand-int 33)
+  (case (rand-int 34)
     0 (ItemStack. Material/DIRT (inc (rand-int 32)))
     1 (ItemStack. Material/DIRT (inc (rand-int 32)))
     2 (ItemStack. Material/SAND (inc (rand-int 64)))
@@ -124,7 +124,7 @@
     9 (ItemStack. Material/BOAT (inc (rand-int 10)))
     10 (ItemStack. Material/BRICK (inc (rand-int 64)))
     11 (ItemStack. Material/COAL (inc (rand-int 64)))
-    12 (ItemStack. Material/COOKIE (inc (rand-int 64)))
+    12 (ItemStack. Material/INK_SACK (inc (rand-int 8)) (short 0) (byte 4)) ; LAPIS
     13 (ItemStack. Material/DIAMOND (inc (rand-int 2)))
     14 (ItemStack. Material/DIAMOND_HOE 1)
     15 (ItemStack. Material/ENDER_CHEST 1)
@@ -134,7 +134,7 @@
     19 (ItemStack. Material/GOLD_INGOT (inc (rand-int 16)))
     20 (ItemStack. Material/BONE (inc (rand-int 16)))
     21 (ItemStack. Material/LOG (inc (rand-int 64)))
-    22 (ItemStack. Material/SADDLE (inc (rand-int 5)))
+    22 (ItemStack. Material/SADDLE 1)
     23 (ItemStack. Material/SLIME_BALL (inc (rand-int 5)))
     24 (ItemStack. Material/STRING (inc (rand-int 5)))
     25 (ItemStack. Material/APPLE (inc (rand-int 5)))
@@ -155,7 +155,7 @@
 (defn create-treasure-chest [block]
   (b/set-block block Material/CHEST 0)
   (let [chest (.getBlock (.getLocation block))]
-    (doseq [item-stack (rand-treasures 3 8)
+    (doseq [item-stack (rand-treasures 2 8)
             :when item-stack]
       (b/add-chest-inventory chest (into-array [item-stack])))))
 
@@ -172,10 +172,10 @@
     (let [[goal-distance chest-distance]
           (let [init-biome (.getBiome hardcore-world 0 0)]
             (get {#_Biome/OCEAN #_[100 10]
-                  Biome/DESERT [250 10]
-                  Biome/EXTREME_HILLS [90 5]}
+                  Biome/DESERT [270 15]
+                  Biome/EXTREME_HILLS [90 2]}
                  init-biome
-                 [200 5]))
+                 [220 6]))
 
           [goal-x goal-z] (random-xz (int (* goal-distance (rand-nth [0.7 0.8 0.9 1.0 1.1 1.2 1.3]))))
 
