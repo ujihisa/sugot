@@ -35,9 +35,11 @@
 (def came-from (atom {}))
 
 (defn- leave-hardcore! [player]
-  (let [to (some identity [(.getBedSpawnLocation player)
+  (let [to (some identity [(get @came-from (.getName player))
+                           (.getBedSpawnLocation player)
                            (.getSpawnLocation (Bukkit/getWorld "world"))])]
-    (.teleport player to)))
+    (.teleport player to)
+    (swap! came-from dissoc (.getName player))))
 
 (defn PlayerLoginEvent [event]
   (let [player (.getPlayer event)]
@@ -163,23 +165,23 @@
     2 (ItemStack. Material/SAND (inc (rand-int 64)))
     3 (ItemStack. Material/STICK (inc (rand-int 64)))
     4 (ItemStack. Material/RAW_FISH (inc (rand-int 10)) (short 0) (byte (rand-int 4)))
-    5 (ItemStack. Material/COOKED_FISH (inc (rand-int 10)) (short 0) (byte (rand-int 2)))
+    5 (ItemStack. Material/BANNER (inc (rand-int 10)))
     6 (ItemStack. Material/EMERALD (inc (rand-int 4)))
-    7 (ItemStack. Material/ANVIL (inc (rand-int 4)))
+    7 (ItemStack. Material/GLOWSTONE_DUST (inc (rand-int 64)))
     8 (ItemStack. Material/ARROW (inc (rand-int 64)))
-    9 (ItemStack. Material/BOAT (inc (rand-int 10)))
+    9 (ItemStack. Material/BOAT 1)
     10 (ItemStack. Material/BRICK (inc (rand-int 64)))
     11 (ItemStack. Material/COAL (inc (rand-int 64)))
     12 (ItemStack. Material/INK_SACK (inc (rand-int 8)) (short 0) (byte 4)) ; LAPIS
     13 (ItemStack. Material/DIAMOND (inc (rand-int 2)))
-    14 (ItemStack. Material/DIAMOND_HOE 1)
+    14 (ItemStack. Material/ACTIVATOR_RAIL 1)
     15 (ItemStack. Material/ENDER_CHEST 1)
     16 (ItemStack. Material/ENDER_PEARL 1)
-    17 (ItemStack. Material/EXP_BOTTLE 1)
+    17 (ItemStack. Material/EXP_BOTTLE (inc (rand-int 5)))
     18 (ItemStack. Material/FLINT_AND_STEEL 1)
-    19 (ItemStack. Material/GOLD_INGOT (inc (rand-int 16)))
-    20 (ItemStack. Material/BONE (inc (rand-int 16)))
-    21 (ItemStack. Material/LOG (inc (rand-int 64)))
+    19 (ItemStack. Material/GOLD_INGOT (inc (rand-int 10)))
+    20 (ItemStack. Material/BONE (inc (rand-int 10)))
+    21 (ItemStack. Material/LOG (inc (rand-int 10)))
     22 (ItemStack. Material/SADDLE 1)
     23 (ItemStack. Material/SLIME_BALL (inc (rand-int 5)))
     24 (ItemStack. Material/STRING (inc (rand-int 5)))
