@@ -22,6 +22,33 @@
 (defn loc-in-hardcore? [loc]
   (= "hardcore" (.getName (.getWorld loc))))
 
+(defn- hardcore-world-dir []
+  (format "%s/../hardcore"
+          (.getAbsolutePath (.getWorldFolder (Bukkit/getWorld "world")))))
+
+(defn- players-file-path []
+  (format "%s/players.clj"
+          (hardcore-world-dir)))
+
+(defn- update-players-file [f]
+  (let [path (players-file-path)]
+    (try
+      (let [players-set (eval (read-string (slurp path)))]
+        (spit path (prn-str (f players-set))))
+      (catch java.io.FileNotFoundException _
+        (try
+          (spit path (prn-str "#{}"))
+          (update-players-file f)
+          (catch Exception e (.printStackTrace e))))
+      (catch Exception e (.printStackTrace e)))))
+
+(defn- get-players-set []
+  (let [path (players-file-path)]
+    (try
+      (eval (read-string (slurp path)))
+      (catch java.io.FileNotFoundException _ #{})
+      (catch Exception e (.printStackTrace e)))))
+
 (defn PlayerDropItemEvent [event]
   (when (and
           (player-in-hardcore? (.getPlayer event))
@@ -37,21 +64,6 @@
 (defn BlockPlaceEvent [event]
   nil)
 
-(defn- players-file-path []
-  (format "%s/../hardcore/players.clj"
-          (.getAbsolutePath (.getWorldFolder (Bukkit/getWorld "world")))))
-
-(defn- update-players-file [f]
-  (let [path (players-file-path)]
-    (try
-      (let [players-set (eval (read-string (slurp path)))]
-        (spit path (prn-str (f players-set))))
-      (catch java.io.FileNotFoundException _
-        (try
-          (spit path (prn-str "#{}"))
-          (update-players-file f)
-          (catch Exception e (.printStackTrace e))))
-      (catch Exception e (.printStackTrace e)))))
 
 ; key: ^String playername, value: ^Long timestamp msec
 (def came-from (atom {}))
@@ -74,6 +86,8 @@
 
 (defn PlayerLoginEvent [event]
   (let [player (.getPlayer event)]
+    (prn (player-in-hardcore? player)
+         (not (contains? @came-from (.getName player))))
     (when (and (player-in-hardcore? player)
                (not (contains? @came-from (.getName player))))
       (leave-hardcore! player))))
@@ -368,7 +382,7 @@
         (if (Bukkit/unloadWorld "hardcore" false)
           (do
             (try
-              (dir-delete-recursively (.getAbsolutePath folder))
+              (dir-delete-recursively (hardcore-world-dir))
               (catch Exception e (.printStackTrace e)))
             :unloadWorld-succeeded)
           :unloadWorld-failed))
@@ -435,3 +449,11 @@
             (.setItemInHand player (ItemStack. Material/PAPER 1))
             (leave-hardcore-with-message player))))))
     (catch Exception e (.printStackTrace e))))
+
+(defn on-load []
+  (try
+    (dir-delete-recursively (hardcore-world-dir))
+    (catch Exception e (.printStackTrace e))))
+
+; TODO support on-load from core
+#_ (on-load)
