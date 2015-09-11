@@ -24,6 +24,9 @@
 (defn in-hardcore? [loc]
   (= "hardcore" (.getName (.getWorld loc))))
 
+(defn ProjectileHitEvent [event]
+  nil)
+
 (defn BlockPlaceEvent [event]
   nil)
 
