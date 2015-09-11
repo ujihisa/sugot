@@ -40,7 +40,7 @@
   sec
   "Convert from seconds to ticks"
   [n]
-  (int (* 20 n)))
+  (long (* 20 n)))
 
 (defn later-fn [tick f]
   (let [f* (fn []

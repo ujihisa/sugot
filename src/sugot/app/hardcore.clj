@@ -4,12 +4,13 @@
             [sugot.world])
   (:import [org.bukkit Bukkit Server WorldCreator Material Location Sound]
            [org.bukkit.block Biome]
-           [org.bukkit.entity ArmorStand Monster Blaze Egg SmallFireball Player LivingEntity]
+           [org.bukkit.entity ArmorStand Monster Blaze Egg SmallFireball Player LivingEntity Projectile]
            [org.bukkit.event.block Action]
            [org.bukkit.event.entity CreatureSpawnEvent$SpawnReason]
            [org.bukkit.event.entity EntityDamageEvent$DamageCause]
            [org.bukkit.inventory ItemStack]
-           [org.bukkit.enchantments Enchantment]))
+           [org.bukkit.enchantments Enchantment]
+           [org.bukkit.util Vector]))
 
 (defn PlayerDropItemEvent [event]
   (when (= "Magic Compass"
@@ -42,10 +43,24 @@
           (instance? ArmorStand entity)
           (.setCancelled event true)
 
+          (instance? Blaze entity)
+          (condp = cause
+            EntityDamageEvent$DamageCause/PROJECTILE
+            (let [projectile (.getDamager event) ]
+              (when (instance? Projectile projectile)
+                (.setCancelled event true)
+                (.setFireTicks projectile (l/sec 1))
+                (sugot.world/play-sound (.getLocation projectile)
+                                        Sound/ZOMBIE_METAL 1.0 2.0)
+                (l/later 0
+                  (.setVelocity projectile (Vector. 0.0 1.0 0.0)))))
+            nil)
+
           (instance? Monster entity)
           (condp = cause
             EntityDamageEvent$DamageCause/FIRE_TICK
             (.setCancelled event true)
+
             nil))))
     (catch Exception e (.printStackTrace e))))
 
@@ -55,6 +70,16 @@
 (defn- hardcore-players []
   (seq (filter #(in-hardcore? (.getLocation %))
                (Bukkit/getOnlinePlayers))))
+
+(defn- target-nearest-hardcore-player [creature]
+  (when-let [players (hardcore-players)]
+    (.setTarget creature (apply min-key
+                                #(.distance creature %)
+                                players))))
+
+(defn- loc-average [loc1 loc2]
+  (.multiply (.add (.clone loc1) (.clone loc2))
+             0.5))
 
 (defn CreatureSpawnEvent [event]
   (let [entity (.getEntity event)
@@ -74,11 +99,14 @@
                         (class entity))
                 monster
                 (sugot.world/spawn loc klass)]
-            (when-let [players (hardcore-players)]
-              (.setTarget monster (rand-nth players)))))))))
+            (target-nearest-hardcore-player monster)))))))
 
 (defn- launch-projectile [source projectile velocity]
   (.launchProjectile source projectile velocity))
+
+(defn- vector-from-to [from-loc to-loc]
+  (.normalize (.getDirection
+                (.subtract from-loc to-loc))))
 
 (defn ProjectileLaunchEvent [event]
   (try
@@ -89,13 +117,14 @@
               (instance? SmallFireball projectile))
         (when-let [target (.getTarget shooter)]
           (.setCancelled event true)
-          (let [velocity
-                (.normalize (.getDirection
-                              (.subtract (.getLocation shooter)
-                                         (.getLocation target))))
-                #_ egg #_(launch-projectile shooter org.bukkit.entity.Arrow velocity)]
-            (.setVelocity shooter velocity)
-            #_ (.setBounce egg true)))))
+          (.setVelocity shooter (vector-from-to (.getLocation shooter)
+                                                (.getLocation target)))
+          (l/later (l/sec 1)
+            (target-nearest-hardcore-player shooter)
+            (launch-projectile shooter org.bukkit.entity.Arrow
+                               (vector-from-to (.getLocation shooter)
+                                                (.getLocation target))))
+          #_ (.setBounce egg true))))
     (catch Exception e (.printStackTrace e))))
 
 #_ (def interesting-seeds
