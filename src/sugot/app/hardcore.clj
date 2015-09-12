@@ -38,13 +38,18 @@
           (.getAbsolutePath (.getWorldFolder (Bukkit/getWorld "world")))))
 
 (defn- update-players-file [f]
-  (prn :try)
-  (try
-    (let [players-set (eval (read-string (slurp (players-file-path))))]
-      (spit (players-file-path) (prn-str (f players-set)))
-      (prn :success))
-    (catch java.io.FileNotFoundException _ #{})
-    (catch Exception e (.printStackTrace e))))
+  (prn :try (players-file-path))
+  (let [path (players-file-path)]
+    (try
+      (let [players-set (eval (read-string (slurp path)))]
+        (spit path (prn-str (f players-set)))
+        (prn :success))
+      (catch java.io.FileNotFoundException _
+        (try
+          (spit path (prn-str "#{}"))
+          (update-players-file f)
+          (catch Exception e (.printStackTrace e))))
+      (catch Exception e (.printStackTrace e)))))
 
 ; key: ^String playername, value: ^Long timestamp msec
 (def came-from (atom {}))
@@ -191,7 +196,7 @@
 (defn- rand-treasure []
   (case (rand-int 34)
     0 (ItemStack. Material/DIRT (inc (rand-int 32)))
-    1 (ItemStack. Material/DIRT (inc (rand-int 32)))
+    1 (ItemStack. Material/WATER_LILY (inc (rand-int 32)))
     2 (ItemStack. Material/SAND (inc (rand-int 64)))
     3 (ItemStack. Material/STICK (inc (rand-int 64)))
     4 (ItemStack. Material/RAW_FISH (inc (rand-int 10)) (short 0) (byte (rand-int 4)))
@@ -200,8 +205,8 @@
     7 (ItemStack. Material/GLOWSTONE_DUST (inc (rand-int 64)))
     8 (ItemStack. Material/ARROW (inc (rand-int 64)))
     9 (ItemStack. Material/BOAT 1)
-    10 (ItemStack. Material/BRICK (inc (rand-int 64)))
-    11 (ItemStack. Material/COAL (inc (rand-int 64)))
+    10 (ItemStack. Material/BRICK (inc (rand-int 32)))
+    11 (ItemStack. Material/COAL (inc (rand-int 32)))
     12 (ItemStack. Material/INK_SACK (inc (rand-int 8)) (short 0) (byte 4)) ; LAPIS
     13 (ItemStack. Material/DIAMOND (inc (rand-int 2)))
     14 (ItemStack. Material/ACTIVATOR_RAIL 1)
