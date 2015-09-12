@@ -38,9 +38,11 @@
           (.getAbsolutePath (.getWorldFolder (Bukkit/getWorld "world")))))
 
 (defn- update-players-file [f]
+  (prn :try)
   (try
     (let [players-set (eval (read-string (slurp (players-file-path))))]
-      (spit (players-file-path) (prn-str (f players-set))))
+      (spit (players-file-path) (prn-str (f players-set)))
+      (prn :success))
     (catch java.io.FileNotFoundException _ #{})
     (catch Exception e (.printStackTrace e))))
 
@@ -229,7 +231,10 @@
     (rand-treasure)))
 
 (defn create-treasure-chest [block]
-  (b/set-block! (b/from-loc (.getLocation block) 0 -1 0) Material/WOOD 0)
+  (doseq [x (range -1 2)
+          z (range -1 2)
+          material (rand-nth [Material/WOOD Material/MOSSY_COBBLESTONE])]
+    (b/set-block! (b/from-loc (.getLocation block) x -1 z) material 0))
   (b/set-block! block Material/CHEST 0)
   (let [chest (.getBlock (.getLocation block))]
     (doseq [item-stack (rand-treasures 2 8)
