@@ -90,9 +90,8 @@
                    (execute [this listener event]
                      (when (instance? event-type event)
                        (try
-                         (f event (-> event .getPlayer m/Player->P))
-                         (catch Exception _
-                           (f event))))))
+                         (f event)
+                         (catch Exception e (.printStackTrace e))))))
         priority org.bukkit.event.EventPriority/NORMAL]
     (-> pm (.registerEvent event-type listener priority executor dummy-sugot-plugin))))
 
