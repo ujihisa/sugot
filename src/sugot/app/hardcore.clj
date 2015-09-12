@@ -33,6 +33,18 @@
 (defn BlockPlaceEvent [event]
   nil)
 
+(defn- players-file-path []
+  (format "../hardcore/%s/players.clj"
+          (.getAbsolutePath (.getWorldFolder (Bukkit/getWorld "world")))))
+
+(defn- update-players-file [f]
+  (try
+    (let [players-set (eval (read-string (slurp (players-file-path))))]
+      (spit (players-file-path) (prn-str (f players-set))))
+    (catch java.io.FileNotFoundException _ #{})
+    (catch Exception e (.printStackTrace e))))
+
+
 ; key: ^String playername, value: ^Long timestamp msec
 (def came-from (atom {}))
 
@@ -48,7 +60,9 @@
     (l/later (l/sec 5)
       (swap! wait-for-a-moment disj pname))
     (.teleport player to)
-    (swap! came-from dissoc pname)))
+    (swap! came-from dissoc pname)
+    (update-players-file (fn [players-set]
+                           (dissoc players-set pname)))))
 
 (defn PlayerLoginEvent [event]
   (let [player (.getPlayer event)]
@@ -265,10 +279,6 @@
 (defn- hardcore-world []
   (Bukkit/getWorld "hardcore"))
 
-(defn- players-file-path []
-  (format "%s/players.clj"
-          (.getAbsolutePath (.getWorldFolder (hardcore-world)))))
-
 (declare garbage-collection)
 
 (defn create [num-retry]
@@ -306,13 +316,9 @@
       (swap! came-from assoc (.getName living-entity) before-loc)
       (swap! enter-time-all assoc (.getName living-entity) (System/currentTimeMillis))
 
-      (try
-        (let [players-set (eval (read-string (slurp (players-file-path))))]
-          (spit (players-file-path)
-                (prn-str (conj players-set
-                               (.getName living-entity)))))
-        (catch java.io.FileNotFoundException _ #{})
-        (catch Exception e (.printStackTrace e))))))
+      (update-players-file (fn [players-set]
+                             (conj players-set
+                                   (.getName living-entity)))))))
 
 (defn enter-satisfy? [player]
   (when-let [item-stack (.getItemInHand player)]
