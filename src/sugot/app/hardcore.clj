@@ -233,7 +233,7 @@
 (defn create-treasure-chest [block]
   (doseq [x (range -1 2)
           z (range -1 2)
-          material (rand-nth [Material/WOOD Material/MOSSY_COBBLESTONE])]
+          :let [material (rand-nth [Material/WOOD Material/MOSSY_COBBLESTONE])]]
     (b/set-block! (b/from-loc (.getLocation block) x -1 z) material 0))
   (b/set-block! block Material/CHEST 0)
   (let [chest (.getBlock (.getLocation block))]
