@@ -95,7 +95,7 @@
     (doseq [item-stack (.getDrops event)
             :when (= Material/BLAZE_ROD (.getType item-stack))]
       (.setType item-stack Material/QUARTZ)
-      (.setData item-stack 0))
+      (.setData item-stack (byte 0)))
     nil))
 
 (defn- hardcore-players []
