@@ -17,7 +17,10 @@
                   (setCancelled [this bool]
                     (swap! state update-in [:cancel] (constantly bool)))
                   mocks/Player
-                  (getPlayer [this] nil)
+                  (getPlayer [this]
+                    (let [world (mocks/world "hardcore")
+                          loc (mocks/location world 0 0 0)]
+                      (mocks/player "dummy-player" loc)))
                   mocks/ItemDrop
                   (getItemDrop [this]
                     (reify

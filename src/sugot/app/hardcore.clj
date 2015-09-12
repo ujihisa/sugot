@@ -12,18 +12,20 @@
            [org.bukkit.enchantments Enchantment]
            [org.bukkit.util Vector]))
 
-(defn PlayerDropItemEvent [event]
-  (when (= "Magic Compass"
-           (some-> event
-                   .getItemDrop .getItemStack .getItemMeta .getDisplayName))
-    (.setCancelled event true)
-    (l/send-message (.getPlayer event) "[HARDCORE] You should keep it for going back home!")))
-
 (defn- hardcore-world-exist? []
   (.isDirectory (clojure.java.io/as-file "hardcore")))
 
 (defn in-hardcore? [loc]
   (= "hardcore" (.getName (.getWorld loc))))
+
+(defn PlayerDropItemEvent [event]
+  (when (and
+          (in-hardcore? (.getLocation (.getPlayer event)))
+          (= "Magic Compass"
+             (some-> event
+                     .getItemDrop .getItemStack .getItemMeta .getDisplayName)))
+    (.setCancelled event true)
+    (l/send-message (.getPlayer event) "[HARDCORE] You should keep it for going back home!")))
 
 (defn ProjectileHitEvent [event]
   nil)
@@ -34,12 +36,19 @@
 ; key: ^String playername, value: ^Long timestamp msec
 (def came-from (atom {}))
 
+; key: ^String playername
+(def wait-for-a-moment (atom #{}))
+
 (defn- leave-hardcore! [player]
   (let [to (some identity [(get @came-from (.getName player))
                            (.getBedSpawnLocation player)
-                           (.getSpawnLocation (Bukkit/getWorld "world"))])]
+                           (.getSpawnLocation (Bukkit/getWorld "world"))])
+        pname (.getName player)]
+    (swap! wait-for-a-moment conj pname)
+    (l/later (l/sec 5)
+      (swap! wait-for-a-moment disj pname))
     (.teleport player to)
-    (swap! came-from dissoc (.getName player))))
+    (swap! came-from dissoc pname)))
 
 (defn PlayerLoginEvent [event]
   (let [player (.getPlayer event)]
@@ -101,7 +110,6 @@
   (let [entity (.getEntity event)
         reason (.getSpawnReason event)
         l (.getLocation event)]
-    ; You can't use `case` for Java enum
     (when (and (hardcore-world-exist?)
                (in-hardcore? l)
                (instance? Monster entity)
@@ -130,7 +138,8 @@
           shooter (.getShooter projectile)]
       (when (and
               (instance? Blaze shooter)
-              (instance? SmallFireball projectile))
+              (instance? SmallFireball projectile)
+              (not= 0 (rand-int 50)))
         (when-let [target (.getTarget shooter)]
           (.setCancelled event true)
           (.setVelocity shooter (vector-from-to (.getLocation shooter)
@@ -289,7 +298,8 @@
   (when-let [item-stack (.getItemInHand player)]
     (when (and (= "world" (.getName (.getWorld (.getLocation player))))
                (= Material/PAPER (.getType item-stack))
-               (= 1 (.getAmount item-stack)))
+               (= 1 (.getAmount item-stack))
+               (not (contains? @wait-for-a-moment (.getName player))))
       (when-let [armour-stand (some #(when (instance? ArmorStand %) %)
                                     (.getNearbyEntities player 0 0 0))]
         (= Material/PUMPKIN (.getType (.getHelmet armour-stand)))))))
