@@ -44,7 +44,6 @@
     (catch java.io.FileNotFoundException _ #{})
     (catch Exception e (.printStackTrace e))))
 
-
 ; key: ^String playername, value: ^Long timestamp msec
 (def came-from (atom {}))
 
@@ -230,7 +229,8 @@
     (rand-treasure)))
 
 (defn create-treasure-chest [block]
-  (b/set-block block Material/CHEST 0)
+  (b/set-block! (b/from-loc (.getLocation block) 0 -1 0) Material/WOOD 0)
+  (b/set-block! block Material/CHEST 0)
   (let [chest (.getBlock (.getLocation block))]
     (doseq [item-stack (rand-treasures 2 8)
             :when item-stack]
@@ -266,8 +266,6 @@
             x (+ goal-x (rand-nth the-range))
             z (+ goal-z (rand-nth the-range))
             y (+ (.getHighestBlockYAt hardcore-world x z) (rand-nth [-3 -2 -1 -1 -1 0 10]))]
-        (b/set-block! (.getBlockAt hardcore-world x (dec y) z) Material/WOOD 0)
-        (b/set-block! (.getBlockAt hardcore-world x y z) Material/AIR 0)
         (create-treasure-chest (.getBlockAt hardcore-world x y z)))
       (-> (sugot.world/spawn (Location. hardcore-world
                                         (+ 0.5 goal-x)
@@ -296,7 +294,7 @@
         (garbage-collection)
         (create (dec num-retry)))
       (do
-        (spit (players-file-path) (prn-str #{}))
+        (update-players-file (constantly #{}))
         (create-main-logic hardcore-world)))))
 
 (defn enter-hardcore [living-entity]
