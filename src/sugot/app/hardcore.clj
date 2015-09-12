@@ -74,7 +74,7 @@
 (defn- target-nearest-hardcore-player [creature]
   (when-let [players (hardcore-players)]
     (.setTarget creature (apply min-key
-                                #(.distance creature %)
+                                #(.distance (.getLocation creature) (.getLocation %))
                                 players))))
 
 (defn- loc-average [loc1 loc2]
