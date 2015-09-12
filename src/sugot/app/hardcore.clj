@@ -34,7 +34,7 @@
   nil)
 
 (defn- players-file-path []
-  (format "/../hardcore/%s/players.clj"
+  (format "%s/../hardcore/players.clj"
           (.getAbsolutePath (.getWorldFolder (Bukkit/getWorld "world")))))
 
 (defn- update-players-file [f]
