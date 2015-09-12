@@ -209,42 +209,43 @@
 
 (defn- create-main-logic [hardcore-world]
   (.setTime hardcore-world 21000)
-    (let [init-y (.getHighestBlockYAt hardcore-world 0 0)]
-      (l/later 0
-        (doseq [x (range -1 2)
-                z (range -1 2)]
-          (b/set-block! (.getBlockAt hardcore-world x (dec init-y) z)
-                        Material/OBSIDIAN 0)
-          (b/set-block! (.getBlockAt hardcore-world x init-y z)
-                        Material/TORCH 0))))
-    (let [[goal-distance chest-distance]
-          (let [init-biome (.getBiome hardcore-world 0 0)]
-            (get {#_Biome/OCEAN #_[100 10]
-                  Biome/DESERT [350 15]
-                  Biome/TAIGA [270 15]
-                  Biome/EXTREME_HILLS [90 2]}
-                 init-biome
-                 [220 6]))
+  (let [init-y (.getHighestBlockYAt hardcore-world 0 0)]
+    (l/later 0
+      (doseq [x (range -1 2)
+              z (range -1 2)]
+        (b/set-block! (.getBlockAt hardcore-world x (dec init-y) z)
+                      Material/OBSIDIAN 0)
+        (b/set-block! (.getBlockAt hardcore-world x init-y z)
+                      Material/TORCH 0))))
+  (let [[goal-distance chest-distance]
+        (let [init-biome (.getBiome hardcore-world 0 0)]
+          (get {#_Biome/OCEAN #_[100 10]
+                Biome/DESERT [350 15]
+                Biome/TAIGA [270 15]
+                Biome/EXTREME_HILLS [90 2]}
+               init-biome
+               [220 6]))
 
-          [goal-x goal-z] (random-xz (int (* goal-distance (rand-nth [0.7 0.8 0.9 1.0 1.1 1.2 1.3 2.0]))))
+        [goal-x goal-z] (random-xz (int (* goal-distance (rand-nth [0.7 0.8 0.9 1.0 1.1 1.2 1.3 2.0]))))
 
-          goal-y (.getHighestBlockYAt hardcore-world goal-x goal-z)]
-      (.setSpawnLocation hardcore-world goal-x (inc goal-y) goal-z)
-      (l/later 0
-        (b/set-block! (.getBlockAt hardcore-world goal-x (dec goal-y) goal-z)
-                      Material/BEDROCK 0)
-        (let [x (+ goal-x (rand-nth (remove zero? (range (- chest-distance) (inc chest-distance)))))
-              z (+ goal-z (rand-nth (remove zero? (range (- chest-distance) (inc chest-distance)))))
-              y (+ (.getHighestBlockYAt hardcore-world x z) (rand-nth [-3 -2 -1 -1 -1 0 10]))]
-          (b/set-block! (.getBlockAt hardcore-world x (dec y) z) Material/WOOD 0)
-          (b/set-block! (.getBlockAt hardcore-world x y z) Material/AIR 0)
-          (create-treasure-chest (.getBlockAt hardcore-world x y z)))
-        (-> (sugot.world/spawn (Location. hardcore-world
-                                          (+ 0.5 goal-x)
-                                          goal-y
-                                          (+ 0.5 goal-z))
-                               ArmorStand)
-          (.setHelmet (ItemStack. Material/OBSIDIAN 1))))))
+        goal-y (.getHighestBlockYAt hardcore-world goal-x goal-z)]
+    (.setSpawnLocation hardcore-world goal-x (inc goal-y) goal-z)
+    (l/later 0
+      (b/set-block! (.getBlockAt hardcore-world goal-x (dec goal-y) goal-z)
+                    Material/BEDROCK 0)
+      (let [the-range (remove zero? (range (- chest-distance) (inc chest-distance)))
+            x (+ goal-x (rand-nth the-range))
+            z (+ goal-z (rand-nth the-range))
+            y (+ (.getHighestBlockYAt hardcore-world x z) (rand-nth [-3 -2 -1 -1 -1 0 10]))]
+        (b/set-block! (.getBlockAt hardcore-world x (dec y) z) Material/WOOD 0)
+        (b/set-block! (.getBlockAt hardcore-world x y z) Material/AIR 0)
+        (create-treasure-chest (.getBlockAt hardcore-world x y z)))
+      (-> (sugot.world/spawn (Location. hardcore-world
+                                        (+ 0.5 goal-x)
+                                        goal-y
+                                        (+ 0.5 goal-z))
+                             ArmorStand)
+        (.setHelmet (ItemStack. Material/OBSIDIAN 1))))))
 
 (declare garbage-collection)
 
