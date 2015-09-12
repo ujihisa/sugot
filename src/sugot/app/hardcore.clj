@@ -262,6 +262,13 @@
                              ArmorStand)
         (.setHelmet (ItemStack. Material/OBSIDIAN 1))))))
 
+(defn- hardcore-world []
+  (Bukkit/getWorld "hardcore"))
+
+(defn- players-file-path []
+  (format "%s/players.clj"
+          (.getAbsolutePath (.getWorldFolder (hardcore-world)))))
+
 (declare garbage-collection)
 
 (defn create [num-retry]
@@ -278,10 +285,9 @@
         (l/broadcast "[HARDCORE] (It's an ocean. Retrying...)")
         (garbage-collection)
         (create (dec num-retry)))
-      (create-main-logic hardcore-world))))
-
-(defn hardcore-world []
-  (Bukkit/getWorld "hardcore"))
+      (do
+        (spit (players-file-path) (prn-str #{}))
+        (create-main-logic hardcore-world)))))
 
 (defn enter-hardcore [living-entity]
   {:pre [(hardcore-world)]}
@@ -298,7 +304,15 @@
                 (.getSeed (hardcore-world))
                 (.name (.getBiome (hardcore-world) 0 0))))
       (swap! came-from assoc (.getName living-entity) before-loc)
-      (swap! enter-time-all assoc (.getName living-entity) (System/currentTimeMillis)))))
+      (swap! enter-time-all assoc (.getName living-entity) (System/currentTimeMillis))
+
+      (try
+        (let [players-set (eval (read-string (slurp (players-file-path))))]
+          (spit (players-file-path)
+                (prn-str (conj players-set
+                               (.getName living-entity)))))
+        (catch java.io.FileNotFoundException _ #{})
+        (catch Exception e (.printStackTrace e))))))
 
 (defn enter-satisfy? [player]
   (when-let [item-stack (.getItemInHand player)]
