@@ -38,11 +38,10 @@
           (.getAbsolutePath (.getWorldFolder (Bukkit/getWorld "world")))))
 
 (defn- update-players-file [f]
-  (prn :updating (players-file-path))
   (try
     (let [players-set (eval (read-string (slurp (players-file-path))))]
       (spit (players-file-path) (prn-str (f players-set))))
-    #_ (catch java.io.FileNotFoundException _ #{})
+    (catch java.io.FileNotFoundException _ #{})
     (catch Exception e (.printStackTrace e))))
 
 ; key: ^String playername, value: ^Long timestamp msec
