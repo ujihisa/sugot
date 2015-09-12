@@ -90,7 +90,13 @@
     (catch Exception e (.printStackTrace e))))
 
 (defn EntityDeathEvent [event]
-  )
+  (condp instance? (.getEntity event)
+    Blaze
+    (doseq [item-stack (.getDrops event)
+            :when (= Material/BLAZE_ROD (.getType item-stack))]
+      (.setType item-stack Material/QUARTZ)
+      (.setData item-stack 0))
+    nil))
 
 (defn- hardcore-players []
   (seq (filter #(in-hardcore? (.getLocation %))
