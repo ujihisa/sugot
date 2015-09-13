@@ -51,7 +51,7 @@
 
 (defn PlayerDropItemEvent [event]
   (when (and
-          (player-in-hardcore? (.getPlayer event))
+          (loc-in-hardcore? (.getLocation (.getPlayer event)))
           (= "Magic Compass"
              (some-> event
                      .getItemDrop .getItemStack .getItemMeta .getDisplayName)))
@@ -452,6 +452,7 @@
 
 (defn on-load []
   (try
+    (prn (hardcore-world-dir))
     (dir-delete-recursively (hardcore-world-dir))
     (catch Exception e (.printStackTrace e))))
 
