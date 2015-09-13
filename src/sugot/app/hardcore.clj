@@ -82,6 +82,7 @@
 
 (defn player-in-hardcore? [player]
   (let [pname (.getName player)]
+    (prn :set (get-players-set) :name pname)
     (contains? (get-players-set) pname)))
 
 (defn PlayerLoginEvent [event]
