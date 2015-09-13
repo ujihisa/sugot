@@ -68,7 +68,6 @@
 (def wait-for-a-moment (atom #{}))
 
 (defn- leave-hardcore! [player]
-  (prn :leave player)
   (let [to (some identity [(get @came-from (.getName player))
                            (.getBedSpawnLocation player)
                            (.getSpawnLocation (Bukkit/getWorld "world"))])
@@ -87,15 +86,10 @@
 
 (defn PlayerLoginEvent [event]
   (let [player (.getPlayer event)]
-    (prn [(and (player-in-hardcore? player)
-               (not (contains? @came-from (.getName player))))])
     (when (and (player-in-hardcore? player)
                (not (contains? @came-from (.getName player))))
-      (prn :ok)
       (l/later 0
-        (prn :yes)
-        (leave-hardcore! player)
-        (prn :done)))))
+        (leave-hardcore! player)))))
 
 ; key: ^String playername, value: ^Long timestamp msec
 (def enter-time-all (atom {}))
@@ -457,8 +451,8 @@
 
 (defn on-load []
   (try
-    (prn (hardcore-world-dir))
-    (dir-delete-recursively (hardcore-world-dir))
+    (when (hardcore-world-exist?)
+      (dir-delete-recursively (hardcore-world-dir)))
     (catch Exception e (.printStackTrace e))))
 
 ; TODO support on-load from core
