@@ -75,6 +75,7 @@
     (swap! wait-for-a-moment conj pname)
     (l/later (l/sec 5)
       (swap! wait-for-a-moment disj pname))
+    (.load (.getChunk to))
     (.teleport player to)
     (swap! came-from dissoc pname)
     (update-players-file (fn [players-set]
