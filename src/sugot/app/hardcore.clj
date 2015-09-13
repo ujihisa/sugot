@@ -24,7 +24,7 @@
 
 (defn- players-file-path []
   (format "%s/../hardcore-players.clj"
-          (hardcore-world-dir)))
+          (.getAbsolutePath (.getWorldFolder (Bukkit/getWorld "world")))))
 
 (defn- update-players-file [f]
   (let [path (players-file-path)]
@@ -40,9 +40,7 @@
 
 (defn- get-players-set []
   (let [path (players-file-path)]
-    (prn :path path)
     (try
-      (prn :result (eval (read-string (slurp path))))
       (eval (read-string (slurp path)))
       (catch java.io.FileNotFoundException _ #{})
       (catch Exception e (.printStackTrace e)))))
