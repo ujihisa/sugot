@@ -456,4 +456,4 @@
     (catch Exception e (.printStackTrace e))))
 
 ; TODO support on-load from core
-#_ (on-load)
+(on-load)
