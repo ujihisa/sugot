@@ -17,7 +17,7 @@
 
 (defn player-in-hardcore? [player]
   (let [pname (.getName player)]
-    false))
+    (contains? (get-players-set) pname)))
 
 (defn loc-in-hardcore? [loc]
   (= "hardcore" (.getName (.getWorld loc))))
