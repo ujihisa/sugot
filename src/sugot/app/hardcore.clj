@@ -40,7 +40,9 @@
 
 (defn- get-players-set []
   (let [path (players-file-path)]
+    (prn :path path)
     (try
+      (prn :result (eval (read-string (slurp path))))
       (eval (read-string (slurp path)))
       (catch java.io.FileNotFoundException _ #{})
       (catch Exception e (.printStackTrace e)))))
