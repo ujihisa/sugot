@@ -95,34 +95,32 @@
 (def enter-time-all (atom {}))
 
 (defn EntityDamageEvent [event]
-  (try
-    (let [entity (.getEntity event)
-          cause (.getCause event)]
-      (when (loc-in-hardcore? (.getLocation entity))
-        (cond
-          (instance? ArmorStand entity)
+  (let [entity (.getEntity event)
+        cause (.getCause event)]
+    (when (loc-in-hardcore? (.getLocation entity))
+      (cond
+        (instance? ArmorStand entity)
+        (.setCancelled event true)
+
+        (instance? Blaze entity)
+        (condp = cause
+          EntityDamageEvent$DamageCause/PROJECTILE
+          (let [projectile (.getDamager event) ]
+            (when (instance? Projectile projectile)
+              (.setCancelled event true)
+              (.setFireTicks projectile (l/sec 1))
+              (sugot.world/play-sound (.getLocation projectile)
+                                      Sound/ZOMBIE_METAL 1.0 2.0)
+              (l/later 0
+                (.setVelocity projectile (Vector. 0.0 1.0 0.0)))))
+          nil)
+
+        (instance? Monster entity)
+        (condp = cause
+          EntityDamageEvent$DamageCause/FIRE_TICK
           (.setCancelled event true)
 
-          (instance? Blaze entity)
-          (condp = cause
-            EntityDamageEvent$DamageCause/PROJECTILE
-            (let [projectile (.getDamager event) ]
-              (when (instance? Projectile projectile)
-                (.setCancelled event true)
-                (.setFireTicks projectile (l/sec 1))
-                (sugot.world/play-sound (.getLocation projectile)
-                                        Sound/ZOMBIE_METAL 1.0 2.0)
-                (l/later 0
-                  (.setVelocity projectile (Vector. 0.0 1.0 0.0)))))
-            nil)
-
-          (instance? Monster entity)
-          (condp = cause
-            EntityDamageEvent$DamageCause/FIRE_TICK
-            (.setCancelled event true)
-
-            nil))))
-    (catch Exception e (.printStackTrace e))))
+          nil)))))
 
 (defn EntityDeathEvent [event]
   (condp instance? (.getEntity event)
