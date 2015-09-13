@@ -87,9 +87,15 @@
 
 (defn PlayerLoginEvent [event]
   (let [player (.getPlayer event)]
+    (prn [(and (player-in-hardcore? player)
+               (not (contains? @came-from (.getName player))))])
     (when (and (player-in-hardcore? player)
                (not (contains? @came-from (.getName player))))
-      (leave-hardcore! player))))
+      (prn :ok)
+      (l/later 0
+        (prn :yes)
+        (leave-hardcore! player)
+        (prn :done)))))
 
 ; key: ^String playername, value: ^Long timestamp msec
 (def enter-time-all (atom {}))
