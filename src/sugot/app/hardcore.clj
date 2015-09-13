@@ -4,7 +4,7 @@
             [sugot.world])
   (:import [org.bukkit Bukkit Server WorldCreator Material Location Sound]
            [org.bukkit.block Biome]
-           [org.bukkit.entity ArmorStand Monster Blaze Egg SmallFireball Player LivingEntity Projectile]
+           [org.bukkit.entity ArmorStand Monster Blaze Egg SmallFireball Player LivingEntity Projectile Arrow Snowball]
            [org.bukkit.event.block Action]
            [org.bukkit.event.entity CreatureSpawnEvent$SpawnReason]
            [org.bukkit.event.entity EntityDamageEvent$DamageCause]
@@ -105,14 +105,20 @@
         (instance? Blaze entity)
         (condp = cause
           EntityDamageEvent$DamageCause/PROJECTILE
-          (let [projectile (.getDamager event) ]
-            (when (instance? Projectile projectile)
-              (.setCancelled event true)
-              (.setFireTicks projectile (l/sec 1))
-              (sugot.world/play-sound (.getLocation projectile)
-                                      Sound/ZOMBIE_METAL 1.0 2.0)
-              (l/later 0
-                (.setVelocity projectile (Vector. 0.0 1.0 0.0)))))
+          (let [projectile (.getDamager event)]
+            (condp instance? projectile
+              Snowball
+              (l/broadcast "[HARDCORE] (debug) snowball ok")
+
+              Arrow
+              (do
+                (.setCancelled event true)
+                (.setFireTicks projectile (l/sec 1))
+                (sugot.world/play-sound (.getLocation projectile)
+                                        Sound/ZOMBIE_METAL 1.0 2.0)
+                (l/later 0
+                  (.setVelocity projectile (Vector. 0.0 1.0 0.0))))
+              nil))
           nil)
 
         (instance? Monster entity)
