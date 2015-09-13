@@ -336,6 +336,7 @@
           (hardcore-world) 0.5 (inc (.getHighestBlockYAt (hardcore-world) 0 0)) 0.5)]
     (.teleport living-entity init-loc)
     (when (instance? Player living-entity)
+      (l/send-message "[HARDCORE] HINT: BlazeにSnowballを投げ当てると...?")
       (l/broadcast-and-post-lingr
         (format "[HARDCORE] %s entered to hardcore world. (seed: \"%d\", biome: %s)"
                 (.getName living-entity)
