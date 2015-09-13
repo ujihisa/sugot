@@ -68,6 +68,7 @@
 (def wait-for-a-moment (atom #{}))
 
 (defn- leave-hardcore! [player]
+  (prn :leave player)
   (let [to (some identity [(get @came-from (.getName player))
                            (.getBedSpawnLocation player)
                            (.getSpawnLocation (Bukkit/getWorld "world"))])
@@ -82,13 +83,10 @@
 
 (defn player-in-hardcore? [player]
   (let [pname (.getName player)]
-    (prn :set (get-players-set) :name pname)
     (contains? (get-players-set) pname)))
 
 (defn PlayerLoginEvent [event]
   (let [player (.getPlayer event)]
-    (prn (player-in-hardcore? player)
-         (not (contains? @came-from (.getName player))))
     (when (and (player-in-hardcore? player)
                (not (contains? @came-from (.getName player))))
       (leave-hardcore! player))))
