@@ -38,12 +38,10 @@
           (.getAbsolutePath (.getWorldFolder (Bukkit/getWorld "world")))))
 
 (defn- update-players-file [f]
-  (prn :try (players-file-path))
   (let [path (players-file-path)]
     (try
       (let [players-set (eval (read-string (slurp path)))]
-        (spit path (prn-str (f players-set)))
-        (prn :success))
+        (spit path (prn-str (f players-set))))
       (catch java.io.FileNotFoundException _
         (try
           (spit path (prn-str "#{}"))
@@ -68,7 +66,7 @@
     (.teleport player to)
     (swap! came-from dissoc pname)
     (update-players-file (fn [players-set]
-                           (dissoc players-set pname)))))
+                           (disj players-set pname)))))
 
 (defn PlayerLoginEvent [event]
   (let [player (.getPlayer event)]
