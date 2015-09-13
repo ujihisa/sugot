@@ -15,10 +15,6 @@
 (defn- hardcore-world-exist? []
   (.isDirectory (clojure.java.io/as-file "hardcore")))
 
-(defn player-in-hardcore? [player]
-  (let [pname (.getName player)]
-    (contains? (get-players-set) pname)))
-
 (defn loc-in-hardcore? [loc]
   (= "hardcore" (.getName (.getWorld loc))))
 
@@ -83,6 +79,10 @@
     (swap! came-from dissoc pname)
     (update-players-file (fn [players-set]
                            (disj players-set pname)))))
+
+(defn player-in-hardcore? [player]
+  (let [pname (.getName player)]
+    (contains? (get-players-set) pname)))
 
 (defn PlayerLoginEvent [event]
   (let [player (.getPlayer event)]
