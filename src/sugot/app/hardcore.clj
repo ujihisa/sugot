@@ -15,12 +15,16 @@
 (defn- hardcore-world-exist? []
   (.isDirectory (clojure.java.io/as-file "hardcore")))
 
-(defn in-hardcore? [loc]
+(defn player-in-hardcore? [player]
+  (let [pname (.getName player)]
+    false))
+
+(defn loc-in-hardcore? [loc]
   (= "hardcore" (.getName (.getWorld loc))))
 
 (defn PlayerDropItemEvent [event]
   (when (and
-          (in-hardcore? (.getLocation (.getPlayer event)))
+          (player-in-hardcore? (.getPlayer event))
           (= "Magic Compass"
              (some-> event
                      .getItemDrop .getItemStack .getItemMeta .getDisplayName)))
@@ -70,7 +74,7 @@
 
 (defn PlayerLoginEvent [event]
   (let [player (.getPlayer event)]
-    (when (and (in-hardcore? player)
+    (when (and (player-in-hardcore? player)
                (not (contains? @came-from (.getName player))))
       (leave-hardcore! player))))
 
@@ -81,7 +85,7 @@
   (try
     (let [entity (.getEntity event)
           cause (.getCause event)]
-      (when (in-hardcore? (.getLocation entity))
+      (when (loc-in-hardcore? (.getLocation entity))
         (cond
           (instance? ArmorStand entity)
           (.setCancelled event true)
@@ -117,7 +121,7 @@
     nil))
 
 (defn- hardcore-players []
-  (seq (filter #(in-hardcore? (.getLocation %))
+  (seq (filter #(player-in-hardcore? %)
                (Bukkit/getOnlinePlayers))))
 
 (defn- target-nearest-hardcore-player [creature]
@@ -135,7 +139,7 @@
         reason (.getSpawnReason event)
         l (.getLocation event)]
     (when (and (hardcore-world-exist?)
-               (in-hardcore? l)
+               (loc-in-hardcore? l)
                (instance? Monster entity)
                (= CreatureSpawnEvent$SpawnReason/NATURAL reason))
       (l/later 0
@@ -338,7 +342,7 @@
 
 (defn leave-satisfy? [player]
   (when-let [item-stack (.getItemInHand player)]
-    (when (and (in-hardcore? (.getLocation player))
+    (when (and (player-in-hardcore? player)
                (= Material/COMPASS (.getType item-stack))
                (= 1 (.getAmount item-stack)))
       (when-let [armour-stand (some #(when (instance? ArmorStand %) %)
@@ -389,7 +393,7 @@
       (format "%d seconds" seconds))))
 
 (defn leave-hardcore-with-message [player]
-  {:pre [(in-hardcore? (.getLocation player))]}
+  {:pre [(player-in-hardcore? player)]}
   (leave-hardcore! player)
   (l/broadcast-and-post-lingr (format "[HARDCORE] %s left from the hardcore world."
                                       (.getName player)))
