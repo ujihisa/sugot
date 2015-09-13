@@ -108,7 +108,8 @@
           (let [projectile (.getDamager event)]
             (condp instance? projectile
               Snowball
-              (l/broadcast "[HARDCORE] (debug) snowball ok")
+              (.setDamage event (max (dec (.getMaxHealth entity))
+                                     1))
 
               Arrow
               (do
