@@ -17,7 +17,7 @@
       (let [msg (format "<%s> Qu'ils mangent de la brioche." (.getName player))]
         (l/broadcast msg))
       (sugot.world/play-sound (.getLocation player) Sound/EAT 0.8 2.0)
-      (give-exp player 0.30))))
+      (give-exp player 0.29))))
 
 (defn recipes []
   (let [item-stack (doto (ItemStack. Material/BREAD 1)
