@@ -20,5 +20,7 @@
     [milk->whey whey->ricotta]))
 
 (defn PlayerBucketEmptyEvent [event]
-  (let [player (.getPlayer event)]
-    :ok))
+  (let [player (.getPlayer event)
+        item-stack (.getItemStack event)]
+    (when (= "Whey" (some-> item-stack .getItemMeta .getDisplayName))
+      (.setCancelled event true))))
