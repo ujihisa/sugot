@@ -16,8 +16,9 @@
                (seq (.getEnchantments item-stack)))
       (let [msg (format "<%s> Qu'ils mangent de la brioche." (.getName player))]
         (l/broadcast msg))
-      (sugot.world/play-sound (.getLocation player) Sound/EAT 0.8 2.0)
-      (give-exp player 0.29))))
+      (give-exp player 0.29)
+      (l/later (l/sec 0.5)
+        (sugot.world/play-sound (.getLocation player) Sound/EAT 0.8 2.0)))))
 
 (defn recipes []
   (let [item-stack (doto (ItemStack. Material/BREAD 1)
