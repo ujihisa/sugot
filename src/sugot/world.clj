@@ -11,3 +11,6 @@
 
 (defn spawn [loc klass]
   (.spawn (.getWorld loc) loc klass))
+
+(defn drop-item [loc item-stack]
+  (.dropItemNaturally (.getWorld loc) loc item-stack))

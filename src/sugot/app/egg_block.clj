@@ -17,4 +17,6 @@
 (defn BlockPlaceEvent [event]
   (let [item-stack (.getItemInHand event)]
     (when (= "Egg Block" (some-> item-stack .getItemMeta .getDisplayName))
-      (.setCancelled event true))))
+      (.setCancelled event true)
+      (sugot.world/drop-item (.getLocation (.getBlock event))
+                             (ItemStack. Material/EGG 9)))))
