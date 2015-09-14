@@ -6,7 +6,7 @@
            [org.bukkit.inventory FurnaceRecipe ShapelessRecipe]))
 
 (defn recipes []
-  (let [item-stack (doto (ItemStack. Material/MILK_BUCKET 1 (byte 1))
+  (let [item-stack (doto (ItemStack. Material/MILK_BUCKET 1 (short 0) (byte 1))
                      (.addUnsafeEnchantment Enchantment/DURABILITY 1)
                      (l/set-display-name "Whey"))
         milk->whey (doto (ShapelessRecipe. item-stack)
