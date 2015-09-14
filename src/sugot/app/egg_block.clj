@@ -10,7 +10,7 @@
                      (.addUnsafeEnchantment Enchantment/DURABILITY 1)
                      (l/set-display-name "Egg Block"))
         egg->eggblock (doto (ShapelessRecipe. item-stack)
-                     (.addIngredient 16 Material/EGG))]
+                     (.addIngredient 8 Material/EGG))]
     [egg->eggblock]))
 
 (defn BlockPlaceEvent [event]
