@@ -11,7 +11,7 @@
                      (l/set-display-name "Egg Block"))
         egg->eggblock (doto (ShapedRecipe. item-stack)
                         (.shape (into-array ["aaa" "aaa" "aaa"]))
-                        (.addIngredient \a Material/EGG))]
+                        (.setIngredient \a Material/EGG))]
     [egg->eggblock]))
 
 (defn BlockPlaceEvent [event]
