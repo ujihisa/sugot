@@ -18,9 +18,11 @@
   (require 'sugot.app.alloy)
   (require 'sugot.app.brioche)
   (require 'sugot.app.whey)
+  (require 'sugot.app.egg-block)
   (doseq [recipes [((ns-resolve 'sugot.app.alloy 'recipes))
                    ((ns-resolve 'sugot.app.brioche 'recipes))
-                   ((ns-resolve 'sugot.app.whey 'recipes))]
+                   ((ns-resolve 'sugot.app.whey 'recipes))
+                   ((ns-resolve 'sugot.app.egg-block 'recipes))]
           recipe recipes]
     (when-not (Bukkit/addRecipe recipe)
       (binding [*out* *err*]
