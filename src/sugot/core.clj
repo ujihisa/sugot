@@ -17,8 +17,10 @@
   ; TODO autoload
   (require 'sugot.app.alloy)
   (require 'sugot.app.brioche)
+  (require 'sugot.app.whey)
   (doseq [recipes [((ns-resolve 'sugot.app.alloy 'recipes))
-                   ((ns-resolve 'sugot.app.brioche 'recipes))]
+                   ((ns-resolve 'sugot.app.brioche 'recipes))
+                   ((ns-resolve 'sugot.app.whey 'recipes))]
           recipe recipes]
     (when-not (Bukkit/addRecipe recipe)
       (binding [*out* *err*]
