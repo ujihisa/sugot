@@ -27,7 +27,8 @@
                   (getItem [this] item-stack))]
       (with-redefs [give-exp (fn [& _]
                                (dosync
-                                 (ref-set called? true)))]
+                                 (ref-set called? true)))
+                    l/later-fn (fn [& _] nil)]
         (is (false? (do
                       (PlayerItemConsumeEvent event)
                       @called?))))))

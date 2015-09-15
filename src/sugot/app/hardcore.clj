@@ -215,7 +215,7 @@
     [x z]))
 
 (defn- rand-treasure []
-  (case (rand-int 34)
+  (case (rand-int 36)
     0 (ItemStack. Material/DIRT (inc (rand-int 32)))
     1 (ItemStack. Material/WATER_LILY (inc (rand-int 32)))
     2 (ItemStack. Material/SAND (inc (rand-int 64)))
@@ -250,6 +250,8 @@
     31 (ItemStack. Material/IRON_BARDING 1)
     32 (ItemStack. Material/GOLD_BARDING 1)
     33 (ItemStack. Material/DIAMOND_BARDING 1)
+    34 (ItemStack. Material/RABBIT_FOOT (inc (rand-int 10)))
+    35 (ItemStack. Material/RABBIT_STEW 1)
     nil))
 
 (defn- rand-treasures [min-n max-n]
