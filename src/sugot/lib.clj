@@ -69,3 +69,7 @@
     (if (= 1 amount)
       (.setItemInHand player nil)
       (.setAmount item-stack (dec amount)))))
+
+(defn vector-from-to [from-loc to-loc]
+  (.normalize (.getDirection
+                (.subtract from-loc to-loc))))

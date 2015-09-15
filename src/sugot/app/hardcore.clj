@@ -106,7 +106,8 @@
         (instance? Blaze entity)
         (condp = cause
           EntityDamageEvent$DamageCause/PROJECTILE
-          (let [projectile (.getDamager event)]
+          (let [projectile (.getDamager event)
+                shooter (.getShooter projectile)]
             (condp instance? projectile
               Snowball
               (.setDamage event (max (dec (.getMaxHealth entity))
@@ -119,7 +120,10 @@
                 (sugot.world/play-sound (.getLocation projectile)
                                         Sound/ZOMBIE_METAL 1.0 2.0)
                 (l/later 0
-                  (.setVelocity projectile (Vector. 0.0 1.0 0.0))))
+                  (.setVelocity projectile (Vector. 0.0 1.0 0.0))
+                  (when shooter
+                    (.setVelocity entity (l/vector-from-to (.getLocation entity)
+                                                           (.getLocation shooter))))))
               nil))
           nil)
 
@@ -175,10 +179,6 @@
 (defn- launch-projectile [source projectile velocity]
   (.launchProjectile source projectile velocity))
 
-(defn- vector-from-to [from-loc to-loc]
-  (.normalize (.getDirection
-                (.subtract from-loc to-loc))))
-
 (defn ProjectileLaunchEvent [event]
   (try
     (let [projectile (.getEntity event)
@@ -189,12 +189,12 @@
               (not= 0 (rand-int 50)))
         (when-let [target (.getTarget shooter)]
           (.setCancelled event true)
-          (.setVelocity shooter (vector-from-to (.getLocation shooter)
+          (.setVelocity shooter (l/vector-from-to (.getLocation shooter)
                                                 (.getLocation target)))
           (l/later (l/sec 1)
             (target-nearest-hardcore-player shooter)
             (launch-projectile shooter org.bukkit.entity.Arrow
-                               (vector-from-to (.getLocation shooter)
+                               (l/vector-from-to (.getLocation shooter)
                                                 (.getLocation target))))
           #_ (.setBounce egg true))))
     (catch Exception e (.printStackTrace e))))
