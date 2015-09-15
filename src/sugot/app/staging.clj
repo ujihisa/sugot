@@ -5,7 +5,8 @@
             [sugot.world])
   (:import [org.bukkit Material Sound]
            [org.bukkit.event.entity CreatureSpawnEvent$SpawnReason]
-           [org.bukkit.event.block Action]))
+           [org.bukkit.event.block Action]
+           [org.bukkit.event.entity EntityDamageEvent$DamageCause]))
 
 (defn PlayerLoginEvent [event]
   (.setSleepingIgnored (.getPlayer event) true))
@@ -110,3 +111,27 @@
               (doseq [b-above (take (.getAmount item-in-hand) targets)]
                 (b/set-block b-above Material/CROPS (byte 0))
                 (l/consume-item player)))))))))
+
+(defn- player? [entity]
+  (instance? org.bukkit.entity.Player entity))
+
+(defn EntityDamageEvent [event]
+  (let [entity (.getEntity event)
+        player (when (player? entity)
+                 entity)]
+    (when (= EntityDamageEvent$DamageCause/FALL (.getCause event))
+      #_ (l/send-message player (str (format "%.2f" (-> player .getVelocity .getY))))
+      (when (< 0 (-> entity .getVelocity .getY))
+        (.setCancelled event true))
+      #_ (l/send-message player (prn-str (-> player .getVelocity .getY)))
+      #_ (let [block (-> player .getLocation .getBlock)]
+        (when (= Material/PISTON_MOVING_PIECE (.getType block))
+          (l/send-message player
+                          #_ (prn-str :here (-> player .getLocation (b/from-loc 0 0 0) .getType .name)
+                                   (-> player .getLocation (b/from-loc 0 0 0) .getData)
+                                   :shita (-> player .getLocation (b/from-loc 0 -1 0) .getType .name)
+                                   (-> player .getLocation (b/from-loc 0 -1 0) .getData))
+                          (prn-str (.getData block)
+                                   (-> block .getState)
+                                   (-> block .getState .getData)
+                                   (-> block .getState .getRawData))))))))

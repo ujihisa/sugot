@@ -4,11 +4,11 @@
   (:import [org.bukkit Material]
            [org.bukkit.event.block Action]))
 
-#_ (defprotocol SugotCancellable
-  (setCancelled [this bool]))
+(defrecord Elevator [loc-plate])
 
-#_ (defrecord SugotBlockDamageEvent [getPlayer getBlock]
-  SugotCancellable)
+(defn- get-elevator-from [loc]
+  (when (= Material/STONE_PLATE (-> loc .getBlock .getType))
+    (Elevator. loc)))
 
 (defn elevator? [player block]
   #_ (when (= Material/GOLD_BLOCK (.getType block))
@@ -53,10 +53,11 @@
   (let [player (.getPlayer event)
         from (.getFrom event)
         to (.getTo event)]
-    (when (and (= Material/STONE_PLATE (-> from .getBlock .getType))
-               (jumping-directly-above? player from to))
-      #_ (.setCancelled event true)
-      (l/send-message player "[ELEVATOR] going up."))))
+    (when (jumping-directly-above? player from to)
+      (when-let [elevator (get-elevator-from from)]
+        #_ (.setCancelled event true)
+        (l/send-message player (format "[ELEVATOR] going up. %s"
+                                       elevator))))))
 
 (defn PlayerToggleSneakEvent [event]
   (let [player (.getPlayer event)]
@@ -64,27 +65,3 @@
             (.isSneaking event)
             (= Material/STONE_PLATE (-> player .getLocation .getBlock .getType)))
       (l/send-message player "[ELEVATOR] going down"))))
-
-(defn- player? [entity]
-  (instance? org.bukkit.entity.Player entity))
-
-(defn EntityDamageEvent [event]
-  (let [entity (.getEntity event)
-        player (when (player? entity)
-                 entity)]
-    (when (= org.bukkit.event.entity.EntityDamageEvent$DamageCause/FALL (.getCause event))
-      #_ (l/send-message player (str (format "%.2f" (-> player .getVelocity .getY))))
-      (when (< 0 (-> entity .getVelocity .getY))
-        (.setCancelled event true))
-      #_ (l/send-message player (prn-str (-> player .getVelocity .getY)))
-      #_ (let [block (-> player .getLocation .getBlock)]
-        (when (= Material/PISTON_MOVING_PIECE (.getType block))
-          (l/send-message player
-                          #_ (prn-str :here (-> player .getLocation (b/from-loc 0 0 0) .getType .name)
-                                   (-> player .getLocation (b/from-loc 0 0 0) .getData)
-                                   :shita (-> player .getLocation (b/from-loc 0 -1 0) .getType .name)
-                                   (-> player .getLocation (b/from-loc 0 -1 0) .getData))
-                          (prn-str (.getData block)
-                                   (-> block .getState)
-                                   (-> block .getState .getData)
-                                   (-> block .getState .getRawData))))))))

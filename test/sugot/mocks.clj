@@ -1,8 +1,9 @@
 (ns sugot.mocks
   (:import [org.bukkit Material]))
 
-(defprotocol Name
-  (getName [this]))
+(defprotocol Entity (getEntity [this]))
+(defprotocol Cause (getCause [this]))
+(defprotocol Name (getName [this]))
 
 (defprotocol ^:private SugotBlock
   (getType [this])
