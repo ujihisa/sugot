@@ -17,7 +17,7 @@
       (let [msg (format "<%s> Qu'ils mangent de la brioche." (.getName player))]
         (l/broadcast msg))
       (give-exp player 0.29)
-      #_ (l/later (l/sec 0.5)
+      (l/later (l/sec 0.5)
         (sugot.world/play-sound (.getLocation player) Sound/EAT 0.8 2.0)))))
 
 (defn recipes []

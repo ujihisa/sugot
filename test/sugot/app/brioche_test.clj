@@ -48,6 +48,7 @@
       (with-redefs [give-exp (fn [& _]
                                (dosync
                                  (ref-set called? true)))
+                    l/later-fn (fn [& _] nil)
                     l/broadcast (fn [& _] nil)
                     sugot.world/play-sound (fn [& _] nil)]
         (is (true?  (do
