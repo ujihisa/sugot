@@ -165,16 +165,18 @@
                (loc-in-hardcore? l)
                (instance? Monster entity)
                (= CreatureSpawnEvent$SpawnReason/NATURAL reason))
-      (l/later 0
-        (dotimes [_ 2]
-          (let [loc (doto (.clone l)
-                      (.add (rand-nth [-0.5 0.5]) 0.5 (rand-nth [-0.5 0.5])))
-                klass (if (= 0 (rand-int 3))
-                        Blaze
-                        (class entity))
-                monster
-                (sugot.world/spawn loc klass)]
-            (target-nearest-hardcore-player monster)))))))
+      (if (< (.getY l) 64)
+        (.setCancelled event true)
+        (l/later 0
+          (dotimes [_ 2]
+            (let [loc (doto (.clone l)
+                        (.add (rand-nth [-0.5 0.5]) 0.5 (rand-nth [-0.5 0.5])))
+                  klass (if (= 0 (rand-int 3))
+                          Blaze
+                          (class entity))
+                  monster
+                  (sugot.world/spawn loc klass)]
+              (target-nearest-hardcore-player monster))))))))
 
 (defn- launch-projectile [source projectile velocity]
   (.launchProjectile source projectile velocity))
