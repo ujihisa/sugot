@@ -25,15 +25,9 @@
                   (getItemDrop [this]
                     (reify
                       mocks/ItemStack
-                      (getItemStack [this]
-                        (reify
-                          mocks/ItemMeta
-                          (getItemMeta [this]
-                            (reify
-                              mocks/DisplayName
-                              (getDisplayName [this]
-                                "Magic Compass")))))))))]
-    (is (with-redefs [l/send-message do-nothing]
+                      (getItemStack [this] :dummy-item-stack)))))]
+    (is (with-redefs [l/send-message do-nothing
+                      l/get-display-name (constantly "Magic Compass")]
           (PlayerDropItemEvent event)
           (true? (.isCancelled event))))))
 

@@ -50,7 +50,7 @@
           (loc-in-hardcore? (.getLocation (.getPlayer event)))
           (= "Magic Compass"
              (some-> event
-                     .getItemDrop .getItemStack .getItemMeta .getDisplayName)))
+                     .getItemDrop .getItemStack l/get-display-name)))
     (.setCancelled event true)
     (l/send-message (.getPlayer event) "[HARDCORE] You should keep it for going back home!")))
 
