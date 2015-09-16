@@ -4,7 +4,7 @@
             [sugot.world])
   (:import [org.bukkit Bukkit Server WorldCreator Material Location Sound]
            [org.bukkit.block Biome]
-           [org.bukkit.entity ArmorStand Monster Blaze Egg SmallFireball Player LivingEntity Projectile Arrow Snowball]
+           [org.bukkit.entity ArmorStand Monster Blaze Egg SmallFireball Player LivingEntity Projectile Arrow Snowball Guardian]
            [org.bukkit.event.block Action]
            [org.bukkit.event.entity CreatureSpawnEvent$SpawnReason]
            [org.bukkit.event.entity EntityDamageEvent$DamageCause]
@@ -166,7 +166,8 @@
                (instance? Monster entity)
                (= CreatureSpawnEvent$SpawnReason/NATURAL reason))
       (if (< (.getY l) 64)
-        (.setCancelled event true)
+        (when-not (instance? Guardian entity)
+          (.setCancelled event true))
         (l/later 0
           (dotimes [_ 2]
             (let [loc (doto (.clone l)
