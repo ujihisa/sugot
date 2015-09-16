@@ -75,8 +75,10 @@
     (swap! wait-for-a-moment conj pname)
     (l/later (l/sec 5)
       (swap! wait-for-a-moment disj pname))
-    (.load (.getChunk to))
     (.teleport player to)
+    ; To avoid suffocation due to loading
+    (l/later 0
+      (.teleport player to))
     (swap! came-from dissoc pname)
     (update-players-file (fn [players-set]
                            (disj players-set pname)))))
@@ -493,4 +495,4 @@
     (catch Exception e (.printStackTrace e))))
 
 ; TODO support on-load from core
-#_ (on-load)
+(on-load)
