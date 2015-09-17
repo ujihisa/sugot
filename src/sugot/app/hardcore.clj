@@ -4,7 +4,7 @@
             [sugot.world])
   (:import [org.bukkit Bukkit Server WorldCreator Material Location Sound]
            [org.bukkit.block Biome]
-           [org.bukkit.entity ArmorStand Monster Blaze Egg SmallFireball Player LivingEntity Projectile Arrow Snowball Guardian]
+           [org.bukkit.entity ArmorStand Monster Blaze Egg SmallFireball Player LivingEntity Projectile Arrow Snowball Guardian Creeper Silverfish]
            [org.bukkit.event.block Action]
            [org.bukkit.event.entity CreatureSpawnEvent$SpawnReason]
            [org.bukkit.event.entity EntityDamageEvent$DamageCause]
@@ -143,12 +143,8 @@
       (.setData item-stack nil))
     nil))
 
-(defn- hardcore-players []
-  (seq (filter #(player-in-hardcore? %)
-               (Bukkit/getOnlinePlayers))))
-
 (defn- target-nearest-hardcore-player [creature]
-  (when-let [players (hardcore-players)]
+  (when-let [players (seq (get-players-set))]
     (.setTarget creature (apply min-key
                                 #(.distance (.getLocation creature) (.getLocation %))
                                 players))))
@@ -172,11 +168,14 @@
           (dotimes [_ 2]
             (let [loc (doto (.clone l)
                         (.add (rand-nth [-0.5 0.5]) 0.5 (rand-nth [-0.5 0.5])))
-                  klass (if (= 0 (rand-int 3))
-                          Blaze
-                          (class entity))
                   monster
-                  (sugot.world/spawn loc klass)]
+                  (case (rand-int 10)
+                    0 (doto (sugot.world/spawn loc Creeper)
+                        (.setPowered true))
+                    1 (sugot.world/spawn loc Silverfish)
+                    2 (sugot.world/spawn loc Blaze)
+                    3 (sugot.world/spawn loc Blaze)
+                    (sugot.world/spawn loc (class entity)))]
               (target-nearest-hardcore-player monster))))))))
 
 (defn- launch-projectile [source projectile velocity]
@@ -387,7 +386,7 @@
 (defn garbage-collection []
   (if (and
         (hardcore-world-exist?)
-        (empty? (hardcore-players)))
+        (empty? (get-players-set)))
     (if-let [hardcore-world (hardcore-world)]
       (let [folder (.getWorldFolder hardcore-world)]
         (if (Bukkit/unloadWorld "hardcore" false)
