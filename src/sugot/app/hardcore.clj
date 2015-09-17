@@ -144,10 +144,13 @@
     nil))
 
 (defn- target-nearest-hardcore-player [creature]
-  (when-let [players (seq (get-players-set))]
-    (.setTarget creature (apply min-key
-                                #(.distance (.getLocation creature) (.getLocation %))
-                                players))))
+  (let [players-set (get-players-set)
+        online-players-set (remove nil?
+                                   (map #(Bukkit/getPlayer %) players-set))]
+    (when-let [players (seq online-players-set)]
+      (.setTarget creature (apply min-key
+                                  #(.distance (.getLocation creature) (.getLocation %))
+                                  players)))))
 
 (defn- loc-average [loc1 loc2]
   (.multiply (.add (.clone loc1) (.clone loc2))
