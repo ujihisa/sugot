@@ -2,7 +2,8 @@
   (:require [clojure.test :refer :all]
             [sugot.app.elevator :refer :all]
             [sugot.lib :as l]
-            [sugot.mocks :as mocks]))
+            [sugot.mocks :as mocks])
+  (:import [org.bukkit Material]))
 
 (defprotocol SugotPlayerInteractEvent
   (isCancelled [this])
@@ -22,10 +23,12 @@
       (is (= nil (PlayerInteractEvent event))))))
 
 (deftest PlayerToggleSneakEvent-test
-  (let [event (reify
+  (let [block (mocks/block Material/STONE_PLATE 0)
+        loc (mocks/location "world" 10 20 30 {[10 20 30] block})
+        event (reify
                 mocks/Player
-                (getPlayer [this] (mocks/player "dummy-player"))
+                (getPlayer [this] (mocks/player "dummy-player" loc))
                 mocks/PlayerToggleSneakEvent
                 (isSneaking [this] true))]
-    ; TODO actual test
-    event))
+    (with-redefs [l/send-message (fn [& _] :ok)]
+      (is (= :ok (PlayerToggleSneakEvent event))))))
