@@ -6,11 +6,9 @@
            [org.bukkit.event.entity CreatureSpawnEvent$SpawnReason]
            [org.bukkit.entity Guardian]))
 
-; TODO make it private
 (defn guardian? [entity]
   (instance? Guardian entity))
 
-; TODO make it private
 (defn prismarine? [block]
   (= Material/PRISMARINE (.getType block)))
 

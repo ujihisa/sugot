@@ -488,11 +488,10 @@
               (leave-hardcore-with-message player))))))
     (catch Exception e (.printStackTrace e))))
 
+; TODO
+; This is loaded from ~/.sugot-init.clj
 (defn on-load []
   (try
     (when (hardcore-world-exist?)
       (dir-delete-recursively (hardcore-world-dir)))
     (catch Exception e (.printStackTrace e))))
-
-; TODO support on-load from core
-(on-load)
