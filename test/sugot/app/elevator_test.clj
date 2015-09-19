@@ -22,6 +22,19 @@
     (with-redefs [l/send-message (fn [p m] :ok)]
       (is (= nil (PlayerInteractEvent event))))))
 
+(deftest PlayerMoveEvent-test
+  (let [loc nil
+        player nil
+        event (reify
+                mocks/Player
+                (getPlayer [this] player)
+                mocks/PlayerMoveEvent
+                (getFrom [this] :from)
+                (getTo [this] :to))]
+    (with-redefs [l/send-message (constantly :okk)
+                  jumping-directly-above? (constantly true)]
+      (is (= :ok (PlayerMoveEvent event))))))
+
 (deftest PlayerToggleSneakEvent-test
   (let [block (mocks/block Material/STONE_PLATE 0)
         loc (mocks/location "world" 10 20 30 {[10 20 30] block})

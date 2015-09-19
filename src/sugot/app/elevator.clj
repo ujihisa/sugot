@@ -40,7 +40,8 @@
           (l/send-message player (prn-str {:block-face block-face :block block}))
           nil)))))
 
-(defn- jumping-directly-above? [player from to]
+; TODO make it private
+(defn jumping-directly-above? [player from to]
   (and (< (.getY from) (.getY to))
        (< (- (Math/abs (.getX from)) (Math/abs (.getX to))) 0.1)
        (< (- (Math/abs (.getZ from)) (Math/abs (.getZ to))) 0.1)
@@ -60,8 +61,9 @@
                                        elevator))))))
 
 (defn PlayerToggleSneakEvent [event]
-  (let [player (.getPlayer event)]
-    (when (and
-            (.isSneaking event)
-            (= Material/STONE_PLATE (-> player .getLocation .getBlock .getType)))
-      (l/send-message player "[ELEVATOR] going down"))))
+  (let [player (.getPlayer event)
+        loc (.getLocation player)]
+    (when (.isSneaking event)
+      (when-let [elevator (get-elevator-from loc)]
+        (l/send-message player (format "[ELEVATOR] going down"
+                                       elevator))))))

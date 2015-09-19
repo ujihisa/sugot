@@ -43,8 +43,7 @@
                 mocks/Player
                 (getPlayer [this] player)
                 mocks/Action
-                (getAction [this] Action/RIGHT_CLICK_AIR)
-                )]
+                (getAction [this] Action/RIGHT_CLICK_AIR))]
     (with-redefs [enter-satisfy? (constantly true)
                   sugot.world/strike-lightning-effect do-nothing
                   sugot.world/play-sound do-nothing
