@@ -164,26 +164,31 @@
   (let [entity (.getEntity event)
         reason (.getSpawnReason event)
         l (.getLocation event)]
-    (when (and (hardcore-world-exist?)
-               (loc-in-hardcore? l)
-               (instance? Monster entity)
-               (= CreatureSpawnEvent$SpawnReason/NATURAL reason))
-      (if (< (.getY l) 64)
-        (when-not (instance? Guardian entity)
-          (.setCancelled event true))
-        (l/later 0
-          (dotimes [_ 2]
-            (let [loc (doto (.clone l)
-                        (.add (rand-nth [-0.5 0.5]) 0.5 (rand-nth [-0.5 0.5])))
-                  monster
-                  (case (rand-int 10)
-                    0 (doto (sugot.world/spawn loc Creeper)
-                        (.setPowered true))
-                    1 (sugot.world/spawn loc Silverfish)
-                    2 (sugot.world/spawn loc Blaze)
-                    3 (sugot.world/spawn loc Blaze)
-                    (sugot.world/spawn loc (class entity)))]
-              (target-nearest-hardcore-player monster))))))))
+    (when (and (loc-in-hardcore? l)
+               (contains? #{CreatureSpawnEvent$SpawnReason/NATURAL
+                            CreatureSpawnEvent$SpawnReason/CHUNK_GEN}
+                          reason))
+      (condp instance? entity
+        Guardian nil
+
+        Monster
+        (if (< (.getY l) 64)
+          (when-not (instance? Guardian entity)
+            (.setCancelled event true))
+          (l/later 0
+            (dotimes [_ 2]
+              (let [loc (doto (.clone l)
+                          (.add (rand-nth [-0.5 0.5]) 0.5 (rand-nth [-0.5 0.5])))
+                    monster
+                    (case (rand-int 10)
+                      0 (doto (sugot.world/spawn loc Creeper)
+                          (.setPowered true))
+                      1 (sugot.world/spawn loc Silverfish)
+                      2 (sugot.world/spawn loc Blaze)
+                      3 (sugot.world/spawn loc Blaze)
+                      (sugot.world/spawn loc (class entity)))]
+                (target-nearest-hardcore-player monster)))))
+        nil))))
 
 (defn- launch-projectile [source projectile velocity]
   (.launchProjectile source projectile velocity))
