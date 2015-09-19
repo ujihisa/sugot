@@ -51,16 +51,21 @@
           (= "Magic Compass"
              (some-> event
                      .getItemDrop .getItemStack l/get-display-name)))
-    (.setCancelled event true)
+    (l/set-cancelled event)
     (l/send-message (.getPlayer event) "[HARDCORE] You should keep it for going back home!")))
 
 (defn ProjectileHitEvent [event]
   nil)
 
+(defn player-in-hardcore? [player]
+  (let [pname (.getName player)]
+    (contains? (get-players-set) pname)))
+
 (defn BlockPlaceEvent [event]
-  (let [item-stack (.getItemInHand event)]
-    (when (= Material/BED (.getType item-stack))
-      (l/set-cancelled event))))
+  (when (player-in-hardcore? (.getPlayer event))
+    (let [item-stack (.getItemInHand event)]
+      (when (= Material/BED (.getType item-stack))
+        (l/set-cancelled event)))))
 
 
 ; key: ^String playername, value: ^Long timestamp msec
@@ -84,10 +89,6 @@
     (swap! came-from dissoc pname)
     (update-players-file (fn [players-set]
                            (disj players-set pname)))))
-
-(defn player-in-hardcore? [player]
-  (let [pname (.getName player)]
-    (contains? (get-players-set) pname)))
 
 (defn PlayerLoginEvent [event]
   (let [player (.getPlayer event)]
