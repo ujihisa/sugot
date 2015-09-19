@@ -106,7 +106,7 @@
     (when (loc-in-hardcore? (.getLocation entity))
       (cond
         (instance? ArmorStand entity)
-        (.setCancelled event true)
+        (l/set-cancelled event)
 
         (instance? Blaze entity)
         (condp = cause
@@ -120,7 +120,7 @@
 
               Arrow
               (do
-                (.setCancelled event true)
+                (l/set-cancelled event)
                 (.setFireTicks projectile (l/sec 1))
                 (sugot.world/play-sound (.getLocation projectile)
                                         Sound/ZOMBIE_METAL 1.0 2.0)
@@ -135,7 +135,7 @@
         (instance? Monster entity)
         (condp = cause
           EntityDamageEvent$DamageCause/FIRE_TICK
-          (.setCancelled event true)
+          (l/set-cancelled event)
 
           nil)))))
 
@@ -177,7 +177,7 @@
         Monster
         (if (< (.getY l) 64)
           (when-not (instance? Guardian entity)
-            (.setCancelled event true))
+            (l/set-cancelled event))
           (l/later 0
             (dotimes [_ 2]
               (let [loc (doto (.clone l)
@@ -206,7 +206,7 @@
               (instance? SmallFireball projectile)
               (not= 0 (rand-int 50)))
         (when-let [target (.getTarget shooter)]
-          (.setCancelled event true)
+          (l/set-cancelled event)
           (.setVelocity shooter (l/vector-from-to (.getLocation shooter)
                                                 (.getLocation target)))
           (l/later (l/sec 1)
@@ -454,7 +454,7 @@
             (player-in-hardcore? player))
       (let [helmet (.getHelmet entity)]
         (when (= Material/OBSIDIAN (.getType helmet))
-          (.setCancelled event true)))
+          (l/set-cancelled event)))
       #_ (let [x (.getX position)
             y (.getY position)
             z (.getZ position)]

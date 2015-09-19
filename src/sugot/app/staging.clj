@@ -122,7 +122,7 @@
     (when (= EntityDamageEvent$DamageCause/FALL (.getCause event))
       #_ (l/send-message player (str (format "%.2f" (-> player .getVelocity .getY))))
       (when (< 0 (-> entity .getVelocity .getY))
-        (.setCancelled event true))
+        (l/set-cancelled event))
       #_ (l/send-message player (prn-str (-> player .getVelocity .getY)))
       #_ (let [block (-> player .getLocation .getBlock)]
         (when (= Material/PISTON_MOVING_PIECE (.getType block))

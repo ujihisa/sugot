@@ -68,10 +68,6 @@
       Location
       (getLocation [this] loc))))
 
-(defprotocol Cancel
-  (isCancelled [this])
-  (setCancelled [this bool]))
-
 (defprotocol ItemDrop
   (getItemDrop [this]))
 

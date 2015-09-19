@@ -2,7 +2,8 @@
   (:require [clojure.test :refer :all]
             [sugot.app.highrise :refer :all]
             [sugot.lib :as l]
-            [sugot.mocks :as mocks])
+            [sugot.mocks :as mocks]
+            [sugot.event :as event])
   (:import [org.bukkit Location Material]))
 
 (deftest CreatureSpawnEvent-test
@@ -11,38 +12,22 @@
     (testing "prevent spawning monster at high space"
       (with-redefs [guardian? (fn [entity] false)
                     prismarine? (fn [entity] false)]
-        (is (let [cancelled (ref false)
-                  event (reify
+        (is (let [event (reify
                           mocks/SugotCreatureSpawnEvent
                           (getEntity [this] nil)
                           (getSpawnReason [this] reason)
                           mocks/Location
-                          (getLocation [this] (mocks/location world 0 120 0))
-                          mocks/Cancel
-                          (setCancelled [this bool]
-                            (dosync
-                              (ref-set cancelled true)))
-                          (isCancelled [this]
-                            @cancelled))]
-              (CreatureSpawnEvent event)
-              (.isCancelled event)))))
+                          (getLocation [this] (mocks/location world 0 120 0)))]
+              (event/cancelled? CreatureSpawnEvent event)))))
     (testing "prevent spawning on polished stone"
       (with-redefs [guardian? (fn [entity] false)
                     prismarine? (fn [entity] false)]
-        (is (let [cancelled (ref false)
-                  block-map {[0 59 0] (mocks/block Material/STONE 2)}
+        (is (let [block-map {[0 59 0] (mocks/block Material/STONE 2)}
                   event (reify
                           mocks/SugotCreatureSpawnEvent
                           (getEntity [this] nil)
                           (getSpawnReason [this] reason)
                           mocks/Location
                           (getLocation [this]
-                            (mocks/location world 0 60 0 block-map))
-                          mocks/Cancel
-                          (setCancelled [this bool]
-                            (dosync
-                              (ref-set cancelled true)))
-                          (isCancelled [this]
-                            @cancelled))]
-              (CreatureSpawnEvent event)
-              (.isCancelled event)))))))
+                            (mocks/location world 0 60 0 block-map)))]
+              (event/cancelled? CreatureSpawnEvent event)))))))
