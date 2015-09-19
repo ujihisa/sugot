@@ -2,8 +2,17 @@
   (:require [clojure.string :as s]
             [sugot.lib :as l]
             [sugot.block :as b])
-  (:import [org.bukkit Bukkit]
-           [org.bukkit.event.entity CreatureSpawnEvent$SpawnReason]))
+  (:import [org.bukkit Bukkit Material]
+           [org.bukkit.event.entity CreatureSpawnEvent$SpawnReason]
+           [org.bukkit.entity Guardian]))
+
+; TODO make it private
+(defn guardian? [entity]
+  (instance? Guardian entity))
+
+; TODO make it private
+(defn prismarine? [block]
+  (= Material/PRISMARINE (.getType block)))
 
 (defn CreatureSpawnEvent [event]
   (let [entity (.getEntity event)
@@ -16,4 +25,7 @@
                        reason)
         (when (or (<= 100 (.getY l))
                   (b/polish-stone? (b/from-loc l 0 -1 0)))
+          (.setCancelled event true))
+        (when (and (not (guardian? entity))
+                   (prismarine? (b/from-loc l 0 -1 0)))
           (.setCancelled event true))))))

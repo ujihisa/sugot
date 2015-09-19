@@ -3,7 +3,7 @@
             [sugot.lib :as l]
             [sugot.block :as b]
             [sugot.world])
-  (:import [org.bukkit Material Sound]
+  (:import [org.bukkit Bukkit Material Sound]
            [org.bukkit.event.entity CreatureSpawnEvent$SpawnReason]
            [org.bukkit.event.block Action]
            [org.bukkit.event.entity EntityDamageEvent$DamageCause]))
@@ -135,3 +135,13 @@
                                    (-> block .getState)
                                    (-> block .getState .getData)
                                    (-> block .getState .getRawData))))))))
+
+(defn headbang [ticks pname]
+  (when (< 0 ticks)
+    (when-let [player (Bukkit/getPlayer pname)]
+      (let [pitch (- (rand-int 180) 90)
+            yaw (- (rand-int 360) 180)]
+        (.teleport player (doto (.getLocation player)
+                            (.setPitch pitch)
+                            (.setYaw yaw))))
+      (l/later 1 (headbang (dec ticks) pname)))))
