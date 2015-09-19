@@ -436,17 +436,29 @@
     (catch Exception e (.printStackTrace e))))
 
 (defn PlayerInteractAtEntityEvent [event]
-  (prn :PlayerInteractAtEntityEvent event))
+  (let [player (.getPlayer event)
+        entity (.getRightClicked event)
+        position (.getClickedPosition event)]
+    (when (and
+            (instance? ArmorStand entity)
+            (player-in-hardcore? player))
+      (let [helmet (.getHelmet entity)]
+        (when (= Material/OBSIDIAN (.getType helmet))
+          (.setCancelled event true)))
+      #_ (let [x (.getX position)
+            y (.getY position)
+            z (.getZ position)]
+        (let [b (b/from-loc (.getLocation entity) (- x -0.5) 0 (- z -0.5))]
+          (when-not (.isSolid (.getType b))
+            (.teleport entity (.getLocation b))))))))
 
 (defn PlayerInteractEntityEvent [event]
-  (prn :PlayerInteractEntityEvent event))
+  #_ (prn :PlayerInteractEntityEvent event))
 
 (defn PlayerInteractEvent [event]
   (try
     (when-let [player (.getPlayer event)]
       (let [action (.getAction event)]
-        (when (= "ujm" (.getName player))
-          (prn :action action))
         (when (contains? #{Action/RIGHT_CLICK_AIR Action/RIGHT_CLICK_BLOCK} action)
           (cond
             (enter-satisfy? player)
@@ -481,4 +493,4 @@
     (catch Exception e (.printStackTrace e))))
 
 ; TODO support on-load from core
-(on-load)
+#_ (on-load)
