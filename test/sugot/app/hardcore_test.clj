@@ -31,3 +31,19 @@
           (PlayerDropItemEvent event)
           (true? (.isCancelled event))))))
 
+(defn event-cancelled? [f event]
+  (let [flag (ref false)]
+    (with-redefs [l/set-cancelled
+                  (fn [e]
+                    (when (= event e)
+                      (dosync
+                        (ref-set flag true))))]
+      (f event)
+      flag)))
+
+(deftest BlockPlaceEvent-test
+  (let [event (reify
+                mocks/ItemInHand
+                (getItemInHand [this]
+                  (ItemStack. Material/BED 1)))]
+    (is (event-cancelled? BlockPlaceEvent event))))

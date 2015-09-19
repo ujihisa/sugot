@@ -58,7 +58,9 @@
   nil)
 
 (defn BlockPlaceEvent [event]
-  nil)
+  (let [item-stack (.getItemInHand event)]
+    (when (= Material/BED (.getType item-stack))
+      (l/set-cancelled event))))
 
 
 ; key: ^String playername, value: ^Long timestamp msec

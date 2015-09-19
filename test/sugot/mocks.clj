@@ -75,8 +75,8 @@
 (defprotocol ItemDrop
   (getItemDrop [this]))
 
-(defprotocol ItemStack
-  (getItemStack [this]))
+(defprotocol ItemStack (getItemStack [this]))
+(defprotocol ItemInHand (getItemInHand [this]))
 
 (defprotocol ItemMeta
   (getItemMeta [this]))

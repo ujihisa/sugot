@@ -74,3 +74,6 @@
   (when (= (.getWorld from-loc) (.getWorld to-loc))
     (.normalize (.getDirection
                   (.subtract from-loc to-loc)))))
+
+(defn set-cancelled [event]
+  (.setCancelled event true))
