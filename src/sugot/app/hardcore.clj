@@ -135,13 +135,15 @@
           nil)))))
 
 (defn EntityDeathEvent [event]
-  (condp instance? (.getEntity event)
-    Blaze
-    (doseq [item-stack (.getDrops event)
-            :when (= Material/BLAZE_ROD (.getType item-stack))]
-      (.setType item-stack Material/QUARTZ)
-      (.setData item-stack nil))
-    nil))
+  (let [entity (.getEntity event)]
+    (when (loc-in-hardcore? (.getLocation entity))
+      (condp instance? entity
+        Blaze
+        (doseq [item-stack (.getDrops event)
+                :when (= Material/BLAZE_ROD (.getType item-stack))]
+          (.setType item-stack Material/QUARTZ)
+          (.setData item-stack nil))
+        nil))))
 
 (defn- target-nearest-hardcore-player [creature]
   (let [players-set (get-players-set)
@@ -189,6 +191,7 @@
     (let [projectile (.getEntity event)
           shooter (.getShooter projectile)]
       (when (and
+              (loc-in-hardcore? (.getLocation projectile))
               (instance? Blaze shooter)
               (instance? SmallFireball projectile)
               (not= 0 (rand-int 50)))
@@ -432,35 +435,43 @@
                   (- (System/currentTimeMillis) enter-time)))))
     (catch Exception e (.printStackTrace e))))
 
+(defn PlayerInteractAtEntityEvent [event]
+  (prn :PlayerInteractAtEntityEvent event))
+
+(defn PlayerInteractEntityEvent [event]
+  (prn :PlayerInteractEntityEvent event))
+
 (defn PlayerInteractEvent [event]
   (try
     (when-let [player (.getPlayer event)]
-    (let [action (.getAction event)]
-      (when (contains? #{Action/RIGHT_CLICK_AIR Action/RIGHT_CLICK_BLOCK} action)
-        (cond
-          (enter-satisfy? player)
-          (do
-            ; effect
-            (let [loc (.getLocation player)]
-              (sugot.world/strike-lightning-effect loc)
-              (sugot.world/play-sound loc Sound/AMBIENCE_CAVE 1.0 1.0)
-              (sugot.world/play-sound loc Sound/AMBIENCE_CAVE 1.0 1.0))
-            ; main
-            (garbage-collection)
-            (let [compass (doto (ItemStack. Material/COMPASS 1)
-                            (.addUnsafeEnchantment Enchantment/DURABILITY 1)
-                            (l/set-display-name "Magic Compass"))]
-              (.setItemInHand player compass)
-              (when-not (hardcore-world-exist?)
-                (l/broadcast "[HARDCORE] (Creating world...)")
-                (create 3))
-              ; TODO living entity
-              (enter-hardcore player)))
+      (let [action (.getAction event)]
+        (when (= "ujm" (.getName player))
+          (prn :action action))
+        (when (contains? #{Action/RIGHT_CLICK_AIR Action/RIGHT_CLICK_BLOCK} action)
+          (cond
+            (enter-satisfy? player)
+            (do
+              ; effect
+              (let [loc (.getLocation player)]
+                (sugot.world/strike-lightning-effect loc)
+                (sugot.world/play-sound loc Sound/AMBIENCE_CAVE 1.0 1.0)
+                (sugot.world/play-sound loc Sound/AMBIENCE_CAVE 1.0 1.0))
+              ; main
+              (garbage-collection)
+              (let [compass (doto (ItemStack. Material/COMPASS 1)
+                              (.addUnsafeEnchantment Enchantment/DURABILITY 1)
+                              (l/set-display-name "Magic Compass"))]
+                (.setItemInHand player compass)
+                (when-not (hardcore-world-exist?)
+                  (l/broadcast "[HARDCORE] (Creating world...)")
+                  (create 3))
+                ; TODO living entity
+                (enter-hardcore player)))
 
-          (leave-satisfy? player)
-          (do
-            (.setItemInHand player (ItemStack. Material/PAPER 1))
-            (leave-hardcore-with-message player))))))
+            (leave-satisfy? player)
+            (do
+              (.setItemInHand player (ItemStack. Material/PAPER 1))
+              (leave-hardcore-with-message player))))))
     (catch Exception e (.printStackTrace e))))
 
 (defn on-load []
