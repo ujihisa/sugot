@@ -77,3 +77,9 @@
 
 (defn set-cancelled [event]
   (.setCancelled event true))
+
+(defn set-item-in-hand [player item-stack]
+  (.setItemInHand player item-stack))
+
+(defn add-enchantment [item-stack enchantment level]
+  (.addUnsafeEnchantment item-stack enchantment level))

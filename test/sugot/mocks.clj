@@ -68,14 +68,11 @@
       Location
       (getLocation [this] loc))))
 
-(defprotocol ItemDrop
-  (getItemDrop [this]))
-
+(defprotocol Action (getAction [this]))
+(defprotocol ItemDrop (getItemDrop [this]))
 (defprotocol ItemStack (getItemStack [this]))
 (defprotocol ItemInHand (getItemInHand [this]))
-
-(defprotocol ItemMeta
-  (getItemMeta [this]))
+(defprotocol ItemMeta (getItemMeta [this]))
 
 (defprotocol DisplayName
   (getDisplayName [this]))

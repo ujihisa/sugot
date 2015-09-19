@@ -481,9 +481,9 @@
               ; main
               (garbage-collection)
               (let [compass (doto (ItemStack. Material/COMPASS 1)
-                              (.addUnsafeEnchantment Enchantment/DURABILITY 1)
+                              (l/add-enchantment Enchantment/DURABILITY 1)
                               (l/set-display-name "Magic Compass"))]
-                (.setItemInHand player compass)
+                (l/set-item-in-hand player compass)
                 (when-not (hardcore-world-exist?)
                   (l/broadcast "[HARDCORE] (Creating world...)")
                   (create 3))
@@ -492,7 +492,7 @@
 
             (leave-satisfy? player)
             (do
-              (.setItemInHand player (ItemStack. Material/PAPER 1))
+              (l/set-item-in-hand player (ItemStack. Material/PAPER 1))
               (leave-hardcore-with-message player))))))
     (catch Exception e (.printStackTrace e))))
 
