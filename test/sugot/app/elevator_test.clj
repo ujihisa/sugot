@@ -42,13 +42,13 @@
                     (mocks/block Material/IRON_FENCE 0))
         coll (assoc coll [10 20 30]
                     (mocks/block Material/STONE_PLATE 0
-                                 (mocks/location 10 20 30)))]
+                                 (mocks/location "anywhere" 10 20 30)))]
     coll))
 
 (deftest raise-elevator-test
   #_ (defrecord Elevator [loc-plate loc-bar base-type base-data])
   (let [elevator (Elevator. (mocks/location "anywhere" 50 60 70)
-                            nil
+                            (mocks/location "anywhere" 50 60 71)
                             Material/DIRT
                             0)]
     (with-redefs [b/set-block! (constantly :ok)]
