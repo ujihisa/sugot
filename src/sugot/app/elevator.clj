@@ -50,8 +50,9 @@
                  (.getChunkAt world
                               (+ xdiff (.getX (:loc-plate elevator)))
                               (+ zdiff (.getZ (:loc-plate elevator)))))
-        _ (prn :chunks (distinct chunks))
         entities (mapcat #(.getEntities %) (distinct chunks))]
+    (prn :dchunks (distinct chunks))
+    (prn :dentities (distinct entities))
     entities))
 
 (defn raise-entities [entities ydiff]
