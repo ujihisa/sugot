@@ -64,7 +64,7 @@
     (with-redefs [l/set-cancelled (constantly :o)
                   l/send-message (constantly :ok)
                   jumping-directly-above? (constantly true)
-                  raise-elevator (constantly :okk)
+                  raise-elevator (constantly 5)
                   l/teleport (constantly :okkk)]
       (is (= :okkk (PlayerMoveEvent event))))))
 

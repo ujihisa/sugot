@@ -68,8 +68,8 @@
         (l/send-message player (format "[ELEVATOR] going up. %s"
                                        (prn-str elevator)))
         (when-let [y-diff (raise-elevator elevator)]
-          (.teleport player (doto (.getLocation player)
-                              (.add 0 y-diff 0))))))))
+          (l/teleport player (doto (.getLocation player)
+                               (.add 0 y-diff 0))))))))
 
 (defn PlayerToggleSneakEvent [event]
   (let [player (.getPlayer event)
