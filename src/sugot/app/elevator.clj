@@ -48,8 +48,8 @@
   (let [world (.getWorld (:loc-plate elevator))
         chunks (for [[xdiff zdiff] [[-1 -1] [1 1]]]
                  (.getChunkAt world
-                              (+ xdiff (.getX (:loc-plate elevator)))
-                              (+ zdiff (.getZ (:loc-plate elevator)))))
+                              (doto (.clone (:loc-plate elevator))
+                                (.add xdiff 0 zdiff))))
         entities (mapcat #(.getEntities %) (distinct chunks))]
     (prn :dchunks (distinct chunks))
     (prn :dentities (distinct entities))
