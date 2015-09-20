@@ -46,12 +46,13 @@
 
 (defn find-involved-entities [elevator]
   (let [world (.getWorld (:loc-plate elevator))
-        chunks (mapcat (fn [[xdiff zdiff]]
-                         (.getChunkAt world
-                                      (+ xdiff (.getX (:loc-plate elevator)))
-                                      (+ zdiff (.getZ (:loc-plate elevator)))))
-                       [[-1 -1] [1 1]])]
-    chunks))
+        chunks (for [[xdiff zdiff] [[-1 -1] [1 1]]]
+                 (.getChunkAt world
+                              (+ xdiff (.getX (:loc-plate elevator)))
+                              (+ zdiff (.getZ (:loc-plate elevator)))))
+        _ (prn :chunks (distinct chunks))
+        entities (mapcat #(.getEntities %) (distinct chunks))]
+    entities))
 
 (defn raise-entities [entities ydiff]
   nil)
