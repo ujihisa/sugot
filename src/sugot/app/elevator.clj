@@ -96,14 +96,14 @@
   "Raise the given elevator as an side effect,
   and returns new location's y-diff where player should teleport."
   [elevator]
-  (let [ydiff 1]
+  (let [ydiff 2]
     (move-elevator elevator ydiff)
     ydiff))
 
 (defn down-elevator
   "similar to `up-elevator`"
   [elevator]
-  (let [ydiff -1]
+  (let [ydiff -2]
     (move-elevator elevator ydiff)
     ydiff))
 
