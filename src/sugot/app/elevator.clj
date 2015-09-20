@@ -44,9 +44,9 @@
                        (-> from .getBlock .getType)))
        (not (-> from .getBlock .isLiquid))))
 
-(defn move-elevator
+(defn up-elevator
   "Raise the given elevator as an side effect,
-  and returns new location y-diff where player should teleport."
+  and returns new location's y-diff where player should teleport."
   [elevator ydiff]
   (doseq [x (range -1 2)
           z (range -1 2)]
@@ -63,7 +63,7 @@
                 Material/IRON_FENCE
                 0)
   ; TODO
-  true)
+  1)
 
 (defn PlayerMoveEvent [event]
   (let [player (.getPlayer event)
@@ -75,12 +75,12 @@
         (l/send-message player (format "[ELEVATOR] going up. %s"
                                        (prn-str elevator)))
         (let [y-diff 1]
-          (when (move-elevator elevator y-diff)
+          (when (up-elevator elevator y-diff)
             (l/teleport player (doto (.getLocation player)
                                  (.add 0 (+ 0.01 y-diff) 0)))))))))
 
 (defn PlayerToggleSneakEvent [event]
-  (let [player (.getPlayer event)
+  #_ (let [player (.getPlayer event)
         loc (.getLocation player)]
     (when (.isSneaking event)
       (when-let [elevator (get-elevator-from loc)]
