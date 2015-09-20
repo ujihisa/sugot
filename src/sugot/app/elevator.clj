@@ -1,7 +1,8 @@
 (ns sugot.app.elevator
   (:require [sugot.lib :as l]
-            [sugot.block :as b])
-  (:import [org.bukkit Material]
+            [sugot.block :as b]
+            [sugot.world])
+  (:import [org.bukkit Material Sound]
            [org.bukkit.event.block Action]))
 
 (defrecord Elevator [loc-plate loc-bar base-type base-data])
@@ -76,22 +77,24 @@
 
 (defn move-elevator [elevator ydiff]
   (b/set-block! (b/from-loc (:loc-plate elevator) 0 0 0)
+                Material/AIR
+                1)
+  (doseq [x (range -1 2)
+          z (range -1 2)]
+    (b/set-block! (b/from-loc (:loc-plate elevator) x (dec ydiff) z)
+                  (:base-type elevator)
+                  (:base-data elevator))
+    (b/set-block! (b/from-loc (:loc-plate elevator) x -1 z)
                   Material/AIR
-                  1)
-    (doseq [x (range -1 2)
-            z (range -1 2)]
-      (b/set-block! (b/from-loc (:loc-plate elevator) x (dec ydiff) z)
-                    (:base-type elevator)
-                    (:base-data elevator))
-      (b/set-block! (b/from-loc (:loc-plate elevator) x -1 z)
-                    Material/AIR
-                    0))
-    (b/set-block! (b/from-loc (:loc-plate elevator) 0 ydiff 0)
-                  Material/STONE_PLATE
-                  1)
-    (b/set-block! (b/from-loc (:loc-bar elevator) 0 -1 0)
-                  Material/IRON_FENCE
                   0))
+  (b/set-block! (b/from-loc (:loc-plate elevator) 0 ydiff 0)
+                Material/STONE_PLATE
+                1)
+  (b/set-block! (b/from-loc (:loc-bar elevator) 0 -1 0)
+                Material/IRON_FENCE
+                0)
+  (sugot.world/play-sound (:loc-plate elevator) Sound/PISTON_EXTEND 1.0 1.5))
+
 (defn up-elevator
   "Raise the given elevator as an side effect,
   and returns new location's y-diff where player should teleport."
@@ -114,8 +117,6 @@
     (when (jumping-directly-above? player from to)
       (when-let [elevator (get-elevator-from from)]
         (l/set-cancelled event)
-        (l/send-message player (format "[ELEVATOR] going up. %s"
-                                       (prn-str elevator)))
         (move-elevator-and-entities elevator up-elevator)
         #_ (let [y-diff 1]
           (when (up-elevator elevator)
@@ -127,6 +128,4 @@
         loc (.getLocation player)]
     (when (.isSneaking event)
       (when-let [elevator (get-elevator-from loc)]
-        (l/send-message player (format "[ELEVATOR] going down. %s"
-                                       (prn-str elevator)))
         (move-elevator-and-entities elevator down-elevator)))))

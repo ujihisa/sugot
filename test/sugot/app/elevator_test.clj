@@ -3,7 +3,8 @@
             [sugot.app.elevator :refer :all]
             [sugot.lib :as l]
             [sugot.mocks :as mocks]
-            [sugot.block :as b])
+            [sugot.block :as b]
+            [sugot.world])
   (:import [org.bukkit Material]
            [sugot.app.elevator Elevator]))
 
@@ -51,9 +52,10 @@
                             (mocks/location "anywhere" 50 60 71)
                             Material/DIRT
                             0)]
-    (with-redefs [b/set-block! (constantly :ok)]
+    (with-redefs [b/set-block! (constantly :ok)
+                  sugot.world/play-sound (constantly :okk)]
       ; TODO real tests
-      (is (= 1 (up-elevator elevator))))))
+      (is (= 2 (up-elevator elevator))))))
 
 (deftest PlayerMoveEvent-test
   (let [loc (mocks/location "anywhere" 10 20 30 block-map)
@@ -65,8 +67,8 @@
                 (getFrom [this] loc)
                 (getTo [this] nil))]
     (with-redefs [l/set-cancelled (constantly :o)
-                  l/send-message (constantly :ok)
                   b/critical-block? (constantly false)
+                  sugot.world/play-sound (constantly :ok)
                   jumping-directly-above? (constantly true)
                   move-elevator-and-entities (constantly :okkk)]
       (is (= :okkk (PlayerMoveEvent event))))))
@@ -79,7 +81,6 @@
                 (getPlayer [this] (mocks/player "dummy-player" loc))
                 mocks/PlayerToggleSneakEvent
                 (isSneaking [this] true))]
-    (with-redefs [l/send-message (fn [& _] :ok)
-                  move-elevator (constantly true)
+    (with-redefs [move-elevator (constantly true)
                   l/teleport (constantly :okkk)]
       (is (= :okkk (PlayerToggleSneakEvent event))))))
