@@ -44,7 +44,10 @@
                 (getPlayer [this] player)
                 mocks/Action
                 (getAction [this] Action/RIGHT_CLICK_AIR))]
-    (with-redefs [enter-satisfy? (constantly true)
+    (with-redefs [enter-armour-stand
+                  (constantly (reify
+                                mocks/Location
+                                (getLocation [this] loc)))
                   sugot.world/strike-lightning-effect do-nothing
                   sugot.world/play-sound do-nothing
                   l/add-enchantment do-nothing

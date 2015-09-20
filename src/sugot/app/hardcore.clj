@@ -368,7 +368,9 @@
                              (conj players-set
                                    (.getName living-entity)))))))
 
-(defn enter-satisfy? [player]
+(defn enter-armour-stand
+  "returns armour to enter, stand only if it exists. No side effects."
+  [player]
   (when-let [item-stack (.getItemInHand player)]
     (when (and (= "world" (.getName (.getWorld (.getLocation player))))
                (= Material/PAPER (.getType item-stack))
@@ -376,7 +378,8 @@
                (not (contains? @wait-for-a-moment (.getName player))))
       (when-let [armour-stand (some #(when (instance? ArmorStand %) %)
                                     (.getNearbyEntities player 0 0 0))]
-        (= Material/PUMPKIN (.getType (.getHelmet armour-stand)))))))
+        (when (= Material/PUMPKIN (.getType (.getHelmet armour-stand)))
+          armour-stand)))))
 
 (defn leave-satisfy? [player]
   (when-let [item-stack (.getItemInHand player)]
@@ -466,10 +469,11 @@
 (defn PlayerInteractEvent [event]
   (try
     (when-let [player (.getPlayer event)]
-      (let [action (.getAction event)]
+      (let [action (.getAction event)
+            armour-stand (enter-armour-stand player)]
         (when (contains? #{Action/RIGHT_CLICK_AIR Action/RIGHT_CLICK_BLOCK} action)
           (cond
-            (enter-satisfy? player)
+            armour-stand
             (do
               ; effect
               (let [loc (.getLocation player)]
@@ -486,8 +490,7 @@
                   (l/broadcast "[HARDCORE] (Creating world...)")
                   (create 3))
                 ; TODO living entity
-                ; TODO change the initial location
-                (enter-hardcore player (.getLocation player))))
+                (enter-hardcore player (.getLocation armour-stand))))
 
             (leave-satisfy? player)
             (do
