@@ -79,5 +79,7 @@
                 (getPlayer [this] (mocks/player "dummy-player" loc))
                 mocks/PlayerToggleSneakEvent
                 (isSneaking [this] true))]
-    (with-redefs [l/send-message (fn [& _] :ok)]
-      (is (= :ok (PlayerToggleSneakEvent event))))))
+    (with-redefs [l/send-message (fn [& _] :ok)
+                  move-elevator (constantly true)
+                  l/teleport (constantly :okkk)]
+      (is (= :okkk (PlayerToggleSneakEvent event))))))

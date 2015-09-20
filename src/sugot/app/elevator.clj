@@ -85,4 +85,8 @@
     (when (.isSneaking event)
       (when-let [elevator (get-elevator-from loc)]
         (l/send-message player (format "[ELEVATOR] going down. %s"
-                                       (prn-str elevator)))))))
+                                       (prn-str elevator)))
+        (let [y-diff -1]
+          (when (move-elevator elevator y-diff)
+            (l/teleport player (doto (.getLocation player)
+                                 (.add 0 (+ 0.01 y-diff) 0)))))))))
