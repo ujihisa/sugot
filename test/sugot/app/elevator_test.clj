@@ -2,8 +2,10 @@
   (:require [clojure.test :refer :all]
             [sugot.app.elevator :refer :all]
             [sugot.lib :as l]
-            [sugot.mocks :as mocks])
-  (:import [org.bukkit Material]))
+            [sugot.mocks :as mocks]
+            [sugot.block :as b])
+  (:import [org.bukkit Material]
+           [sugot.app.elevator Elevator]))
 
 (defprotocol SugotPlayerInteractEvent
   (isCancelled [this])
@@ -40,6 +42,16 @@
         coll (assoc coll [10 20 30] (mocks/block Material/STONE_PLATE 0))]
     coll))
 
+(deftest raise-elevator-test
+  #_ (defrecord Elevator [loc-plate loc-bar base-type base-data])
+  (let [elevator (Elevator. (mocks/location "anywhere" 50 60 70)
+                            nil
+                            Material/DIRT
+                            0)]
+    (with-redefs [b/set-block! (constantly :ok)]
+      ; TODO real tests
+      (is (nil? (raise-elevator elevator))))))
+
 (deftest PlayerMoveEvent-test
   (let [loc (mocks/location "anywhere" 10 20 30 block-map)
         player nil
@@ -49,9 +61,11 @@
                 mocks/PlayerMoveEvent
                 (getFrom [this] loc)
                 (getTo [this] :to))]
-    (with-redefs [l/send-message (constantly :ok)
-                  jumping-directly-above? (constantly true)]
-      (is (= :ok (PlayerMoveEvent event))))))
+    (with-redefs [l/set-cancelled (constantly :o)
+                  l/send-message (constantly :ok)
+                  jumping-directly-above? (constantly true)
+                  raise-elevator (constantly :okk)]
+      (is (= :okk (PlayerMoveEvent event))))))
 
 (deftest PlayerToggleSneakEvent-test
   (let [block (mocks/block Material/STONE_PLATE 0)
