@@ -60,8 +60,8 @@
                 Material/STONE_PLATE
                 1)
   (b/set-block! (b/from-loc (:loc-bar elevator) 0 1 0)
-                Material/STONE_PLATE
-                1)
+                Material/IRON_FENCE
+                0)
   1)
 
 (defn PlayerMoveEvent [event]
