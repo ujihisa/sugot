@@ -53,13 +53,13 @@
     (b/set-block! (b/from-loc (:loc-plate elevator) x (dec ydiff) z)
                   (:base-type elevator)
                   (:base-data elevator))
-    (b/set-block! (b/from-loc (:loc-plate elevator) x (- ydiff 2) z)
+    (b/set-block! (b/from-loc (:loc-plate elevator) x (- ydiff) z)
                   Material/AIR
                   0))
   (b/set-block! (b/from-loc (:loc-plate elevator) 0 ydiff 0)
                 Material/STONE_PLATE
                 1)
-  (b/set-block! (b/from-loc (:loc-bar elevator) 0 (- ydiff 2) 0)
+  (b/set-block! (b/from-loc (:loc-bar elevator) 0 (- ydiff) 0)
                 Material/IRON_FENCE
                 0)
   ; TODO
