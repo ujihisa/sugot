@@ -56,9 +56,9 @@
                              loc-diff (l/subtract loc (:loc-plate elevator))]
                          (prn (.getSimpleName (class e)) :loc-diff loc-diff)
                          (and
-                           (<= -0.5 (.getX loc-diff) 1.5)
+                           (<= -1.5 (.getX loc-diff) 0.5)
                            (<= 0 (.getY loc-diff) 1)
-                           (<= -0.5 (.getZ loc-diff) 1.1))))]
+                           (<= -1.5 (.getZ loc-diff) 0.5))))]
     (filter on-elevator?
             (distinct all-entities))))
 
