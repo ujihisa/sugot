@@ -86,3 +86,6 @@
 
 (defn teleport [entity loc]
   (.teleport entity loc))
+
+(defn subtract [loc1 loc2]
+  (.subtract (.clone loc1) (.clone loc2)))

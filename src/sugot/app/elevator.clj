@@ -50,8 +50,16 @@
                  (.getChunkAt world
                               (doto (.clone (:loc-plate elevator))
                                 (.add xdiff 0 zdiff))))
-        entities (mapcat #(.getEntities %) (distinct chunks))]
-    (distinct entities)))
+        all-entities (mapcat #(.getEntities %) (distinct chunks))
+        on-elevator? (fn [e]
+                       (let [loc (.getLocation e)
+                             loc-diff(l/subtract loc (:loc-plate elevator))]
+                         (and
+                           (<= -1 (.getX loc-diff) 1)
+                           (<= 0 (.getY loc-diff) 1)
+                           (<= -1 (.getZ loc-diff) 1))))]
+    (filter on-elevator?
+            (distinct all-entities))))
 
 (defn move-entities [entities ydiff]
   (doseq [entity entities]
