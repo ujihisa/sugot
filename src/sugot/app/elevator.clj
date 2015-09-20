@@ -51,18 +51,17 @@
                               (doto (.clone (:loc-plate elevator))
                                 (.add xdiff 0 zdiff))))
         entities (mapcat #(.getEntities %) (distinct chunks))]
-    (prn :dchunks (distinct chunks))
-    (prn :dentities (distinct entities))
-    entities))
+    (distinct entities)))
 
 (defn raise-entities [entities ydiff]
-  nil)
+  (doseq [entity entities]
+    (l/teleport entity (doto (.getLocation entity)
+                         (.add 0 ydiff 0)))))
 
 (defn move-elevator-and-entities [elevator elevator-mover-f]
   (let [entities (find-involved-entities elevator)
-        _ (prn :entities entities)
         ydiff (elevator-mover-f elevator)]
-    (raise-entities entities ydiff)))
+    (l/later 0 (raise-entities entities ydiff))))
 
 (defn up-elevator
   "Raise the given elevator as an side effect,
