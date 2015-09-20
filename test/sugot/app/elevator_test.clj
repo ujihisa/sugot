@@ -54,7 +54,7 @@
 
 (deftest PlayerMoveEvent-test
   (let [loc (mocks/location "anywhere" 10 20 30 block-map)
-        player nil
+        player (mocks/player "dummy-player" loc)
         event (reify
                 mocks/Player
                 (getPlayer [this] player)
