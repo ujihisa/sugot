@@ -22,9 +22,20 @@
     (with-redefs [l/send-message (fn [p m] :ok)]
       (is (= nil (PlayerInteractEvent event))))))
 
+(def block-map
+  {[10 20 30] (mocks/block Material/STONE_PLATE 0)
+   [9 19 29] (mocks/block Material/PRISMARINE 1)
+   [10 19 29] (mocks/block Material/PRISMARINE 1)
+   [11 19 29] (mocks/block Material/PRISMARINE 1)
+   [9 19 30] (mocks/block Material/PRISMARINE 1)
+   [10 19 30] (mocks/block Material/PRISMARINE 1)
+   [11 19 30] (mocks/block Material/PRISMARINE 1)
+   [9 19 31] (mocks/block Material/PRISMARINE 1)
+   [10 19 31] (mocks/block Material/PRISMARINE 1)
+   [11 19 31] (mocks/block Material/PRISMARINE 1)})
+
 (deftest PlayerMoveEvent-test
-  (let [block-map {[10 20 30] (mocks/block Material/STONE_PLATE 0)}
-        loc (mocks/location "anywhere" 10 20 30 block-map)
+  (let [loc (mocks/location "anywhere" 10 20 30 block-map)
         player nil
         event (reify
                 mocks/Player
@@ -38,7 +49,7 @@
 
 (deftest PlayerToggleSneakEvent-test
   (let [block (mocks/block Material/STONE_PLATE 0)
-        loc (mocks/location "world" 10 20 30 {[10 20 30] block})
+        loc (mocks/location "world" 10 20 30 block-map)
         event (reify
                 mocks/Player
                 (getPlayer [this] (mocks/player "dummy-player" loc))

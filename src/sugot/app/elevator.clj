@@ -4,11 +4,21 @@
   (:import [org.bukkit Material]
            [org.bukkit.event.block Action]))
 
-(defrecord Elevator [loc-plate])
+(defrecord Elevator [loc-plate base-type base-data])
 
 (defn- get-elevator-from [loc]
   (when (= Material/STONE_PLATE (-> loc .getBlock .getType))
-    (Elevator. loc)))
+    (let [base-block (b/from-loc loc 0 -1 0)
+          base-type (.getType base-block)
+          base-data (.getData base-block)
+          base-blocks (for [x (range -1 2)
+                            z (range -1 2)
+                            :when (and (not (zero? x)) (not (zero? z)))]
+                        (b/from-loc loc x -1 z))]
+      (when (every? #(and (= base-type (.getType %))
+                          (= base-data (.getData %)))
+                    base-blocks)
+        (Elevator. loc base-type base-data)))))
 
 (defn elevator? [player block]
   #_ (when (= Material/GOLD_BLOCK (.getType block))
@@ -65,5 +75,5 @@
         loc (.getLocation player)]
     (when (.isSneaking event)
       (when-let [elevator (get-elevator-from loc)]
-        (l/send-message player (format "[ELEVATOR] going down"
+        (l/send-message player (format "[ELEVATOR] going down. %s"
                                        elevator))))))
