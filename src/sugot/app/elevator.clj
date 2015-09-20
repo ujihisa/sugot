@@ -52,7 +52,7 @@
           z (range -1 2)]
     (b/set-block! (b/from-loc (:loc-plate elevator) x -1 z)
                   Material/AIR
-                  Material/AIR)
+                  0)
     (b/set-block! (b/from-loc (:loc-plate elevator) x 0 z)
                   (:base-type elevator)
                   (:base-data elevator)))
