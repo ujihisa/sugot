@@ -53,7 +53,8 @@
         all-entities (mapcat #(.getEntities %) (distinct chunks))
         on-elevator? (fn [e]
                        (let [loc (.getLocation e)
-                             loc-diff(l/subtract loc (:loc-plate elevator))]
+                             loc-diff (l/subtract loc (:loc-plate elevator))]
+                         (prn (class e) :loc-diff loc-diff)
                          (and
                            (<= -1 (.getX loc-diff) 1)
                            (<= 0 (.getY loc-diff) 1)
@@ -68,6 +69,7 @@
 
 (defn move-elevator-and-entities [elevator elevator-mover-f]
   (let [entities (find-involved-entities elevator)
+        _ (prn :entities entities)
         ydiff (elevator-mover-f elevator)]
     (l/later 0 (move-entities entities ydiff))))
 
