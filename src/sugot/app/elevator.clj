@@ -50,12 +50,12 @@
   [elevator]
   (doseq [x (range -1 2)
           z (range -1 2)]
-    (b/set-block! (b/from-loc (:loc-plate elevator) x -1 z)
-                  Material/AIR
-                  0)
     (b/set-block! (b/from-loc (:loc-plate elevator) x 0 z)
                   (:base-type elevator)
-                  (:base-data elevator)))
+                  (:base-data elevator))
+    (b/set-block! (b/from-loc (:loc-plate elevator) x -1 z)
+                  Material/AIR
+                  0))
   (b/set-block! (b/from-loc (:loc-plate elevator) 0 1 0)
                 Material/STONE_PLATE
                 1)
