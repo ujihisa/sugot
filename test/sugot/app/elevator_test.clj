@@ -38,8 +38,11 @@
                            z (range -1 2)]
                        [[(+ 10 x) 20 (+ 30 z)]
                         (mocks/block Material/AIR 0)]))
-        coll (assoc coll [11 20 30] (mocks/block Material/IRON_FENCE 0))
-        coll (assoc coll [10 20 30] (mocks/block Material/STONE_PLATE 0))]
+        coll (assoc coll [11 20 30]
+                    (mocks/block Material/IRON_FENCE 0))
+        coll (assoc coll [10 20 30]
+                    (mocks/block Material/STONE_PLATE 0
+                                 (mocks/location 10 20 30)))]
     coll))
 
 (deftest raise-elevator-test

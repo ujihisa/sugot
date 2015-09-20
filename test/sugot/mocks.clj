@@ -4,16 +4,22 @@
 (defprotocol Entity (getEntity [this]))
 (defprotocol Cause (getCause [this]))
 (defprotocol Name (getName [this]))
+(defprotocol Location (getLocation [this]))
 
 (defprotocol ^:private SugotBlock
   (getType [this])
   (getData [this]))
 
-(defn block [^Material type ^Byte data]
-  (reify
-    SugotBlock
-    (getType [this] type)
-    (getData [this] data)))
+(defn block
+  ([^Material type ^Byte data]
+    (block type data nil))
+  ([^Material type ^Byte data loc]
+    (reify
+      SugotBlock
+      (getType [this] type)
+      (getData [this] data)
+      Location
+      (getLocation [this] loc))))
 
 (defn world [name]
   (reify Name
@@ -54,9 +60,6 @@
           (get block-map [(.getX this)
                           (.getY this)
                           (.getZ this)]))))))
-
-(defprotocol Location
-  (getLocation [this]))
 
 (defn player
   ([name]

@@ -32,7 +32,7 @@
           (when (every? #(and (= base-type (.getType %))
                               (= base-data (.getData %)))
                         base-blocks)
-            (Elevator. loc (first bars) base-type base-data)))))))
+            (Elevator. loc (.getLocation (first bars)) base-type base-data)))))))
 
 ; TODO make it private
 (defn jumping-directly-above? [player from to]
@@ -50,10 +50,16 @@
   [elevator]
   (doseq [x (range -1 2)
           z (range -1 2)]
+    (b/set-block! (b/from-loc (:loc-plate elevator) x -1 z)
+                  Material/AIR
+                  Material/AIR)
     (b/set-block! (b/from-loc (:loc-plate elevator) x 0 z)
                   (:base-type elevator)
                   (:base-data elevator)))
   (b/set-block! (b/from-loc (:loc-plate elevator) 0 1 0)
+                Material/STONE_PLATE
+                1)
+  (b/set-block! (b/from-loc (:loc-bar elevator) 0 1 0)
                 Material/STONE_PLATE
                 1)
   1)
