@@ -50,7 +50,7 @@
                             0)]
     (with-redefs [b/set-block! (constantly :ok)]
       ; TODO real tests
-      (is (nil? (raise-elevator elevator))))))
+      (is (= :ok (raise-elevator elevator))))))
 
 (deftest PlayerMoveEvent-test
   (let [loc (mocks/location "anywhere" 10 20 30 block-map)
