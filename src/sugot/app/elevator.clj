@@ -68,7 +68,7 @@
       (when-let [elevator (get-elevator-from from)]
         #_ (.setCancelled event true)
         (l/send-message player (format "[ELEVATOR] going up. %s"
-                                       elevator))))))
+                                       (prn-str elevator)))))))
 
 (defn PlayerToggleSneakEvent [event]
   (let [player (.getPlayer event)
@@ -76,4 +76,4 @@
     (when (.isSneaking event)
       (when-let [elevator (get-elevator-from loc)]
         (l/send-message player (format "[ELEVATOR] going down. %s"
-                                       elevator))))))
+                                       (prn-str elevator)))))))
