@@ -32,7 +32,7 @@
           (when (every? #(and (= base-type (.getType %))
                               (= base-data (.getData %)))
                         base-blocks)
-            (Elevator. loc (.getLocation (first bars)) base-type base-data)))))))
+            (Elevator. (-> loc .getBlock .getLocation) (.getLocation (first bars)) base-type base-data)))))))
 
 ; TODO make it private
 (defn jumping-directly-above? [player from to]
