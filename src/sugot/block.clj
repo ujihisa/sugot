@@ -22,6 +22,10 @@
   (.getBlock (doto (.clone loc)
                (.add x y z))))
 
+(defn critical-block? [block]
+  (or (= Material/BEDROCK (.getType block))
+      (instance? org.bukkit.inventory.InventoryHolder (.getState block))))
+
 (defn set-block! [target-block btype bdata]
   (.setType target-block btype)
   (.setData target-block bdata))

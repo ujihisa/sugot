@@ -111,6 +111,9 @@
                                  (.add 0 (+ 0.01 y-diff) 0)))))))))
 
 (defn PlayerToggleSneakEvent [event]
+  (let [player (.getPlayer event)
+        block (b/from-loc (.getLocation player) 0 -0.5 0)]
+    (l/send-message player (prn-str :critical? (b/critical-block? block))))
   #_ (let [player (.getPlayer event)
         loc (.getLocation player)]
     (when (.isSneaking event)
