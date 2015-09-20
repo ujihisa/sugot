@@ -45,13 +45,20 @@
        (not (-> from .getBlock .isLiquid))))
 
 (defn find-involved-entities [elevator]
-  nil)
+  (let [world (.getWorld (:loc-plate elevator))
+        chunks (mapcat (fn [[xdiff zdiff]]
+                         (.getChunkAt world
+                                      (+ xdiff (.getX (:loc-plate elevator)))
+                                      (+ zdiff (.getZ (:loc-plate elevator)))))
+                       [[-1 -1] [1 1]])]
+    chunks))
 
 (defn raise-entities [entities ydiff]
   nil)
 
 (defn move-elevator-and-entities [elevator elevator-mover-f]
   (let [entities (find-involved-entities elevator)
+        _ (prn :entities entities)
         ydiff (elevator-mover-f elevator)]
     (raise-entities entities ydiff)))
 
