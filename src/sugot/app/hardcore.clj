@@ -348,11 +348,9 @@
         (update-players-file (constantly #{}))
         (create-main-logic hardcore-world)))))
 
-(defn enter-hardcore [living-entity]
+(defn enter-hardcore [living-entity before-loc]
   {:pre [(hardcore-world)]}
-  (let [before-loc (.getLocation living-entity)
-
-        init-loc
+  (let [init-loc
         (Location.
           (hardcore-world) 0.5 (inc (.getHighestBlockYAt (hardcore-world) 0 0)) 0.5)]
     (.teleport living-entity init-loc)
@@ -488,7 +486,8 @@
                   (l/broadcast "[HARDCORE] (Creating world...)")
                   (create 3))
                 ; TODO living entity
-                (enter-hardcore player)))
+                ; TODO change the initial location
+                (enter-hardcore player (.getLocation player))))
 
             (leave-satisfy? player)
             (do
