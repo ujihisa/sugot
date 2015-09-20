@@ -44,10 +44,22 @@
                        (-> from .getBlock .getType)))
        (not (-> from .getBlock .isLiquid))))
 
+(defn find-involved-entities [elevator]
+  nil)
+
+(defn raise-entities [entities ydiff]
+  nil)
+
+(defn move-elevator-and-entities [elevator elevator-mover-f]
+  (let [entities (find-involved-entities elevator)
+        ydiff (elevator-mover-f elevator)]
+    (raise-entities entities ydiff)))
+
 (defn up-elevator
   "Raise the given elevator as an side effect,
   and returns new location's y-diff where player should teleport."
-  [elevator ydiff]
+  [elevator]
+  (def ydiff 1)
   (doseq [x (range -1 2)
           z (range -1 2)]
     (b/set-block! (b/from-loc (:loc-plate elevator) x (dec ydiff) z)
@@ -74,8 +86,9 @@
         (l/set-cancelled event)
         (l/send-message player (format "[ELEVATOR] going up. %s"
                                        (prn-str elevator)))
-        (let [y-diff 1]
-          (when (up-elevator elevator y-diff)
+        (move-elevator-and-entities elevator up-elevator)
+        #_ (let [y-diff 1]
+          (when (up-elevator elevator)
             (l/teleport player (doto (.getLocation player)
                                  (.add 0 (+ 0.01 y-diff) 0)))))))))
 
