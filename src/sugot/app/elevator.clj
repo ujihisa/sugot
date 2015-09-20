@@ -71,7 +71,8 @@
 (defn move-elevator-and-entities [elevator elevator-mover-f]
   (let [entities (find-involved-entities elevator)
         ydiff (elevator-mover-f elevator)]
-    (l/later 0 (move-entities entities ydiff))))
+    (when ydiff
+      (l/later 0 (move-entities entities ydiff)))))
 
 (defn move-elevator [elevator ydiff]
   (b/set-block! (b/from-loc (:loc-plate elevator) 0 0 0)
@@ -91,21 +92,54 @@
   (b/set-block! (b/from-loc (:loc-bar elevator) 0 -1 0)
                 Material/IRON_FENCE
                 0)
-  (sugot.world/play-sound (:loc-plate elevator) Sound/PISTON_EXTEND 1.0 1.5))
+  (sugot.world/play-sound (:loc-plate elevator) Sound/MINECART_BASE 0.5 2.0))
+
+(defn find-ydiff-up [elevator]
+  (let [available? (fn [ydiff]
+                     (let [bs (for [x (range -1 2)
+                                    z (range -1 2)
+                                    :when (not-both-nonzero? x z)]
+                                (b/from-loc (:loc-plate elevator) x ydiff z))
+                           airs (filter #(= Material/AIR (.getType %)) bs)
+                           bars (filter #(= Material/IRON_FENCE (.getType %)) bs)]
+                       (and (= 7 (count airs))
+                            (= 1 (count bars)))))
+        ydiffs (take-while available?
+                           (range 1 6))]
+    (when (seq ydiffs)
+      (last ydiffs))))
+
+(defn find-ydiff-down [elevator]
+  (let [available? (fn [ydiff]
+                     (let [bs (for [x (range -1 2)
+                                    z (range -1 2)
+                                    :when (not-both-nonzero? x z)]
+                                (b/from-loc (:loc-plate elevator) x (dec ydiff) z))
+                           airs (filter #(= Material/AIR (.getType %)) bs)
+                           bars (filter #(= Material/IRON_FENCE (.getType %)) bs)]
+                       (and (= 7 (count airs))
+                            (= 1 (count bars)))))
+        ydiffs (take-while available?
+                           (map - (range 1 6)))]
+    (when (seq ydiffs)
+      (last ydiffs))))
+
 
 (defn up-elevator
   "Raise the given elevator as an side effect,
   and returns new location's y-diff where player should teleport."
   [elevator]
-  (let [ydiff 2]
-    (move-elevator elevator ydiff)
+  (let [ydiff (find-ydiff-up elevator)]
+    (when ydiff
+      (move-elevator elevator ydiff))
     ydiff))
 
 (defn down-elevator
   "similar to `up-elevator`"
   [elevator]
-  (let [ydiff -2]
-    (move-elevator elevator ydiff)
+  (let [ydiff (find-ydiff-down elevator)]
+    (when ydiff
+      (move-elevator elevator ydiff))
     ydiff))
 
 (defn PlayerMoveEvent [event]

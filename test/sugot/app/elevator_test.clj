@@ -53,7 +53,8 @@
                             Material/DIRT
                             0)]
     (with-redefs [b/set-block! (constantly :ok)
-                  sugot.world/play-sound (constantly :okk)]
+                  sugot.world/play-sound (constantly :okk)
+                  find-ydiff-up (constantly 2)]
       ; TODO real tests
       (is (= 2 (up-elevator elevator))))))
 
