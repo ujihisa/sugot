@@ -54,11 +54,11 @@
         on-elevator? (fn [e]
                        (let [loc (.getLocation e)
                              loc-diff (l/subtract loc (:loc-plate elevator))]
-                         (prn (class e) :loc-diff loc-diff)
+                         (prn (.getSimpleName (class e)) :loc-diff loc-diff)
                          (and
-                           (<= -1 (.getX loc-diff) 1)
+                           (<= -0.5 (.getX loc-diff) 1.5)
                            (<= 0 (.getY loc-diff) 1)
-                           (<= -1 (.getZ loc-diff) 1))))]
+                           (<= -0.5 (.getZ loc-diff) 1.1))))]
     (filter on-elevator?
             (distinct all-entities))))
 
@@ -69,7 +69,7 @@
 
 (defn move-elevator-and-entities [elevator elevator-mover-f]
   (let [entities (find-involved-entities elevator)
-        _ (prn :entities entities)
+        _ (prn (count entities))
         ydiff (elevator-mover-f elevator)]
     (l/later 0 (move-entities entities ydiff))))
 
