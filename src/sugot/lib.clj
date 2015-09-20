@@ -83,3 +83,6 @@
 
 (defn add-enchantment [item-stack enchantment level]
   (.addUnsafeEnchantment item-stack enchantment level))
+
+(defn teleport [player loc]
+  (.teleport player loc))

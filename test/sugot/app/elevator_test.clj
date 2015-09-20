@@ -50,7 +50,7 @@
                             0)]
     (with-redefs [b/set-block! (constantly :ok)]
       ; TODO real tests
-      (is (= :ok (raise-elevator elevator))))))
+      (is (= 1 (raise-elevator elevator))))))
 
 (deftest PlayerMoveEvent-test
   (let [loc (mocks/location "anywhere" 10 20 30 block-map)
@@ -64,8 +64,9 @@
     (with-redefs [l/set-cancelled (constantly :o)
                   l/send-message (constantly :ok)
                   jumping-directly-above? (constantly true)
-                  raise-elevator (constantly :okk)]
-      (is (= :okk (PlayerMoveEvent event))))))
+                  raise-elevator (constantly :okk)
+                  l/teleport (constantly :okkk)]
+      (is (= :okkk (PlayerMoveEvent event))))))
 
 (deftest PlayerToggleSneakEvent-test
   (let [block (mocks/block Material/STONE_PLATE 0)
