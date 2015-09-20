@@ -66,6 +66,7 @@
                 (getTo [this] nil))]
     (with-redefs [l/set-cancelled (constantly :o)
                   l/send-message (constantly :ok)
+                  b/critical-block? (constantly false)
                   jumping-directly-above? (constantly true)
                   move-elevator-and-entities (constantly :okkk)]
       (is (= :okkk (PlayerMoveEvent event))))))

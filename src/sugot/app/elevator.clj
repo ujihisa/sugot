@@ -22,17 +22,18 @@
       (when (and
               (= 1 (count bars))
               (every? #(= Material/AIR (.getType %)) nonbars))
-        (let [base-block (b/from-loc loc 0 -1 0)
-              base-type (.getType base-block)
-              base-data (.getData base-block)
-              base-blocks (for [x (range -1 2)
-                                z (range -1 2)
-                                :when (not-both-nonzero? x z)]
-                            (b/from-loc loc x -1 z))]
-          (when (every? #(and (= base-type (.getType %))
-                              (= base-data (.getData %)))
-                        base-blocks)
-            (Elevator. (-> loc .getBlock .getLocation) (.getLocation (first bars)) base-type base-data)))))))
+        (let [base-block (b/from-loc loc 0 -1 0)]
+          (when-not (b/critical-block? base-block)
+            (let [base-type (.getType base-block)
+                  base-data (.getData base-block)
+                  base-blocks (for [x (range -1 2)
+                                    z (range -1 2)
+                                    :when (not-both-nonzero? x z)]
+                                (b/from-loc loc x -1 z))]
+              (when (every? #(and (= base-type (.getType %))
+                                  (= base-data (.getData %)))
+                            base-blocks)
+                (Elevator. (-> loc .getBlock .getLocation) (.getLocation (first bars)) base-type base-data)))))))))
 
 ; TODO make it private
 (defn jumping-directly-above? [player from to]
@@ -111,9 +112,6 @@
                                  (.add 0 (+ 0.01 y-diff) 0)))))))))
 
 (defn PlayerToggleSneakEvent [event]
-  (let [player (.getPlayer event)
-        block (b/from-loc (.getLocation player) 0 -0.5 0)]
-    (l/send-message player (prn-str :critical? (b/critical-block? block))))
   #_ (let [player (.getPlayer event)
         loc (.getLocation player)]
     (when (.isSneaking event)
