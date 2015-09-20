@@ -13,8 +13,9 @@
       (with-redefs [guardian? (fn [entity] false)
                     prismarine? (fn [entity] false)]
         (is (let [event (reify
-                          mocks/SugotCreatureSpawnEvent
+                          mocks/Entity
                           (getEntity [this] nil)
+                          mocks/SugotCreatureSpawnEvent
                           (getSpawnReason [this] reason)
                           mocks/Location
                           (getLocation [this] (mocks/location world 0 120 0)))]
@@ -24,8 +25,9 @@
                     prismarine? (fn [entity] false)]
         (is (let [block-map {[0 59 0] (mocks/block Material/STONE 2)}
                   event (reify
-                          mocks/SugotCreatureSpawnEvent
+                          mocks/Entity
                           (getEntity [this] nil)
+                          mocks/SugotCreatureSpawnEvent
                           (getSpawnReason [this] reason)
                           mocks/Location
                           (getLocation [this]

@@ -76,17 +76,12 @@
 (defprotocol ItemStack (getItemStack [this]))
 (defprotocol ItemInHand (getItemInHand [this]))
 (defprotocol ItemMeta (getItemMeta [this]))
-
-(defprotocol DisplayName
-  (getDisplayName [this]))
+(defprotocol DisplayName (getDisplayName [this]))
+(defprotocol Player (getPlayer [this]))
 
 (defprotocol SugotCreatureSpawnEvent
   ; Use with Cancel and Location
-  (getEntity [this])
   (getSpawnReason [this]))
-
-(defprotocol Player
-  (getPlayer [this]))
 
 (defprotocol PlayerMoveEvent
   ; Use with Player
