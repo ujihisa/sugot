@@ -23,16 +23,22 @@
       (is (= nil (PlayerInteractEvent event))))))
 
 (def block-map
-  {[10 20 30] (mocks/block Material/STONE_PLATE 0)
-   [9 19 29] (mocks/block Material/PRISMARINE 1)
-   [10 19 29] (mocks/block Material/PRISMARINE 1)
-   [11 19 29] (mocks/block Material/PRISMARINE 1)
-   [9 19 30] (mocks/block Material/PRISMARINE 1)
-   [10 19 30] (mocks/block Material/PRISMARINE 1)
-   [11 19 30] (mocks/block Material/PRISMARINE 1)
-   [9 19 31] (mocks/block Material/PRISMARINE 1)
-   [10 19 31] (mocks/block Material/PRISMARINE 1)
-   [11 19 31] (mocks/block Material/PRISMARINE 1)})
+  (let [coll {}
+        coll (reduce #(assoc %1 (first %2) (second %2))
+                     coll
+                     (for [x (range -1 2)
+                           z (range -1 2)]
+                       [[(+ 10 x) 19 (+ 30 z)]
+                        (mocks/block Material/PRISMARINE 1)]))
+        coll (reduce #(assoc %1 (first %2) (second %2))
+                     coll
+                     (for [x (range -1 2)
+                           z (range -1 2)]
+                       [[(+ 10 x) 20 (+ 30 z)]
+                        (mocks/block Material/AIR 0)]))
+        coll (assoc coll [11 20 30] (mocks/block Material/IRON_FENCE 0))
+        coll (assoc coll [10 20 30] (mocks/block Material/STONE_PLATE 0))]
+    coll))
 
 (deftest PlayerMoveEvent-test
   (let [loc (mocks/location "anywhere" 10 20 30 block-map)

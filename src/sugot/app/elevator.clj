@@ -4,21 +4,35 @@
   (:import [org.bukkit Material]
            [org.bukkit.event.block Action]))
 
-(defrecord Elevator [loc-plate base-type base-data])
+(defrecord Elevator [loc-plate loc-bar base-type base-data])
+
+(defn- not-both-nonzero? [a b]
+  (not (and (zero? a)
+            (zero? b))))
 
 (defn- get-elevator-from [loc]
   (when (= Material/STONE_PLATE (-> loc .getBlock .getType))
-    (let [base-block (b/from-loc loc 0 -1 0)
-          base-type (.getType base-block)
-          base-data (.getData base-block)
-          base-blocks (for [x (range -1 2)
-                            z (range -1 2)
-                            :when (and (not (zero? x)) (not (zero? z)))]
-                        (b/from-loc loc x -1 z))]
-      (when (every? #(and (= base-type (.getType %))
-                          (= base-data (.getData %)))
-                    base-blocks)
-        (Elevator. loc base-type base-data)))))
+    (let [bar-candidates (for [x (range -1 2)
+                               z (range -1 2)
+                               :when (not-both-nonzero? x z)]
+                           (b/from-loc loc x 0 z))
+          {bars true nonbars false} (group-by
+                                      #(= Material/IRON_FENCE (.getType %))
+                                      bar-candidates)]
+      (when (and
+              (= 1 (count bars))
+              (every? #(= Material/AIR (.getType %)) nonbars))
+        (let [base-block (b/from-loc loc 0 -1 0)
+              base-type (.getType base-block)
+              base-data (.getData base-block)
+              base-blocks (for [x (range -1 2)
+                                z (range -1 2)
+                                :when (not-both-nonzero? x z)]
+                            (b/from-loc loc x -1 z))]
+          (when (every? #(and (= base-type (.getType %))
+                              (= base-data (.getData %)))
+                        base-blocks)
+            (Elevator. loc (first bars) base-type base-data)))))))
 
 (defn elevator? [player block]
   #_ (when (= Material/GOLD_BLOCK (.getType block))
