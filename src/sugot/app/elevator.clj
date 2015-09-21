@@ -24,7 +24,10 @@
               (= 1 (count bars))
               (every? #(= Material/AIR (.getType %)) nonbars))
         (let [base-block (b/from-loc loc 0 -1 0)]
-          (when-not (b/critical-block? base-block)
+          (when (and
+                  (not (b/critical-block? base-block))
+                  (not (contains? #{Material/SAND Material/GRAVEL}
+                                  (.getType base-block))))
             (let [base-type (.getType base-block)
                   base-data (.getData base-block)
                   base-blocks (for [x (range -1 2)
@@ -102,10 +105,12 @@
                                 (b/from-loc (:loc-plate elevator) x ydiff z))
                            airs (filter #(= Material/AIR (.getType %)) bs)
                            bars (filter #(= Material/IRON_FENCE (.getType %)) bs)]
-                       (and (= 7 (count airs))
+                       (and (= Material/AIR (.getType (b/from-loc (:loc-plate elevator) 0 ydiff 0)))
+                            (= Material/AIR (.getType (b/from-loc (:loc-plate elevator) 0 (inc ydiff) 0)))
+                            (= 7 (count airs))
                             (= 1 (count bars)))))
         ydiffs (take-while available?
-                           (range 1 6))]
+                           (range 1 51))]
     (when (seq ydiffs)
       (last ydiffs))))
 
@@ -117,10 +122,11 @@
                                 (b/from-loc (:loc-plate elevator) x (dec ydiff) z))
                            airs (filter #(= Material/AIR (.getType %)) bs)
                            bars (filter #(= Material/IRON_FENCE (.getType %)) bs)]
-                       (and (= 7 (count airs))
+                       (and (= Material/AIR (.getType (b/from-loc (:loc-plate elevator) 0 (dec ydiff) 0)))
+                            (= 7 (count airs))
                             (= 1 (count bars)))))
         ydiffs (take-while available?
-                           (map - (range 1 6)))]
+                           (map - (range 1 51)))]
     (when (seq ydiffs)
       (last ydiffs))))
 
