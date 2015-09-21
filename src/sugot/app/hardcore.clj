@@ -78,6 +78,7 @@
   (let [to (some identity [(get @came-from (.getName player))
                            (.getBedSpawnLocation player)
                            (.getSpawnLocation (Bukkit/getWorld "world"))])
+        to (doto to (.add 0.0 0.1 0.0))
         pname (.getName player)]
     (swap! wait-for-a-moment conj pname)
     (l/later (l/sec 5)
@@ -490,7 +491,8 @@
                   (l/broadcast "[HARDCORE] (Creating world...)")
                   (create 3))
                 ; TODO living entity
-                (enter-hardcore player (.getLocation armour-stand))))
+                (enter-hardcore player (doto (.clone (.getLocation armour-stand))
+                                         (.add 0 1 0)))))
 
             (leave-satisfy? player)
             (do
