@@ -4,7 +4,9 @@
             [sugot.world])
   (:import [org.bukkit Bukkit Server WorldCreator Material Location Sound]
            [org.bukkit.block Biome]
-           [org.bukkit.entity ArmorStand Monster Blaze Egg SmallFireball Player LivingEntity Projectile Arrow Snowball Guardian Creeper Silverfish]
+           [org.bukkit.entity ArmorStand Monster Blaze Egg SmallFireball
+            Player LivingEntity Projectile Arrow Snowball Guardian Creeper Silverfish Horse
+            Pig Skeleton]
            [org.bukkit.event.block Action]
            [org.bukkit.event.entity CreatureSpawnEvent$SpawnReason]
            [org.bukkit.event.entity EntityDamageEvent$DamageCause]
@@ -105,6 +107,32 @@
   (let [entity (.getEntity event)
         cause (.getCause event)]
     (when (loc-in-hardcore? (.getLocation entity))
+      (when (instance? Pig entity)
+        (when (.getPassenger entity)
+          (when (= EntityDamageEvent$DamageCause/FALL cause)
+            (l/set-cancelled event))))
+      (when (instance? Skeleton entity)
+        (when (contains? #{EntityDamageEvent$DamageCause/PROJECTILE
+                           EntityDamageEvent$DamageCause/ENTITY_ATTACK
+                           EntityDamageEvent$DamageCause/ENTITY_EXPLOSION}
+                         cause)
+          (when-let [vehicle (.getVehicle entity)]
+            (when (instance? Pig vehicle)
+              (l/set-cancelled event)
+              (when-let [damager (.getDamager event)]
+                (when (instance? Arrow damager)
+                  (.remove damager)))
+              (let [loc (.getLocation entity)]
+                (sugot.world/play-sound loc
+                                        Sound/ENDERMAN_TELEPORT 1.0 1.0)
+                (.setVelocity vehicle (Vector. (rand-nth [-1.0 0.0 1.0])
+                                               0.4
+                                               (rand-nth [-1.0 0.0 1.0])))
+                (when-let [damager (.getDamager event)]
+                  (when (instance? LivingEntity damager)
+                    (.setTarget entity damager)
+                    (.setTarget vehicle damager))))))))
+
       (cond
         (instance? ArmorStand entity)
         (l/set-cancelled event)
@@ -170,10 +198,21 @@
         l (.getLocation event)]
     (when (and (loc-in-hardcore? l)
                (contains? #{CreatureSpawnEvent$SpawnReason/NATURAL
-                            CreatureSpawnEvent$SpawnReason/CHUNK_GEN}
+                            CreatureSpawnEvent$SpawnReason/CHUNK_GEN
+                            CreatureSpawnEvent$SpawnReason/SPAWNER_EGG}
                           reason))
       (condp instance? entity
         Guardian nil
+
+        Horse
+        (do
+          (.setDomestication entity (.getMaxDomestication entity))
+          (.setArmor (.getInventory entity) (ItemStack. Material/DIRT 1)))
+
+        Pig
+        (when (= 0 0 #_(rand-int 10))
+          (let [skeleton (sugot.world/spawn (.getLocation entity) Skeleton)]
+            (.setPassenger entity skeleton)))
 
         Monster
         (if (< (.getY l) 64)
@@ -234,7 +273,7 @@
     [x z]))
 
 (defn- rand-treasure []
-  (case (rand-int 36)
+  (case (rand-int 40)
     0 (ItemStack. Material/DIRT (inc (rand-int 32)))
     1 (ItemStack. Material/WATER_LILY (inc (rand-int 32)))
     2 (ItemStack. Material/SAND (inc (rand-int 64)))
@@ -271,6 +310,13 @@
     33 (ItemStack. Material/DIAMOND_BARDING 1)
     34 (ItemStack. Material/RABBIT_FOOT (inc (rand-int 10)))
     35 (ItemStack. Material/RABBIT_STEW 1)
+    36 (ItemStack. Material/STONE_PLATE (inc (rand-int 10)))
+    37 (ItemStack. Material/IRON_FENCE (inc (rand-int 10)))
+    38 (ItemStack. Material/ROTTEN_FLESH 1)
+    39 (ItemStack. (rand-nth [Material/RECORD_10 Material/RECORD_11 Material/RECORD_12 Material/RECORD_3
+                              Material/RECORD_4 Material/RECORD_5 Material/RECORD_6 Material/RECORD_7
+                              Material/RECORD_8 Material/RECORD_9 Material/GOLD_RECORD Material/GREEN_RECORD])
+                   1)
     nil))
 
 (defn- rand-treasures [min-n max-n]
