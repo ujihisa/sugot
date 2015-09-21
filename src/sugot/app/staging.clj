@@ -118,8 +118,15 @@
 (defn EntityDamageEvent [event]
   (let [entity (.getEntity event)
         player (when (player? entity)
-                 entity)]
-    (when (= EntityDamageEvent$DamageCause/FALL (.getCause event))
+                 entity)
+        cause (.getCause event)]
+    (when (= EntityDamageEvent$DamageCause/SUFFOCATION cause)
+      (when player
+        (when (= Material/AIR (.getType (.getBlock (.getLocation player))))
+          (l/set-cancelled event))
+        #_ (l/broadcast (prn-str :type (.getType (.getBlock (.getLocation player)))
+                              :entity entity))))
+    (when (= EntityDamageEvent$DamageCause/FALL cause)
       #_ (l/send-message player (str (format "%.2f" (-> player .getVelocity .getY))))
       (when (< 0 (-> entity .getVelocity .getY))
         (l/set-cancelled event))
