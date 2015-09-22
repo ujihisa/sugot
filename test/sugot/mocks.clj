@@ -5,6 +5,7 @@
 (defprotocol Cause (getCause [this]))
 (defprotocol Name (getName [this]))
 (defprotocol Location (getLocation [this]))
+(defprotocol ClickedBlock (getClickedBlock [this]))
 
 (defprotocol ^:private SugotBlock
   (getType [this])

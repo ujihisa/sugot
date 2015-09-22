@@ -168,3 +168,17 @@
     (when (.isSneaking event)
       (when-let [elevator (get-elevator-from loc)]
         (move-elevator-and-entities elevator down-elevator)))))
+
+(defn find-elevator-from-bar [block player-y]
+  nil)
+
+(defn PlayerInteractEvent [event]
+  (let [player (.getPlayer event)
+        block (.getClickedBlock event)
+        action (.getAction event)]
+    (when (and
+            (contains? #{Action/LEFT_CLICK_BLOCK Action/RIGHT_CLICK_BLOCK} action)
+            (= Material/IRON_FENCE (.getType block)))
+      (when-let [elevator (find-elevator-from-bar block (.getY (.getLocation player)))]
+        (l/set-cancelled event)
+        (prn :elevator elevator)))))

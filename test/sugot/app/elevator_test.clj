@@ -4,7 +4,8 @@
             [sugot.lib :as l]
             [sugot.mocks :as mocks]
             [sugot.block :as b]
-            [sugot.world])
+            [sugot.world]
+            [sugot.event])
   (:import [org.bukkit Material]
            [sugot.app.elevator Elevator]))
 
@@ -85,3 +86,19 @@
     (with-redefs [move-elevator (constantly true)
                   l/teleport (constantly :okkk)]
       (is (= :okkk (PlayerToggleSneakEvent event))))))
+
+(deftest find-elevator-from-bar-test
+  (let [block-map {}
+        loc (mocks/location "anywhere" 10 20 30 block-map)
+        block (mocks/block Material/IRON_FENCE 0 loc)]
+    (is (nil? (find-elevator-from-bar block 20)))))
+
+(deftest PlayerInteractEvent-test
+  (let [loc (mocks/location "anywhere" 10 20 30)
+        player (mocks/player "dummy-player" loc)
+        event (reify
+                mocks/Player (getPlayer [this] player)
+                mocks/ClickedBlock (getClickedBlock [this] nil)
+                mocks/Action (getAction [this] nil))]
+    (with-redefs [find-elevator-from-bar (constantly :an-elevator)]
+      (is (sugot.event/cancelled? PlayerInteractEvent event)))))
