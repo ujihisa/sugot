@@ -4,6 +4,7 @@
             [sugot.block :as b]
             [sugot.world])
   (:import [org.bukkit Bukkit Material Sound]
+           [org.bukkit.entity ArmorStand]
            [org.bukkit.event.entity CreatureSpawnEvent$SpawnReason]
            [org.bukkit.event.block Action]
            [org.bukkit.event.entity EntityDamageEvent$DamageCause]))
@@ -152,3 +153,13 @@
                             (.setPitch pitch)
                             (.setYaw yaw))))
       (l/later 1 (headbang (dec ticks) pname)))))
+
+(try
+  (when-let [ujm (Bukkit/getPlayer "mozukusoba") ]
+    (let [armour-stands (for [entity (.getNearbyEntities ujm 2 2 2)
+                              :when (instance? ArmorStand entity)]
+                          entity)
+          armour-stand (first armour-stands)]
+      (.setVisible armour-stand true)
+      (.setPassenger armour-stand ujm)))
+  (catch Exception e nil))

@@ -95,6 +95,7 @@
   (b/set-block! (b/from-loc (:loc-bar elevator) 0 -1 0)
                 Material/IRON_FENCE
                 0)
+  (sugot.world/play-sound (:loc-bar elevator) Sound/MINECART_BASE 0.5 2.0)
   (sugot.world/play-sound (:loc-plate elevator) Sound/MINECART_BASE 0.5 2.0))
 
 (defn find-ydiff-up [elevator]

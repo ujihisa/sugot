@@ -210,7 +210,7 @@
           (.setArmor (.getInventory entity) (ItemStack. Material/DIRT 1)))
 
         Pig
-        (when (= 0 0 #_(rand-int 10))
+        (when (= 0 (rand-int 3))
           (let [skeleton (sugot.world/spawn (.getLocation entity) Skeleton)]
             (.setPassenger entity skeleton)))
 
