@@ -2,7 +2,8 @@
   (:require [sugot.lib :as l]
             [sugot.block :as b]
             [sugot.world])
-  (:import [org.bukkit Bukkit Server WorldCreator Material Location Sound]
+  (:import [org.bukkit Bukkit Server WorldCreator Material Location Sound
+            Effect]
            [org.bukkit.block Biome]
            [org.bukkit.entity ArmorStand Monster Blaze Egg SmallFireball
             Player LivingEntity Projectile Arrow Snowball Guardian Creeper Silverfish Horse
@@ -123,8 +124,7 @@
                 (when (instance? Arrow damager)
                   (.remove damager)))
               (let [loc (.getLocation entity)]
-                (sugot.world/play-sound loc
-                                        Sound/ENDERMAN_TELEPORT 1.0 1.0)
+                (sugot.world/play-sound loc Sound/BAT_TAKEOFF 1.0 1.0)
                 (.setVelocity vehicle (Vector. (rand-nth [-1.0 0.0 1.0])
                                                0.4
                                                (rand-nth [-1.0 0.0 1.0])))
@@ -210,7 +210,7 @@
           (.setArmor (.getInventory entity) (ItemStack. Material/DIRT 1)))
 
         Pig
-        (when (= 0 (rand-int 3))
+        (when (= 0 (rand-int 2))
           (let [skeleton (sugot.world/spawn (.getLocation entity) Skeleton)]
             (.setPassenger entity skeleton)))
 
