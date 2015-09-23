@@ -39,8 +39,7 @@
                             base-blocks)
                 (Elevator. (-> loc .getBlock .getLocation) (.getLocation (first bars)) base-type base-data)))))))))
 
-; TODO make it private
-(defn jumping-directly-above? [player from to]
+(defn- jumping-directly-above? [player from to]
   (and (< (.getY from) (.getY to))
        (< (- (Math/abs (.getX from)) (Math/abs (.getX to))) 0.1)
        (< (- (Math/abs (.getZ from)) (Math/abs (.getZ to))) 0.1)

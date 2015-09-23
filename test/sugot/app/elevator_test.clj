@@ -73,9 +73,9 @@
     (with-redefs [l/set-cancelled (constantly :o)
                   b/critical-block? (constantly false)
                   sugot.world/play-sound (constantly :ok)
-                  jumping-directly-above? (constantly true)
                   move-elevator-and-entities (constantly :okkk)]
-      (PlayerMoveEvent event)
+      (with-redefs-fn {#'sugot.app.elevator/jumping-directly-above? (constantly true)}
+                      #(PlayerMoveEvent event))
       => :okkk)))
 
 #_ (deftest PlayerToggleSneakEvent-test
