@@ -1,5 +1,5 @@
 (ns sugot.app.whey-test
-  (:require [clojure.test :refer :all]
+  (:require [midje.sweet :refer :all]
             [sugot.app.whey :refer :all]
             [sugot.lib :as l]
             [sugot.mocks :as mocks]
@@ -8,8 +8,8 @@
            [org.bukkit.inventory ItemStack]
            [org.bukkit.enchantments Enchantment]))
 
-(deftest PlayerBucketEmptyEvent-test
-  (testing "If it's normal milk, nothing will happen"
+(facts PlayerBucketEmptyEvent-test
+  (fact "If it's normal milk, nothing will happen"
     (let [player (mocks/player "dummy-player")
           item-stack (ItemStack. Material/MILK_BUCKET 1)
           called? (ref false)
@@ -18,9 +18,10 @@
                   (getPlayer [this] player)
                   mocks/ItemStack
                   (getItemStack [this] item-stack))]
-      (is (false? (do
-                    #_ (PlayerBucketEmptyEvent event)
-                    @called?)))))
+      (do
+        #_ (PlayerBucketEmptyEvent event)
+        @called?)
+      => false))
   #_ (testing "But if it's enchanted bread, something you get exp."
     (let [player (mocks/player "dummy-player")
           item-stack (reify SugotItemStack

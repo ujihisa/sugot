@@ -1,34 +1,37 @@
 (ns sugot.app.playlog-test
-  (:require [clojure.test :refer :all]
+  (:require [midje.sweet :refer :all]
             [sugot.app.playlog :refer :all]
             [sugot.lib :as l]
             [sugot.mocks :as mocks]
             [sugot.world]))
 
-(deftest PlayerLoginEvent-test
-  (testing "notifies to lingr"
+(facts PlayerLoginEvent-test
+  (fact "notifies to lingr"
     (with-redefs [l/post-lingr (fn [msg] {:msg msg})
                   sugot.world/strike-lightning-effect (fn [loc] nil)]
-      (is (= {:msg "[LOGIN] dummy-player logged in."}
-             (PlayerLoginEvent
-               (reify mocks/Player
-                 (getPlayer [this]
-                   (mocks/player "dummy-player" nil)))))))))
+      (= {:msg "[LOGIN] dummy-player logged in."}
+         (PlayerLoginEvent
+           (reify mocks/Player
+             (getPlayer [this]
+               (mocks/player "dummy-player" nil)))))
+      => true)))
 
-(deftest PlayerQuitEvent-test
-  (testing "notifies to lingr"
+(facts PlayerQuitEvent-test
+  (fact "notifies to lingr"
     (with-redefs [l/post-lingr (fn [msg] {:msg msg})]
-      (is (= {:msg "[LOGOUT] dummy-player logged out."}
-             (PlayerQuitEvent (reify mocks/Player
-                                (getPlayer [this] (mocks/player "dummy-player")))))))))
+      (= {:msg "[LOGOUT] dummy-player logged out."}
+         (PlayerQuitEvent (reify mocks/Player
+                            (getPlayer [this] (mocks/player "dummy-player")))))
+      => true)))
 
-(deftest PlayerBedEnterEvent-test
-  (testing "notifies both to lingr and server"
+(facts PlayerBedEnterEvent-test
+  (fact "notifies both to lingr and server"
     (with-redefs [l/broadcast-and-post-lingr (fn [msg] {:post-lingr msg})]
       ; TODO test if braodcast is also called
-      (is (= {:post-lingr "[BED] dummy-player went to bed."}
-             (PlayerBedEnterEvent (reify mocks/Player
-                                    (getPlayer [this] (mocks/player "dummy-player")))))))))
+      (= {:post-lingr "[BED] dummy-player went to bed."}
+         (PlayerBedEnterEvent (reify mocks/Player
+                                (getPlayer [this] (mocks/player "dummy-player")))))
+      => true)))
 
 ; TODO TODO TODO
 #_ (deftest PlayerDeathEvent-test
@@ -48,11 +51,3 @@
           (with-redefs [l/broadcast-and-post-lingr (fn [msg] {:post-lingr msg})]
             (is (= nil
                    (PlayerDeathEvent event (P. "dummy-player" nil player))))))))
-
-; (defn fixture [f]
-;   ; before
-;   (f)
-;   ; after
-;   )
-; 
-; (use-fixtures :each fixture)

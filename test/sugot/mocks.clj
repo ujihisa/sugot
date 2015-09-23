@@ -73,6 +73,7 @@
       (getLocation [this] loc))))
 
 (defprotocol Action (getAction [this]))
+(defprotocol Item (getItem [this]))
 (defprotocol ItemDrop (getItemDrop [this]))
 (defprotocol ItemStack (getItemStack [this]))
 (defprotocol ItemInHand (getItemInHand [this]))

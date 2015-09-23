@@ -1,5 +1,5 @@
 (ns sugot.app.hardcore-test
-  (:require [clojure.test :refer :all]
+  (:require [midje.sweet :refer :all]
             [sugot.app.hardcore :refer :all]
             [sugot.lib :as l]
             [sugot.mocks :as mocks]
@@ -10,7 +10,7 @@
 
 (defn do-nothing [& _])
 
-(deftest PlayerDropItemEvent-test
+(fact PlayerDropItemEvent-test
   (let [event (reify
                 mocks/Player
                 (getPlayer [this]
@@ -22,11 +22,12 @@
                   (reify
                     mocks/ItemStack
                     (getItemStack [this] :dummy-item-stack))))]
-    (is (with-redefs [l/send-message do-nothing
-                      l/get-display-name (constantly "Magic Compass")]
-          (event/cancelled? PlayerDropItemEvent event)))))
+    (with-redefs [l/send-message do-nothing
+                  l/get-display-name (constantly "Magic Compass")]
+      (event/cancelled? PlayerDropItemEvent event)
+      => true)))
 
-(deftest BlockPlaceEvent-test
+(fact BlockPlaceEvent-test
   (let [event (reify
                 mocks/Player
                 (getPlayer [this] nil)
@@ -34,9 +35,10 @@
                 (getItemInHand [this]
                   (ItemStack. Material/BED 1)))]
     (with-redefs [player-in-hardcore? (constantly true)]
-      (is (event/cancelled? BlockPlaceEvent event)))))
+      (event/cancelled? BlockPlaceEvent event)
+      => true)))
 
-(deftest PlayerInteractEvent-test
+(fact PlayerInteractEvent-test
   (let [loc (mocks/location "hardcore" 10 20 30)
         player (mocks/player "dummy-player" loc)
         event (reify
@@ -58,4 +60,5 @@
                   create do-nothing
                   garbage-collection do-nothing
                   enter-hardcore (constantly :ok)]
-      (is (= :ok (PlayerInteractEvent event))))))
+      (PlayerInteractEvent event)
+      => :ok)))

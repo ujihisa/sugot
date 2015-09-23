@@ -1,5 +1,5 @@
 (ns sugot.app.limited-world-test
-  (:require [clojure.test :refer :all]
+  (:require [midje.sweet :refer :all]
             [sugot.app.limited-world :refer :all]
             [sugot.lib :as l]
             [sugot.models :as m]

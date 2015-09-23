@@ -1,6 +1,5 @@
 (ns sugot.app.elevator-test
-  (:require [clojure.test :refer :all]
-            [midje.sweet :refer :all]
+  (:require [midje.sweet :refer :all]
             [sugot.app.elevator :refer :all]
             [sugot.lib :as l]
             [sugot.mocks :as mocks]
