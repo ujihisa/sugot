@@ -168,7 +168,7 @@
       (when-let [elevator (get-elevator-from loc)]
         (move-elevator-and-entities elevator down-elevator)))))
 
-(defn find-elevator-from-bar [block player-y]
+(defn- find-elevator-from-bar [block player-y]
   nil)
 
 (defn PlayerInteractEvent [event]

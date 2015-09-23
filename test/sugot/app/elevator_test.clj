@@ -94,7 +94,7 @@
   (let [block-map {}
         loc (mocks/location "anywhere" 10 20 30 block-map)
         block (mocks/block Material/IRON_FENCE 0 loc)]
-    (find-elevator-from-bar block 20)
+    (#'sugot.app.elevator/find-elevator-from-bar block 20)
     => nil))
 
 (fact PlayerInteractEvent-test
@@ -105,6 +105,6 @@
                 mocks/Player (getPlayer [this] player)
                 mocks/ClickedBlock (getClickedBlock [this] block)
                 mocks/Action (getAction [this] Action/LEFT_CLICK_BLOCK))]
-    (with-redefs [find-elevator-from-bar (constantly :an-elevator)]
-      (sugot.event/cancelled? PlayerInteractEvent event)
-      => true)))
+    (with-redefs-fn {#'sugot.app.elevator/find-elevator-from-bar (constantly :an-elevator)}
+                    #(sugot.event/cancelled? PlayerInteractEvent event))
+    => true))
