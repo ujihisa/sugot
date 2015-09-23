@@ -180,5 +180,4 @@
             (contains? #{Action/LEFT_CLICK_BLOCK Action/RIGHT_CLICK_BLOCK} action)
             (= Material/IRON_FENCE (.getType block)))
       (when-let [elevator (find-elevator-from-bar block (.getY (.getLocation player)))]
-        (l/set-cancelled event)
-        (prn :elevator elevator)))))
+        (l/set-cancelled event)))))
