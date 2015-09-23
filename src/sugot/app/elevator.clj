@@ -168,7 +168,24 @@
       (when-let [elevator (get-elevator-from loc)]
         (move-elevator-and-entities elevator down-elevator)))))
 
-(defn- find-elevator-from-bar [block player-y]
+(defn- iron-fence? [block]
+  (= Material/IRON_FENCE (.getType block)))
+
+(defn- find-elevator-from-bar [block]
+  #_ (let [loc (.getLocation block)
+        down (for [ydiff (map - (range 0 10))
+                   :let [b (b/from-loc loc 0 ydiff 0)]
+                   :when (iron-fence? b)]
+               b)]
+    (prn down)
+    #_ (prn :down down))
+  #_ (let [ydiffs (mapcat vector (map - (range 0 10)) (range 1 10))
+        [x z] [(.getX loc) (.getZ loc)]
+        result (for [ydiff ydiffs
+                     :let [y (+ ydiff player-y)
+                           b (b/from-loc loc x y z)]]
+                 )]
+    (prn result))
   nil)
 
 (defn PlayerInteractEvent [event]
@@ -178,5 +195,5 @@
     (when (and
             (contains? #{Action/LEFT_CLICK_BLOCK Action/RIGHT_CLICK_BLOCK} action)
             (= Material/IRON_FENCE (.getType block)))
-      (when-let [elevator (find-elevator-from-bar block (.getY (.getLocation player)))]
+      (when-let [elevator (find-elevator-from-bar block)]
         (l/set-cancelled event)))))

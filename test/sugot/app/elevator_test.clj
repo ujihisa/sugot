@@ -91,10 +91,11 @@
       (is (= :okkk (PlayerToggleSneakEvent event))))))
 
 (fact find-elevator-from-bar
-  (let [block-map {}
+  (let [block-map {[10 15 30] (mocks/block Material/IRON_FENCE 0)}
         loc (mocks/location "anywhere" 10 20 30 block-map)
         block (mocks/block Material/IRON_FENCE 0 loc)]
-    (#'sugot.app.elevator/find-elevator-from-bar block 20)
+    (with-redefs-fn {#'sugot.app.elevator/iron-fence? identity}
+                    #(#'sugot.app.elevator/find-elevator-from-bar block))
     => nil))
 
 (fact PlayerInteractEvent-test
