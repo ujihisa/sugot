@@ -8,7 +8,8 @@
             [sugot.world]
             [sugot.event])
   (:import [org.bukkit Material]
-           [sugot.app.elevator Elevator]))
+           [sugot.app.elevator Elevator]
+           [org.bukkit.event.block Action]))
 
 (defprotocol SugotPlayerInteractEvent
   (isCancelled [this])
@@ -100,10 +101,11 @@
 (fact PlayerInteractEvent-test
   (let [loc (mocks/location "anywhere" 10 20 30)
         player (mocks/player "dummy-player" loc)
+        block (mocks/block Material/IRON_FENCE 0)
         event (reify
                 mocks/Player (getPlayer [this] player)
-                mocks/ClickedBlock (getClickedBlock [this] nil)
-                mocks/Action (getAction [this] nil))]
+                mocks/ClickedBlock (getClickedBlock [this] block)
+                mocks/Action (getAction [this] Action/LEFT_CLICK_BLOCK))]
     (with-redefs [find-elevator-from-bar (constantly :an-elevator)]
       (sugot.event/cancelled? PlayerInteractEvent event)
       => true)))

@@ -13,7 +13,7 @@
                  "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
                  "localrepo1"
                  "file://myrepo"}
-  :profiles {:dev {:dependencies [[midje "1.6.0" :exclusions [org.clojure/clojure]]]
+  :profiles {:dev {:dependencies [[midje "1.7.0" :exclusions [org.clojure/clojure]]]
                    :plugins [[lein-midje "3.1.3"]]}}
   :main ^:skip-aot sugot.core
   :target-path "target/%s"
