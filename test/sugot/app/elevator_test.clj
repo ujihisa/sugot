@@ -1,5 +1,6 @@
 (ns sugot.app.elevator-test
   (:require [clojure.test :refer :all]
+            [midje.sweet :refer :all]
             [sugot.app.elevator :refer :all]
             [sugot.lib :as l]
             [sugot.mocks :as mocks]
@@ -47,7 +48,7 @@
                                  (mocks/location "anywhere" 10 20 30)))]
     coll))
 
-(deftest move-elevator-test
+(fact "move-elevator"
   #_ (defrecord Elevator [loc-plate loc-bar base-type base-data])
   (let [elevator (Elevator. (mocks/location "anywhere" 50 60 70)
                             (mocks/location "anywhere" 50 60 71)
@@ -57,9 +58,10 @@
                   sugot.world/play-sound (constantly :okk)
                   find-ydiff-up (constantly 2)]
       ; TODO real tests
-      (is (= 2 (up-elevator elevator))))))
+      (up-elevator elevator)
+      => 2)))
 
-(deftest PlayerMoveEvent-test
+(fact "PlayerMoveEvent"
   (let [loc (mocks/location "anywhere" 10 20 30 block-map)
         player (mocks/player "dummy-player" loc)
         event (reify
@@ -73,7 +75,8 @@
                   sugot.world/play-sound (constantly :ok)
                   jumping-directly-above? (constantly true)
                   move-elevator-and-entities (constantly :okkk)]
-      (is (= :okkk (PlayerMoveEvent event))))))
+      (PlayerMoveEvent event)
+      => :okkk)))
 
 #_ (deftest PlayerToggleSneakEvent-test
   (let [block (mocks/block Material/STONE_PLATE 0)
@@ -87,13 +90,14 @@
                   l/teleport (constantly :okkk)]
       (is (= :okkk (PlayerToggleSneakEvent event))))))
 
-(deftest find-elevator-from-bar-test
+(fact find-elevator-from-bar
   (let [block-map {}
         loc (mocks/location "anywhere" 10 20 30 block-map)
         block (mocks/block Material/IRON_FENCE 0 loc)]
-    (is (nil? (find-elevator-from-bar block 20)))))
+    (find-elevator-from-bar block 20)
+    => nil))
 
-(deftest PlayerInteractEvent-test
+(fact PlayerInteractEvent-test
   (let [loc (mocks/location "anywhere" 10 20 30)
         player (mocks/player "dummy-player" loc)
         event (reify
@@ -101,4 +105,5 @@
                 mocks/ClickedBlock (getClickedBlock [this] nil)
                 mocks/Action (getAction [this] nil))]
     (with-redefs [find-elevator-from-bar (constantly :an-elevator)]
-      (is (sugot.event/cancelled? PlayerInteractEvent event)))))
+      (sugot.event/cancelled? PlayerInteractEvent event)
+      => true)))

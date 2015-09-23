@@ -9,5 +9,4 @@
                       (dosync
                         (ref-set flag true))))]
       (f event)
-      flag)))
-
+      @flag)))
