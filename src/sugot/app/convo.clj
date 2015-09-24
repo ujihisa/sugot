@@ -57,8 +57,8 @@
           [left right]
           (recur (rest table)))))))
 
-(defn- english->hiragana [english-str]
-  (loop [memo "" s english-str]
+(defn- raw->japanese [raw-str]
+  (loop [memo "" s raw-str]
     (if (empty? s)
       memo
       (if-let [[left right] (consume1 romaji-table s)]
@@ -66,7 +66,7 @@
         (recur (str memo (first s)) (.substring s 1))))))
 
 (defn AsyncPlayerChatEvent [event]
-  (let [message (-> event .getMessage english->hiragana)
+  (let [message (-> event .getMessage raw->japanese)
         player (.getPlayer event)
         fmt (-> event .getFormat)]
     (.setMessage event message)
