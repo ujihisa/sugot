@@ -57,16 +57,31 @@
           [left right]
           (recur (rest table)))))))
 
+(defn- japanese? [str]
+  (nil? (re-find #"[a-zA-Z]" str)))
+
 (defn- raw->japanese [raw-str]
-  (loop [memo "" s raw-str]
-    (if (empty? s)
-      memo
-      (if-let [[left right] (consume1 romaji-table s)]
-        (recur (str memo left) right)
-        (recur (str memo (first s)) (.substring s 1))))))
+  (let [translated
+        (loop [memo "" s raw-str]
+          (if (empty? s)
+            memo
+            (if-let [[left right] (consume1 romaji-table s)]
+              (recur (str memo left) right)
+              (recur (str memo (first s)) (.substring s 1)))))]
+    (when (japanese? translated)
+      translated)))
+
+(defn- translate [raw-str]
+  (clojure.string/join
+   " "
+   (map
+    (fn [raw] (if-let [translated (raw->japanese raw)]
+                translated
+                raw))
+    (clojure.string/split raw-str #"\s+"))))
 
 (defn AsyncPlayerChatEvent [event]
-  (let [message (-> event .getMessage raw->japanese)
+  (let [message (-> event .getMessage translate)
         player (.getPlayer event)
         fmt (-> event .getFormat)]
     (.setMessage event message)
