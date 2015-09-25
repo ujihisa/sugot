@@ -72,13 +72,10 @@
       translated)))
 
 (defn- translate [raw-str]
-  (clojure.string/join
-   " "
-   (map
-    (fn [raw] (if-let [translated (raw->japanese raw)]
-                translated
-                raw))
-    (clojure.string/split raw-str #"\s+"))))
+  (s/join " "
+          (map (fn [raw]
+                 (or (raw->japanese raw) raw))
+               (clojure.string/split raw-str #"\s+"))))
 
 (defn AsyncPlayerChatEvent [event]
   (let [message (-> event .getMessage translate)
