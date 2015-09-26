@@ -192,6 +192,12 @@
   (.multiply (.add (.clone loc1) (.clone loc2))
              0.5))
 
+(defn- spawn-hardcore-blaze [loc]
+  (let [blaze (sugot.world/spawn loc Blaze)]
+    (-> (.getEquipment blaze)
+      (.setHelmet (ItemStack. Material/MELON_BLOCK 0)))
+    blaze))
+
 (defn CreatureSpawnEvent [event]
   (let [entity (.getEntity event)
         reason (.getSpawnReason event)
@@ -227,8 +233,8 @@
                       0 (doto (sugot.world/spawn loc Creeper)
                           (.setPowered true))
                       1 (sugot.world/spawn loc Silverfish)
-                      2 (sugot.world/spawn loc Blaze)
-                      3 (sugot.world/spawn loc Blaze)
+                      2 (spawn-hardcore-blaze loc)
+                      3 (spawn-hardcore-blaze loc)
                       (sugot.world/spawn loc (class entity)))]
                 (target-nearest-hardcore-player monster)))))
         nil))))
