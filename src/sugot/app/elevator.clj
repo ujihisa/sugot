@@ -74,6 +74,7 @@
   (let [entities (find-involved-entities elevator)
         ydiff (elevator-mover-f elevator)]
     (when ydiff
+      (move-entities entities ydiff)
       (l/later 0 (move-entities entities ydiff)))))
 
 (defn move-elevator [elevator ydiff]
