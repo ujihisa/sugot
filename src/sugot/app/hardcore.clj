@@ -194,7 +194,7 @@
 
 (defn- spawn-hardcore-blaze [loc]
   (let [blaze (sugot.world/spawn loc Blaze)]
-    (-> (.getEquipment blaze)
+    #_ (-> (.getEquipment blaze)
       (.setHelmet (ItemStack. Material/MELON_BLOCK 0)))
     blaze))
 
