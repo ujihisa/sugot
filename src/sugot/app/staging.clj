@@ -13,7 +13,7 @@
   (.setSleepingIgnored (.getPlayer event) true))
 
 (defn CreatureSpawnEvent
-  "bigger slimes"
+  "bigger slimes / villager log"
   [event]
   (let [entity (.getEntity event)
         reason (.getSpawnReason event)
@@ -22,7 +22,14 @@
             (= "world" (-> l .getWorld .getName))
             (= CreatureSpawnEvent$SpawnReason/NATURAL reason)
             (instance? org.bukkit.entity.Slime entity))
-      (.setSize entity (+ 2 (.getSize entity))))))
+      (.setSize entity (+ 2 (.getSize entity))))
+    (when (and
+            (= CreatureSpawnEvent$SpawnReason/BREEDING reason)
+            (instance? Villager entity))
+      (l/broadcast-and-post-lingr
+        (format "[DEBUG-STAGING] %s"
+                (prn-str :entity entity
+                         :loc [(.getX l) (.getY l) (.getZ l)]))))))
 
 (def notes
   {:A0 (/ 1.0 2.0)
