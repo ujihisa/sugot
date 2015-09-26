@@ -4,7 +4,7 @@
             [sugot.block :as b]
             [sugot.world])
   (:import [org.bukkit Bukkit Material Sound]
-           [org.bukkit.entity ArmorStand]
+           [org.bukkit.entity ArmorStand Villager Painting]
            [org.bukkit.event.entity CreatureSpawnEvent$SpawnReason]
            [org.bukkit.event.block Action]
            [org.bukkit.event.entity EntityDamageEvent$DamageCause]))
@@ -154,7 +154,35 @@
                             (.setYaw yaw))))
       (l/later 1 (headbang (dec ticks) pname)))))
 
-(try
+(defn- villager? [entity]
+  (instance? Villager entity))
+
+(defn- count-villagers
+  "Returns villagers located at the chunks around the given location.
+  Search radius is 5*5 chunks around the centre."
+  [loc-centre]
+  (let [chunk-centre (.getChunk loc-centre)
+        chunks (for [xdiff (range -2 3)
+                     zdiff (range -2 3)]
+                 (.getChunkAt (.getWorld loc-centre)
+                              (+ xdiff (.getX chunk-centre))
+                              (+ zdiff (.getZ chunk-centre))))
+        villagers (for [chunk chunks
+                        entity (.getEntities chunk)
+                        :when (villager? entity)]
+                    entity)]
+    (count villagers)))
+
+(defn PlayerInteractEntityEvent [event]
+  (let [paint? (fn [entity]
+                 (instance? Painting) event)])
+  (let [entity (.getEntity event)]
+    (when (paint? entity)
+      (prn :ok))))
+
+#_ (sugot.lib/later 0 (prn (sugot.app.staging/count-villagers (.getLocation (Bukkit/getPlayer "ujm")))))
+
+#_ (try
   (when-let [ujm (Bukkit/getPlayer "mozukusoba") ]
     (let [armour-stands (for [entity (.getNearbyEntities ujm 2 2 2)
                               :when (instance? ArmorStand entity)]
