@@ -66,16 +66,18 @@
             (distinct all-entities))))
 
 (defn move-entities [entities ydiff]
-  (doseq [entity entities]
-    (l/teleport entity (doto (.getLocation entity)
-                         (.add 0 (+ ydiff 0.1) 0)))))
+  (doseq [entity entities
+          :let [loc (doto (.getLocation entity)
+                      (.add 0 (+ ydiff 0.1) 0))]]
+    (l/teleport entity loc)
+    (l/later 0
+      (l/teleport entity loc))))
 
 (defn move-elevator-and-entities [elevator elevator-mover-f]
   (let [entities (find-involved-entities elevator)
         ydiff (elevator-mover-f elevator)]
     (when ydiff
-      (move-entities entities ydiff)
-      (l/later 0 (move-entities entities ydiff)))))
+      (move-entities entities ydiff))))
 
 (defn move-elevator [elevator ydiff]
   (b/set-block! (b/from-loc (:loc-plate elevator) 0 0 0)
