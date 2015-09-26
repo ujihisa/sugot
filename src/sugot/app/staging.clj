@@ -175,10 +175,10 @@
 
 (defn PlayerInteractEntityEvent [event]
   (let [paint? (fn [entity]
-                 (instance? Painting) event)])
-  (let [entity (.getEntity event)]
-    (when (paint? entity)
-      (prn :ok))))
+                 (instance? Painting) event)]
+    (let [entity (.getEntity event)]
+      (when (paint? entity)
+        (prn :ok)))))
 
 #_ (sugot.lib/later 0 (prn (sugot.app.staging/count-villagers (.getLocation (Bukkit/getPlayer "ujm")))))
 
