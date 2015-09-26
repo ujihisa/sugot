@@ -30,3 +30,7 @@ TODOs
 
 * Do I have to `lein uberjar`?
     * No. Just `lein run`
+
+## License
+
+GPLv3 or any later versions
