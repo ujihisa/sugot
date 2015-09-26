@@ -171,12 +171,19 @@
 (defn- iron-fence? [block]
   (= Material/IRON_FENCE (.getType block)))
 
-(defn- find-elevator-from-bar [block]
-  #_ (let [loc (.getLocation block)
+(defn- find-elevator-from-bar
+  "Lookup nearest elevator base for given iron bar block,
+  and returns the elevator object. Otherwise nil.
+
+  The directions to lookup are only streight up and down,
+  and the return value will be one of them which is shorter
+  (if same, it takes upper one.)"
+  [iron-bar-block]
+  #_ (let [loc (.getLocation iron-bar-block)
         down (for [ydiff (map - (range 0 10))
                    :let [b (b/from-loc loc 0 ydiff 0)]
                    :when (iron-fence? b)]
-               b)]
+               [ydiff b])]
     (prn down)
     #_ (prn :down down))
   #_ (let [ydiffs (mapcat vector (map - (range 0 10)) (range 1 10))
