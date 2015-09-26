@@ -4,7 +4,7 @@
             [sugot.block :as b]
             [sugot.world])
   (:import [org.bukkit Bukkit Material Sound]
-           [org.bukkit.entity ArmorStand Villager Painting]
+           [org.bukkit.entity ArmorStand Villager IronGolem]
            [org.bukkit.event.entity CreatureSpawnEvent$SpawnReason]
            [org.bukkit.event.block Action]
            [org.bukkit.event.entity EntityDamageEvent$DamageCause]))
@@ -162,8 +162,8 @@
   Search radius is 5*5 chunks around the centre."
   [loc-centre]
   (let [chunk-centre (.getChunk loc-centre)
-        chunks (for [xdiff (range -2 3)
-                     zdiff (range -2 3)]
+        chunks (for [xdiff (range -3 4)
+                     zdiff (range -3 4)]
                  (.getChunkAt (.getWorld loc-centre)
                               (+ xdiff (.getX chunk-centre))
                               (+ zdiff (.getZ chunk-centre))))
@@ -174,11 +174,16 @@
     (count villagers)))
 
 (defn PlayerInteractEntityEvent [event]
-  (let [paint? (fn [entity]
-                 (instance? Painting) event)]
-    (let [entity (.getEntity event)]
-      (when (paint? entity)
-        (prn :ok)))))
+  (let [iron-golem? (fn [entity]
+                 (instance? IronGolem entity))]
+    (let [entity (.getRightClicked event)
+          player  (.getPlayer event)]
+      (l/send-message player (prn-str entity))
+      (when (iron-golem? entity)
+        (.setCustomName entity (format "%d Villagers"
+                                       (count-villagers (.getLocation entity))))
+        (.setCustomNameVisible entity true)
+        (l/send-message player (prn-str :name (.getCustomName entity)))))))
 
 #_ (sugot.lib/later 0 (prn (sugot.app.staging/count-villagers (.getLocation (Bukkit/getPlayer "ujm")))))
 
