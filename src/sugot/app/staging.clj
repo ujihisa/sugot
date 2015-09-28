@@ -28,8 +28,7 @@
             (instance? Villager entity))
       (l/broadcast-and-post-lingr
         (format "[DEBUG-STAGING] %s"
-                (prn-str :entity entity
-                         :loc [(.getX l) (.getY l) (.getZ l)]))))))
+                (prn-str :loc [(int (.getX l)) (int (.getY l)) (int (.getZ l))]))))))
 
 (def notes
   {:A0 (/ 1.0 2.0)
@@ -164,7 +163,7 @@
 (defn- villager? [entity]
   (instance? Villager entity))
 
-(defn- count-villagers
+(defn- nearby-villagers
   "Returns villagers located at the chunks around the given location.
   Search radius is 5*5 chunks around the centre."
   [loc-centre]
@@ -178,19 +177,27 @@
                         entity (.getEntities chunk)
                         :when (villager? entity)]
                     entity)]
-    (count villagers)))
+    villagers))
+
+(defn- index-villagers [villagers]
+  (doseq [[villager index] (map vector villagers (iterate inc 1))]
+    (.setCustomName villager (format "Number %02d" index))
+    (.setCustomNameVisible villager true)
+    (sugot.world/strike-lightning-effect (.getLocation villager))))
 
 (defn PlayerInteractEntityEvent [event]
   (let [iron-golem? (fn [entity]
                  (instance? IronGolem entity))]
     (let [entity (.getRightClicked event)
           player  (.getPlayer event)]
-      (l/send-message player (prn-str entity))
+      #_ (l/send-message player (prn-str entity))
       (when (iron-golem? entity)
-        (.setCustomName entity (format "%d Villagers"
-                                       (count-villagers (.getLocation entity))))
-        (.setCustomNameVisible entity true)
-        (l/send-message player (prn-str :name (.getCustomName entity)))))))
+        (let [villagers (nearby-villagers (.getLocation entity))]
+          (.setCustomName entity (format "%d Villagers"
+                                         (count villagers)))
+          (.setCustomNameVisible entity true)
+          (l/send-message player (prn-str :name (.getCustomName entity)))
+          (index-villagers villagers))))))
 
 #_ (sugot.lib/later 0 (prn (sugot.app.staging/count-villagers (.getLocation (Bukkit/getPlayer "ujm")))))
 
