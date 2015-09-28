@@ -19,7 +19,8 @@
     ; You can't use `case` for Java enum
     (when (= "world" (-> l .getWorld .getName))
       (when (contains? #{CreatureSpawnEvent$SpawnReason/NATURAL
-                         CreatureSpawnEvent$SpawnReason/REINFORCEMENTS}
+                         CreatureSpawnEvent$SpawnReason/REINFORCEMENTS
+                         CreatureSpawnEvent$SpawnReason/JOCKEY}
                        reason)
         (when (or (<= 100 (.getY l))
                   (b/polish-stone? (b/from-loc l 0 -1 0)))
