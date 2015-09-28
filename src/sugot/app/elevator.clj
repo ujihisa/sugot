@@ -67,10 +67,10 @@
 
 (defn move-entities [entities ydiff]
   (doseq [entity entities
-          :let [loc (doto (.getLocation entity)
-                      (.add 0 (+ ydiff 0.1) 0))]]
-    (l/teleport entity loc)
-    (l/later 0
+          :let [loc (doto (.clone (.getLocation entity))
+                      (.add 0 (+ ydiff 0.4) 0))]]
+    #_ (l/teleport entity loc)
+    (l/later 1
       (l/teleport entity loc))))
 
 (defn move-elevator-and-entities [elevator elevator-mover-f]
