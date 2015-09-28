@@ -6,7 +6,8 @@
             [sugot.world]))
 
 (defn PlayerLoginEvent [event]
-  (sugot.world/strike-lightning-effect (.getLocation (.getPlayer event)))
+  (l/later 0
+    (sugot.world/strike-lightning-effect (.getLocation (.getPlayer event))))
   (l/post-lingr (format "[LOGIN] %s logged in." (.getName (.getPlayer event)))))
 
 (defn PlayerQuitEvent [event]

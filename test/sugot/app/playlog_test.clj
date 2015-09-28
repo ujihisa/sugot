@@ -7,14 +7,15 @@
 
 (facts PlayerLoginEvent-test
   (fact "notifies to lingr"
-    (with-redefs [l/post-lingr (fn [msg] {:msg msg})
-                  sugot.world/strike-lightning-effect (fn [loc] nil)]
-      (= {:msg "[LOGIN] dummy-player logged in."}
-         (PlayerLoginEvent
-           (reify mocks/Player
+    (let [event (reify mocks/Player
              (getPlayer [this]
-               (mocks/player "dummy-player" nil)))))
-      => true)))
+               (mocks/player "dummy-player" nil)))]
+      (with-redefs [l/later-fn (fn [sec & expr] expr)
+                    l/post-lingr (fn [msg] {:msg msg})
+                    sugot.world/strike-lightning-effect (fn [loc] nil)]
+        (= {:msg "[LOGIN] dummy-player logged in."}
+           (PlayerLoginEvent event))
+        => true))))
 
 (facts PlayerQuitEvent-test
   (fact "notifies to lingr"
