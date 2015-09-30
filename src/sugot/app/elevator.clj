@@ -227,7 +227,7 @@
         block (.getClickedBlock event)
         action (.getAction event)]
     (when (and
-            (contains? #{Action/LEFT_CLICK_BLOCK Action/RIGHT_CLICK_BLOCK} action)
+            (contains? #{Action/RIGHT_CLICK_BLOCK} action)
             (= Material/IRON_FENCE (.getType block)))
       (when-let [elevator (find-elevator-from-bar block)]
         (l/send-message player
