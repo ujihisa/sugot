@@ -206,7 +206,7 @@
                 (first
                   (for [xdiff (range -1 2)
                         zdiff (range -1 2)
-                        :let [block (b/from-loc loc xdiff (inc ydiff) zdiff)]
+                        :let [block (b/from-loc loc xdiff (+ 2 ydiff) zdiff)]
                         :when (stone-plate? block)]
                     block))))]
       (let [loc (.getLocation iron-bar-block)]
