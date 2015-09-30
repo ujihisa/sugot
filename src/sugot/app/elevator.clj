@@ -174,29 +174,42 @@
 (defn- iron-fence? [block]
   (= Material/IRON_FENCE (.getType block)))
 
+(defn- stone-plate? [block]
+  (= Material/STONE_PLATE (.getType block)))
+
 (defn- find-elevator-from-bar
   "Lookup nearest elevator base for given iron bar block,
   and returns the elevator object. Otherwise nil.
 
-  The directions to lookup are only streight up and down,
+  The directions to lookup are only streight up/down,
   and the return value will be one of them which is shorter
   (if same, it takes upper one.)"
   [iron-bar-block]
-  #_ (let [loc (.getLocation iron-bar-block)
-        down (for [ydiff (map - (range 0 10))
-                   :let [b (b/from-loc loc 0 ydiff 0)]
-                   :when (iron-fence? b)]
-               [ydiff b])]
-    (prn down)
-    #_ (prn :down down))
+  (letfn [(find-down [loc]
+            (for [ydiff (map - (range 0 10))
+                  :let [b (b/from-loc loc 0 ydiff 0)]
+                  :when (iron-fence? b)
+                  :let [b-below (b/from-loc loc 0 (dec ydiff) 0)]
+                  :when (not (iron-fence? b-below))]
+              (some stone-plate?
+                    (for [xdiff (range -1 2)
+                          zdiff (range -1 2)]
+                      (b/from-loc loc xdiff ydiff zdiff)))))]
+    (letfn [(find-up [loc]
+              ; TODO
+              nil)]
+      (let [loc (.getLocation iron-bar-block)
+            stone-plate (or (first (find-down loc))
+                            (first (find-up loc)))]
+        (get-elevator-from (.getLocation stone-plate))
+        #_ (prn :down down))))
   #_ (let [ydiffs (mapcat vector (map - (range 0 10)) (range 1 10))
-        [x z] [(.getX loc) (.getZ loc)]
-        result (for [ydiff ydiffs
-                     :let [y (+ ydiff player-y)
-                           b (b/from-loc loc x y z)]]
-                 )]
-    (prn result))
-  nil)
+  [x z] [(.getX loc) (.getZ loc)]
+  result (for [ydiff ydiffs
+  :let [y (+ ydiff player-y)
+  b (b/from-loc loc x y z)]]
+  )]
+  (prn result)))
 
 (defn PlayerInteractEvent [event]
   (let [player (.getPlayer event)

@@ -94,9 +94,11 @@
   (let [block-map {[10 15 30] (mocks/block Material/IRON_FENCE 0)}
         loc (mocks/location "anywhere" 10 20 30 block-map)
         block (mocks/block Material/IRON_FENCE 0 loc)]
-    (with-redefs-fn {#'sugot.app.elevator/iron-fence? identity}
+    (with-redefs-fn {#'sugot.app.elevator/iron-fence? identity
+                     #'sugot.app.elevator/stone-plate? identity
+                     #'sugot.app.elevator/get-elevator-from (constantly :ok)}
                     #(#'sugot.app.elevator/find-elevator-from-bar block))
-    => nil))
+    => :ok))
 
 (fact PlayerInteractEvent-test
   (let [loc (mocks/location "anywhere" 10 20 30)
