@@ -198,8 +198,17 @@
                       :when (stone-plate? block)]
                   block))))]
     (letfn [(find-up [loc]
-              ; TODO
-              nil)]
+              (for [ydiff (range 0 100)
+                    :let [b (b/from-loc loc 0 ydiff 0)]
+                    :when (iron-fence? b)
+                    :let [b-above (b/from-loc loc 0 (inc ydiff) 0)]
+                    :when (not (iron-fence? b-above))]
+                (first
+                  (for [xdiff (range -1 2)
+                        zdiff (range -1 2)
+                        :let [block (b/from-loc loc xdiff (inc ydiff) zdiff)]
+                        :when (stone-plate? block)]
+                    block))))]
       (let [loc (.getLocation iron-bar-block)]
         (when-let [stone-plate (or (first (find-down loc))
                                    (first (find-up loc)))]
