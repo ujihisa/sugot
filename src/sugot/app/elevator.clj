@@ -186,7 +186,7 @@
   (if same, it takes upper one.)"
   [iron-bar-block]
   (letfn [(find-down [loc]
-            (for [ydiff (map - (range 0 10))
+            (for [ydiff (map - (range 0 100))
                   :let [b (b/from-loc loc 0 ydiff 0)]
                   :when (iron-fence? b)
                   :let [b-below (b/from-loc loc 0 (dec ydiff) 0)]
