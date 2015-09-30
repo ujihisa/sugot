@@ -198,10 +198,10 @@
     (letfn [(find-up [loc]
               ; TODO
               nil)]
-      (let [loc (.getLocation iron-bar-block)
-            stone-plate (or (first (find-down loc))
-                            (first (find-up loc)))]
-        (get-elevator-from (.getLocation stone-plate))
+      (let [loc (.getLocation iron-bar-block)]
+        (when-let [stone-plate (or (first (find-down loc))
+                                   (first (find-up loc)))]
+          (get-elevator-from (.getLocation stone-plate)))
         #_ (prn :down down))))
   #_ (let [ydiffs (mapcat vector (map - (range 0 10)) (range 1 10))
   [x z] [(.getX loc) (.getZ loc)]
@@ -219,4 +219,6 @@
             (contains? #{Action/LEFT_CLICK_BLOCK Action/RIGHT_CLICK_BLOCK} action)
             (= Material/IRON_FENCE (.getType block)))
       (when-let [elevator (find-elevator-from-bar block)]
+        (l/send-message player
+                        (format "[ELEVATOR] %s" (prn-str elevator)))
         (l/set-cancelled event)))))

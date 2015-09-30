@@ -108,6 +108,7 @@
                 mocks/Player (getPlayer [this] player)
                 mocks/ClickedBlock (getClickedBlock [this] block)
                 mocks/Action (getAction [this] Action/LEFT_CLICK_BLOCK))]
-    (with-redefs-fn {#'sugot.app.elevator/find-elevator-from-bar (constantly :an-elevator)}
+    (with-redefs-fn {#'sugot.app.elevator/find-elevator-from-bar (constantly :an-elevator)
+                     #'l/send-message (constantly nil)}
                     #(sugot.event/cancelled? PlayerInteractEvent event))
     => true))
