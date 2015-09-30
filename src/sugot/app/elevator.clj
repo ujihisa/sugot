@@ -191,10 +191,12 @@
                   :when (iron-fence? b)
                   :let [b-below (b/from-loc loc 0 (dec ydiff) 0)]
                   :when (not (iron-fence? b-below))]
-              (some stone-plate?
-                    (for [xdiff (range -1 2)
-                          zdiff (range -1 2)]
-                      (b/from-loc loc xdiff ydiff zdiff)))))]
+              (first
+                (for [xdiff (range -1 2)
+                      zdiff (range -1 2)
+                      :let [block (b/from-loc loc xdiff ydiff zdiff)]
+                      :when (stone-plate? block)]
+                  block))))]
     (letfn [(find-up [loc]
               ; TODO
               nil)]
