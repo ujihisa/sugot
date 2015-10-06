@@ -519,37 +519,35 @@
   #_ (prn :PlayerInteractEntityEvent event))
 
 (defn PlayerInteractEvent [event]
-  (try
-    (when-let [player (.getPlayer event)]
-      (let [action (.getAction event)
-            armour-stand (enter-armour-stand player)]
-        (when (contains? #{Action/RIGHT_CLICK_AIR Action/RIGHT_CLICK_BLOCK} action)
-          (cond
-            armour-stand
-            (do
-              ; effect
-              (let [loc (.getLocation player)]
-                (sugot.world/strike-lightning-effect loc)
-                (sugot.world/play-sound loc Sound/AMBIENCE_CAVE 1.0 1.0)
-                (sugot.world/play-sound loc Sound/AMBIENCE_CAVE 1.0 1.0))
-              ; main
-              (garbage-collection)
-              (let [compass (doto (ItemStack. Material/COMPASS 1)
-                              (l/add-enchantment Enchantment/DURABILITY 1)
-                              (l/set-display-name "Magic Compass"))]
-                (l/set-item-in-hand player compass)
-                (when-not (hardcore-world-exist?)
-                  (l/broadcast "[HARDCORE] (Creating world...)")
-                  (create 3))
-                ; TODO living entity
-                (enter-hardcore player (doto (.clone (.getLocation armour-stand))
-                                         (.add 0 1 0)))))
+  (when-let [player (.getPlayer event)]
+    (let [action (.getAction event)
+          armour-stand (enter-armour-stand player)]
+      (when (contains? #{Action/RIGHT_CLICK_AIR Action/RIGHT_CLICK_BLOCK} action)
+        (cond
+          armour-stand
+          (do
+            ; effect
+            (let [loc (.getLocation player)]
+              (sugot.world/strike-lightning-effect loc)
+              (sugot.world/play-sound loc Sound/AMBIENCE_CAVE 1.0 1.0)
+              (sugot.world/play-sound loc Sound/AMBIENCE_CAVE 1.0 1.0))
+            ; main
+            (garbage-collection)
+            (let [compass (doto (ItemStack. Material/COMPASS 1)
+                            (l/add-enchantment Enchantment/DURABILITY 1)
+                            (l/set-display-name "Magic Compass"))]
+              (l/set-item-in-hand player compass)
+              (when-not (hardcore-world-exist?)
+                (l/broadcast "[HARDCORE] (Creating world...)")
+                (create 3))
+              ; TODO living entity
+              (enter-hardcore player (doto (.clone (.getLocation armour-stand))
+                                       (.add 0 1 0)))))
 
-            (leave-satisfy? player)
-            (do
-              (l/set-item-in-hand player (ItemStack. Material/PAPER 1))
-              (leave-hardcore-with-message player))))))
-    (catch Exception e (.printStackTrace e))))
+          (leave-satisfy? player)
+          (do
+            (l/set-item-in-hand player (ItemStack. Material/PAPER 1))
+            (leave-hardcore-with-message player)))))))
 
 ; TODO
 ; This is loaded from ~/.sugot-init.clj
