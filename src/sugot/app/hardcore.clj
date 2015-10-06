@@ -135,7 +135,8 @@
 
       (cond
         (instance? ArmorStand entity)
-        (l/set-cancelled event)
+        (when (.getHelmet entity)
+          (l/set-cancelled event))
 
         (instance? Blaze entity)
         (condp = cause
@@ -194,8 +195,6 @@
 
 (defn- spawn-hardcore-blaze [loc]
   (let [blaze (sugot.world/spawn loc Blaze)]
-    #_ (-> (.getEquipment blaze)
-      (.setHelmet (ItemStack. Material/MELON_BLOCK 0)))
     blaze))
 
 (defn CreatureSpawnEvent [event]
