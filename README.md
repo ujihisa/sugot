@@ -10,7 +10,7 @@ Clojure + Spigot minecraft server
 2. Install it with `lein deploy localrepo1 org.spigotmc/spigot 1.8.8 spigot-1.8.8.jar`
 3. `lein run`
 
-You can also `lein test` to check if it works without starting a Minecraft server..
+You can also `lein midje` to check if it works without starting a Minecraft server..
 
 TODOs
 
