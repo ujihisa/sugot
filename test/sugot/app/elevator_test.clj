@@ -110,5 +110,5 @@
                 mocks/Action (getAction [this] Action/RIGHT_CLICK_BLOCK))]
     (with-redefs-fn {#'sugot.app.elevator/find-elevator-from-bar (constantly :an-elevator)
                      #'l/send-message (constantly nil)}
-                    #(sugot.event/cancelled? PlayerInteractEvent event))
-    => true))
+                    #(PlayerInteractEvent event))
+    => nil))
