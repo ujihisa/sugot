@@ -278,7 +278,7 @@
     [x z]))
 
 (defn- rand-treasure []
-  (case (rand-int 40)
+  (case (rand-int 50)
     0 (ItemStack. Material/DIRT (inc (rand-int 32)))
     1 (ItemStack. Material/WATER_LILY (inc (rand-int 32)))
     2 (ItemStack. Material/SAND (inc (rand-int 64)))
@@ -322,6 +322,17 @@
                               Material/RECORD_4 Material/RECORD_5 Material/RECORD_6 Material/RECORD_7
                               Material/RECORD_8 Material/RECORD_9 Material/GOLD_RECORD Material/GREEN_RECORD])
                    1)
+    40 (ItemStack. Material/ANVIL 1)
+    41 (ItemStack. Material/ARMOR_STAND 1)
+    42 (ItemStack. Material/BLAZE_POWDER 1)
+    43 (ItemStack. Material/BOOK (inc (rand-int 10)))
+    44 (ItemStack. Material/BOOK_AND_QUILL 1)
+    45 (ItemStack. Material/BREWING_STAND_ITEM 1)
+    46 (ItemStack. Material/BUCKET 1)
+    47 (ItemStack. Material/CAKE 1)
+    48 (ItemStack. Material/CARPET (inc (rand-int 64)))
+    49 (ItemStack. Material/CARROT_STICK 1)
+    ; (ItemStack. Material/CAULDRON_ITEM 1)
     nil))
 
 (defn- rand-treasures [min-n max-n]
