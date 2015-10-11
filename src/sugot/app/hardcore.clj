@@ -169,6 +169,13 @@
 
           nil)))))
 
+(defn VehicleExitEvent [event]
+  (let [exited (.getExited event)
+        vehicle (.getVehicle event)]
+    (when-not (.isCancelled event)
+      (when (loc-in-hardcore? (.getLocation exited))
+        (prn :VehicleExitEvent exited vehicle)))))
+
 (defn EntityDeathEvent [event]
   (let [entity (.getEntity event)]
     (when (loc-in-hardcore? (.getLocation entity))
