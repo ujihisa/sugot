@@ -173,8 +173,11 @@
   (let [exited (.getExited event)
         vehicle (.getVehicle event)]
     (when-not (.isCancelled event)
-      (when (loc-in-hardcore? (.getLocation exited))
-        (prn :VehicleExitEvent exited vehicle)))))
+      (when (and
+              (loc-in-hardcore? (.getLocation exited))
+              (instance? Skeleton exited)
+              (instance? Pig vehicle))
+        (l/set-cancelled event)))))
 
 (defn EntityDeathEvent [event]
   (let [entity (.getEntity event)]
