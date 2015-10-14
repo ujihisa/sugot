@@ -366,7 +366,7 @@
     (b/set-block! (b/from-loc (.getLocation block) x -1 z) material 0))
   (b/set-block! block Material/CHEST 0)
   (let [chest (.getBlock (.getLocation block))]
-    (doseq [item-stack (rand-treasures 2 8)
+    (doseq [item-stack (rand-treasures 5 8)
             :when item-stack]
       (b/add-chest-inventory chest (into-array [item-stack])))))
 
