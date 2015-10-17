@@ -230,6 +230,5 @@
             (contains? #{Action/RIGHT_CLICK_BLOCK} action)
             (= Material/IRON_FENCE (.getType block)))
       (when-let [elevator (find-elevator-from-bar block)]
-        (l/send-message player
-                        (format "[ELEVATOR] %s" (prn-str elevator)))
-        (l/set-cancelled event)))))
+        (l/send-message player "(たぶんそのうちここにエレベータ呼べるようになります)")
+        #_ (l/set-cancelled event)))))
