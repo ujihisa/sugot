@@ -20,10 +20,13 @@
       (l/later (l/sec 0.5)
         (sugot.world/play-sound (.getLocation player) Sound/EAT 0.8 2.0)))))
 
+(defn create-brioche [n]
+  (doto (ItemStack. Material/BREAD n)
+    (.addUnsafeEnchantment Enchantment/DURABILITY 1)
+    (l/set-display-name "Brioche")))
+
 (defn recipes []
-  (let [item-stack (doto (ItemStack. Material/BREAD 1)
-                     (.addUnsafeEnchantment Enchantment/DURABILITY 1)
-                     (l/set-display-name "Brioche"))
+  (let [item-stack (create-brioche 1)
         recipe (-> (org.bukkit.inventory.ShapedRecipe. item-stack)
                  (.shape (into-array ["a" "b"]))
                  (.setIngredient \a Material/EGG)
