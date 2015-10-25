@@ -17,7 +17,7 @@
   (l/broadcast-and-post-lingr (format "[BED] %s went to bed." (.getName (.getPlayer event)))))
 
 (defn PlayerDeathEvent [event]
-  (let [player (.getPlayer event)]
+  (let [player (.getEntity event)]
     (l/broadcast-and-post-lingr
       (format "[DEATH] %s (at [%d, %d, %d])"
               (.getDeathMessage event)
