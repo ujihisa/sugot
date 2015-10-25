@@ -380,17 +380,9 @@
                       Material/OBSIDIAN 0)
         (b/set-block! (.getBlockAt hardcore-world x init-y z)
                       Material/TORCH 0))))
-  (let [[goal-distance chest-distance]
-        (let [init-biome (.getBiome hardcore-world 0 0)]
-          (get {#_Biome/OCEAN #_[100 10]
-                Biome/DESERT [350 15]
-                Biome/TAIGA [270 15]
-                Biome/EXTREME_HILLS [90 2]}
-               init-biome
-               [220 6]))
-
-        [goal-x goal-z] (random-xz (int (* goal-distance (rand-nth [0.7 0.8 0.9 1.0 1.1 1.2 1.3 2.0]))))
-
+  (let [[goal-distance chest-distance] [220 6]
+        amplifier (rand-nth [0.5 0.9 1.0 1.0 1.0 1.1 1.1 1.2 1.3 2.0])
+        [goal-x goal-z] (random-xz (int (* goal-distance amplifier)))
         goal-y (.getHighestBlockYAt hardcore-world goal-x goal-z)]
     (.setSpawnLocation hardcore-world goal-x (inc goal-y) goal-z)
     (l/later 0
