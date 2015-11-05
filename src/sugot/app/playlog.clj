@@ -17,10 +17,11 @@
   (l/broadcast-and-post-lingr (format "[BED] %s went to bed." (.getName (.getPlayer event)))))
 
 (defn PlayerDeathEvent [event]
-  (let [player (.getEntity event)]
+  (let [player (.getEntity event)
+        x (int (.getX (.getLocation player)))
+        y (int (.getY (.getLocation player)))
+        z (int (.getZ (.getLocation player)))
+        cause (.getLastDamageCause player)]
     (l/broadcast-and-post-lingr
-      (format "[DEATH] %s (at [%d, %d, %d])"
-              (.getDeathMessage event)
-              (int (.getX (.getLocation player)))
-              (int (.getY (.getLocation player)))
-              (int (.getZ (.getLocation player)))))))
+      (format "[DEATH] %s (at [%d, %d, %d]) %s"
+              (.getDeathMessage event) x y z cause))))
