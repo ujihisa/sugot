@@ -1,5 +1,6 @@
 (ns sugot.app.egg-block
   (:require [sugot.lib :as l]
+            [sugot.block :as b]
             [sugot.world])
   (:import [org.bukkit.inventory ItemStack]
            [org.bukkit Material Sound]
