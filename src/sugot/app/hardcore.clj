@@ -73,10 +73,10 @@
 
 
 ; key: ^String playername, value: ^Long timestamp msec
-(def came-from (atom {}))
+(defonce came-from (atom {}))
 
 ; key: ^String playername
-(def wait-for-a-moment (atom #{}))
+(defonce wait-for-a-moment (atom #{}))
 
 (defn- leave-hardcore! [player]
   (let [to (some identity [(get @came-from (.getName player))
@@ -103,7 +103,7 @@
         (leave-hardcore! player)))))
 
 ; key: ^String playername, value: ^Long timestamp msec
-(def enter-time-all (atom {}))
+(defonce enter-time-all (atom {}))
 
 (defn EntityDamageEvent [event]
   (let [entity (.getEntity event)
