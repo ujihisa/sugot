@@ -26,6 +26,11 @@ TODOs
     * You can abbreviate them if they aren't the main concern of the function
 * Avoid naming colision, and for that you can abbreviate. (e.g. prefer `fmt` to `format`)
 
+### Tips
+
+  * `lein midje :autotest` to run a process to keep running unit test
+    when you modify a file.
+
 ## FAQ
 
 * Do I have to `lein uberjar`?
