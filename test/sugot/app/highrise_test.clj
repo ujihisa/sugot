@@ -4,7 +4,7 @@
             [sugot.lib :as l]
             [sugot.mocks :as mocks]
             [sugot.event :as event])
-  (:import [org.bukkit Location Material]))
+  (:import [org.bukkit Material]))
 
 (facts CreatureSpawnEvent-test
   (let [reason org.bukkit.event.entity.CreatureSpawnEvent$SpawnReason/NATURAL
@@ -13,11 +13,11 @@
       (with-redefs [guardian? (fn [entity] false)
                     prismarine? (fn [entity] false)]
         (let [event (reify
-                      mocks/Entity
+                      mocks/IgetEntity
                       (getEntity [this] nil)
                       mocks/SugotCreatureSpawnEvent
                       (getSpawnReason [this] reason)
-                      mocks/Location
+                      mocks/IgetLocation
                       (getLocation [this] (mocks/location world 0 120 0)))]
           (event/cancelled? CreatureSpawnEvent event)
           => true)))
@@ -26,11 +26,11 @@
                     prismarine? (fn [entity] false)]
         (let [block-map {[0 59 0] (mocks/block Material/STONE 2)}
               event (reify
-                      mocks/Entity
+                      mocks/IgetEntity
                       (getEntity [this] nil)
                       mocks/SugotCreatureSpawnEvent
                       (getSpawnReason [this] reason)
-                      mocks/Location
+                      mocks/IgetLocation
                       (getLocation [this]
                         (mocks/location world 0 60 0 block-map)))]
           (event/cancelled? CreatureSpawnEvent event))

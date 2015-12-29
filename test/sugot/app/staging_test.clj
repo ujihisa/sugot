@@ -11,8 +11,8 @@
   (let [loc (mocks/location "anywhere" 10 20 30 {[10 20 30] (mocks/block Material/AIR 0)})
         player (mocks/player "dummy-player" loc)
         event (reify
-                mocks/Entity (getEntity [this] player)
-                mocks/Cause (getCause [this] EntityDamageEvent$DamageCause/SUFFOCATION))]
+                mocks/IgetEntity (getEntity [this] player)
+                mocks/IgetCause (getCause [this] EntityDamageEvent$DamageCause/SUFFOCATION))]
     (with-redefs-fn {#'sugot.app.staging/player? (constantly true)}
                     #(event/cancelled? EntityDamageEvent event))
     => true))

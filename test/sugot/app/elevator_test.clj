@@ -106,7 +106,7 @@
         block (mocks/block Material/IRON_FENCE 0)
         event (reify
                 mocks/Player (getPlayer [this] player)
-                mocks/ClickedBlock (getClickedBlock [this] block)
+                mocks/IgetClickedBlock (getClickedBlock [this] block)
                 mocks/Action (getAction [this] Action/RIGHT_CLICK_BLOCK))]
     (with-redefs-fn {#'sugot.app.elevator/find-elevator-from-bar (constantly :an-elevator)
                      #'l/send-message (constantly nil)}

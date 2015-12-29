@@ -48,7 +48,7 @@
                 (getAction [this] Action/RIGHT_CLICK_AIR))]
     (with-redefs [enter-armour-stand
                   (constantly (reify
-                                mocks/Location
+                                mocks/IgetLocation
                                 (getLocation [this] loc)))
                   sugot.world/strike-lightning-effect do-nothing
                   sugot.world/play-sound do-nothing

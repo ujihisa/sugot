@@ -1,11 +1,11 @@
 (ns sugot.mocks
   (:import [org.bukkit Material]))
 
-(defprotocol Entity (getEntity [this]))
-(defprotocol Cause (getCause [this]))
-(defprotocol Name (getName [this]))
-(defprotocol Location (getLocation [this]))
-(defprotocol ClickedBlock (getClickedBlock [this]))
+(defprotocol IgetEntity (getEntity [this]))
+(defprotocol IgetCause (getCause [this]))
+(defprotocol IgetName (getName [this]))
+(defprotocol IgetLocation (getLocation [this]))
+(defprotocol IgetClickedBlock (getClickedBlock [this]))
 
 (defprotocol ^:private SugotBlock
   (getType [this])
@@ -19,11 +19,11 @@
       SugotBlock
       (getType [this] type)
       (getData [this] data)
-      Location
+      IgetLocation
       (getLocation [this] loc))))
 
 (defn world [name]
-  (reify Name
+  (reify IgetName
     (getName [this] name)))
 
 (defprotocol SugotLocation
@@ -67,9 +67,9 @@
     (player name nil))
   ([name loc]
     (reify
-      Name
+      IgetName
       (getName [this] name)
-      Location
+      IgetLocation
       (getLocation [this] loc))))
 
 (defprotocol Action (getAction [this]))
@@ -82,7 +82,7 @@
 (defprotocol Player (getPlayer [this]))
 
 (defprotocol SugotCreatureSpawnEvent
-  ; Use with Cancel and Location
+  ; Use with Cancel and IgetLocation
   (getSpawnReason [this]))
 
 (defprotocol PlayerMoveEvent
