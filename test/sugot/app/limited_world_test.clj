@@ -9,7 +9,7 @@
   (testing "send-message for the player if it's very far"
     (let [l (mocks/location (mocks/world "world") 400 50 0)
           event (reify
-                  mocks/Player
+                  mocks/IgetPlayer
                   (getPlayer [this] (mocks/player "dummy-player"))
                   mocks/PlayerMoveEvent
                   (getFrom [this] nil)

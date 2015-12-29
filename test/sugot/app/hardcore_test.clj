@@ -12,12 +12,12 @@
 
 (fact PlayerDropItemEvent-test
   (let [event (reify
-                mocks/Player
+                mocks/IgetPlayer
                 (getPlayer [this]
                   (let [world (mocks/world "hardcore")
                         loc (mocks/location world 0 0 0)]
                     (mocks/player "dummy-player" loc)))
-                mocks/ItemDrop
+                mocks/IgetItemDrop
                 (getItemDrop [this]
                   (reify
                     mocks/ItemStack
@@ -29,9 +29,9 @@
 
 (fact BlockPlaceEvent-test
   (let [event (reify
-                mocks/Player
+                mocks/IgetPlayer
                 (getPlayer [this] nil)
-                mocks/ItemInHand
+                mocks/IgetItemInHand
                 (getItemInHand [this]
                   (ItemStack. Material/BED 1)))]
     (with-redefs [player-in-hardcore? (constantly true)]
@@ -42,9 +42,9 @@
   (let [loc (mocks/location "hardcore" 10 20 30)
         player (mocks/player "dummy-player" loc)
         event (reify
-                mocks/Player
+                mocks/IgetPlayer
                 (getPlayer [this] player)
-                mocks/Action
+                mocks/IgetAction
                 (getAction [this] Action/RIGHT_CLICK_AIR))]
     (with-redefs [enter-armour-stand
                   (constantly (reify

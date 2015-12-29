@@ -21,7 +21,7 @@
     (with-redefs [l/post-lingr (fn [msg] {:msg msg})]
       (AsyncPlayerChatEvent
         (reify
-          mocks/Player
+          mocks/IgetPlayer
           (getPlayer [this] (mocks/player "dummy-player"))
           SugotAsyncPlayerChatEvent
           (getMessage [this] "a")

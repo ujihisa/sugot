@@ -65,7 +65,7 @@
   (let [loc (mocks/location "anywhere" 10 20 30 block-map)
         player (mocks/player "dummy-player" loc)
         event (reify
-                mocks/Player
+                mocks/IgetPlayer
                 (getPlayer [this] player)
                 mocks/PlayerMoveEvent
                 (getFrom [this] loc)
@@ -82,7 +82,7 @@
   (let [block (mocks/block Material/STONE_PLATE 0)
         loc (mocks/location "world" 10 20 30 block-map)
         event (reify
-                mocks/Player
+                mocks/IgetPlayer
                 (getPlayer [this] (mocks/player "dummy-player" loc))
                 mocks/PlayerToggleSneakEvent
                 (isSneaking [this] true))]
@@ -105,9 +105,9 @@
         player (mocks/player "dummy-player" loc)
         block (mocks/block Material/IRON_FENCE 0)
         event (reify
-                mocks/Player (getPlayer [this] player)
+                mocks/IgetPlayer (getPlayer [this] player)
                 mocks/IgetClickedBlock (getClickedBlock [this] block)
-                mocks/Action (getAction [this] Action/RIGHT_CLICK_BLOCK))]
+                mocks/IgetAction (getAction [this] Action/RIGHT_CLICK_BLOCK))]
     (with-redefs-fn {#'sugot.app.elevator/find-elevator-from-bar (constantly :an-elevator)
                      #'l/send-message (constantly nil)}
                     #(PlayerInteractEvent event))

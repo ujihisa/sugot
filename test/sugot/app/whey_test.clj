@@ -14,7 +14,7 @@
           item-stack (ItemStack. Material/MILK_BUCKET 1)
           called? (ref false)
           event (reify
-                  mocks/Player
+                  mocks/IgetPlayer
                   (getPlayer [this] player)
                   mocks/ItemStack
                   (getItemStack [this] item-stack))]
@@ -31,9 +31,9 @@
                          (into-array [Enchantment/DURABILITY])))
           called? (ref false)
           event (reify
-                  mocks/Player
+                  mocks/IgetPlayer
                   (getPlayer [this] player)
-                  Item
+                  IgetItem
                   (getItem [this] item-stack))]
       (with-redefs [give-exp (fn [& _]
                                (dosync

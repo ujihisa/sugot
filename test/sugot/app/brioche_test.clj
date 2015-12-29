@@ -18,9 +18,9 @@
           item-stack (ItemStack. Material/BREAD 1)
           called? (ref false)
           event (reify
-                  mocks/Player
+                  mocks/IgetPlayer
                   (getPlayer [this] player)
-                  mocks/Item
+                  mocks/IgetItem
                   (getItem [this] item-stack))]
       (with-redefs [give-exp (fn [& _]
                                (dosync
@@ -39,9 +39,9 @@
                          (into-array [Enchantment/DURABILITY])))
           called? (ref false)
           event (reify
-                  mocks/Player
+                  mocks/IgetPlayer
                   (getPlayer [this] player)
-                  mocks/Item
+                  mocks/IgetItem
                   (getItem [this] item-stack))]
       (with-redefs [give-exp (fn [& _]
                                (dosync

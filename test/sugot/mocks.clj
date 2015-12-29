@@ -6,6 +6,13 @@
 (defprotocol IgetName (getName [this]))
 (defprotocol IgetLocation (getLocation [this]))
 (defprotocol IgetClickedBlock (getClickedBlock [this]))
+(defprotocol IgetAction (getAction [this]))
+(defprotocol IgetItem (getItem [this]))
+(defprotocol IgetItemDrop (getItemDrop [this]))
+(defprotocol IgetItemInHand (getItemInHand [this]))
+(defprotocol IgetItemMeta (getItemMeta [this]))
+(defprotocol IgetDisplayName (getDisplayName [this]))
+(defprotocol IgetPlayer (getPlayer [this]))
 
 (defprotocol ^:private SugotBlock
   (getType [this])
@@ -72,24 +79,17 @@
       IgetLocation
       (getLocation [this] loc))))
 
-(defprotocol Action (getAction [this]))
-(defprotocol Item (getItem [this]))
-(defprotocol ItemDrop (getItemDrop [this]))
 (defprotocol ItemStack (getItemStack [this]))
-(defprotocol ItemInHand (getItemInHand [this]))
-(defprotocol ItemMeta (getItemMeta [this]))
-(defprotocol DisplayName (getDisplayName [this]))
-(defprotocol Player (getPlayer [this]))
 
 (defprotocol SugotCreatureSpawnEvent
   ; Use with Cancel and IgetLocation
   (getSpawnReason [this]))
 
 (defprotocol PlayerMoveEvent
-  ; Use with Player
+  ; Use with IgetPlayer
   (getTo [this])
   (getFrom [this]))
 
 (defprotocol PlayerToggleSneakEvent
-  ; Use with Player
+  ; Use with IgetPlayer
   (isSneaking [this]))

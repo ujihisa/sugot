@@ -7,7 +7,7 @@
 
 (facts PlayerLoginEvent-test
   (fact "notifies to lingr"
-    (let [event (reify mocks/Player
+    (let [event (reify mocks/IgetPlayer
              (getPlayer [this]
                (mocks/player "dummy-player" nil)))]
       (with-redefs [l/later-fn (fn [sec & expr] expr)
@@ -21,7 +21,7 @@
   (fact "notifies to lingr"
     (with-redefs [l/post-lingr (fn [msg] {:msg msg})]
       (= {:msg "[LOGOUT] dummy-player logged out."}
-         (PlayerQuitEvent (reify mocks/Player
+         (PlayerQuitEvent (reify mocks/IgetPlayer
                             (getPlayer [this] (mocks/player "dummy-player")))))
       => true)))
 
@@ -30,7 +30,7 @@
     (with-redefs [l/broadcast-and-post-lingr (fn [msg] {:post-lingr msg})]
       ; TODO test if braodcast is also called
       (= {:post-lingr "[BED] dummy-player went to bed."}
-         (PlayerBedEnterEvent (reify mocks/Player
+         (PlayerBedEnterEvent (reify mocks/IgetPlayer
                                 (getPlayer [this] (mocks/player "dummy-player")))))
       => true)))
 
@@ -46,7 +46,7 @@
                 new-level nil
                 death-message "dummy-death-message"]
             ; PlayerDeathEvent(
-            ;   Player player, List<ItemStack> drops, int droppedExp, int newExp, int newTotalExp, int newLevel, String deathMessage)
+            ;   IgetPlayer player, List<ItemStack> drops, int droppedExp, int newExp, int newTotalExp, int newLevel, String deathMessage)
             (proxy [] []
               (getDeathMessage [this] "dummy-death-message")))]
           (with-redefs [l/broadcast-and-post-lingr (fn [msg] {:post-lingr msg})]
