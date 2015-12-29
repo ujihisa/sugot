@@ -128,8 +128,14 @@
             (set! (.usageMessage aggregated-command) "")))]
     (.register command-map "sugot" aggregated-command)))
 
+; TODO don't hardcode
+(defn- execute-all-on-load []
+  (require 'sugot.app.hardcore)
+  (sugot.app.hardcore/on-load))
+
 (defn -main [& args]
-  (future (Main/main (make-array String 0)))
+  (future
+    (Main/main (make-array String 0)))
 
   ; call `start` once server is ready.
   (loop [server nil]
@@ -139,6 +145,7 @@
             command-map (-> server .getCommandMap)]
         (register-all-events pm)
         (register-all-recipes)
+        (execute-all-on-load)
         #_ (register-all-commands command-map))
       (recur (try (Bukkit/getServer) (catch Exception e nil))))))
 
