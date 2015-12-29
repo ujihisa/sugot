@@ -130,8 +130,11 @@
 
 ; TODO don't hardcode
 (defn- execute-all-on-load []
-  (require 'sugot.app.hardcore)
-  (sugot.app.hardcore/on-load))
+  (try
+    (eval (read-string "(do
+                       (require 'sugot.app.hardcore)
+                       (sugot.app.hardcore/on-load))"))
+    (catch Exception e (.printStackTrace e))))
 
 (defn -main [& args]
   (future
