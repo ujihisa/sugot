@@ -1,12 +1,12 @@
-(defproject sugot "1.0-SNAPSHOT"
+(defproject sugot "1.0"
   :description "clojure + spigot minecraft server"
   :url "https://github.com/ujihisa/sugot"
   :license {:name "GPL3 or any later versions"
             :url "http://www.gnu.org/licenses/gpl-3.0.en.html"}
-  :dependencies [[org.clojure/clojure "1.8.0-RC4"]
-                 [org.spigotmc/spigot-api "1.8.8-R0.1-SNAPSHOT"]
-                 [org.spigotmc/spigot "1.8.8"]
-                 [clj-http "2.0.0"]]
+  :dependencies [[org.clojure/clojure "1.8.0"]
+                 [org.spigotmc/spigot-api "1.9.4-R0.1-20160515.121902-8"]
+                 [org.spigotmc/spigot "1.9.4"]
+                 [clj-http "3.0.1"]]
   :repositories {"org.bukkit"
                  "http://repo.bukkit.org/content/groups/public/"
                  "spigot-repo"
