@@ -1,5 +1,5 @@
 #!/bin/bash -ex
-VERSION="1.8.8"
+VERSION="1.9.4"
 mkdir -p spigot
 cd spigot
 pwd

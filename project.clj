@@ -1,4 +1,4 @@
-(defproject sugot "1.0"
+(defproject sugot "1.1-SNAPSHOT"
   :description "clojure + spigot minecraft server"
   :url "https://github.com/ujihisa/sugot"
   :license {:name "GPL3 or any later versions"
