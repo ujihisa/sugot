@@ -8,7 +8,7 @@
     (with-redefs [sugot.lib/bot-verifier "dummy-bot-verifier"
                   clj-http.client/post (fn [& args] args)]
       (is (= ["http://lingr.com/api/room/say"
-              {:form-params {:room "mcujm", :bot 'sugoicraft, :text "hello", :bot_verifier "dummy-bot-verifier"}}]
+              {:form-params {:room "mcujm", :bot 'spifax, :text "hello", :bot_verifier "dummy-bot-verifier"}}]
              (post-lingr-sync "hello"))))))
 
 (deftest post-lingr-test
