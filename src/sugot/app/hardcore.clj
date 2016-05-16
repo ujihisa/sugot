@@ -125,7 +125,7 @@
                 (when (instance? Arrow damager)
                   (.remove damager)))
               (let [loc (.getLocation entity)]
-                (sugot.world/play-sound loc Sound/BAT_TAKEOFF 1.0 1.0)
+                (sugot.world/play-sound loc Sound/ENTITY_BAT_TAKEOFF 1.0 1.0)
                 (.setVelocity vehicle (Vector. (rand-nth [-1.0 0.0 1.0])
                                                0.4
                                                (rand-nth [-1.0 0.0 1.0])))
@@ -154,7 +154,7 @@
                 (l/set-cancelled event)
                 (.setFireTicks projectile (l/sec 1))
                 (sugot.world/play-sound (.getLocation projectile)
-                                        Sound/ZOMBIE_METAL 1.0 2.0)
+                                        Sound/ENTITY_ZOMBIE_ATTACK_IRON_DOOR 1.0 2.0)
                 (l/later 0
                   (.setVelocity projectile (Vector. 0.0 1.0 0.0))
                   (when shooter

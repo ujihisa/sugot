@@ -18,7 +18,7 @@
         (l/broadcast msg))
       (give-exp player 0.29)
       (l/later (l/sec 0.5)
-        (sugot.world/play-sound (.getLocation player) Sound/EAT 0.8 2.0)))))
+        (sugot.world/play-sound (.getLocation player) Sound/ENTITY_GENERIC_EAT 0.8 2.0)))))
 
 (defn create-brioche [n]
   (doto (ItemStack. Material/BREAD n)
