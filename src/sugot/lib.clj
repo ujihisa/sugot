@@ -10,7 +10,7 @@
       "http://lingr.com/api/room/say"
       {:form-params
        {:room "mcujm"
-        :bot 'sugoicraft
+        :bot 'spifax
         :text (ChatColor/stripColor (str msg))
         :bot_verifier bot-verifier}})))
 
