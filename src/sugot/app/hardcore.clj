@@ -552,8 +552,8 @@
             ; effect
             (let [loc (.getLocation player)]
               (sugot.world/strike-lightning-effect loc)
-              (sugot.world/play-sound loc Sound/AMBIENCE_CAVE 1.0 1.0)
-              (sugot.world/play-sound loc Sound/AMBIENCE_CAVE 1.0 1.0))
+              (sugot.world/play-sound loc Sound/AMBIENT_CAVE 1.0 1.0)
+              (sugot.world/play-sound loc Sound/AMBIENT_CAVE 1.0 1.0))
             ; main
             (garbage-collection)
             (let [compass (doto (ItemStack. Material/COMPASS 1)
