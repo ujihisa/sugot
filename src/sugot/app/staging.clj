@@ -68,7 +68,7 @@
     (let [[pitchkey interval] (first score)]
       (when pitchkey
         #_ (sugot.world/play-sound loc org.bukkit.Sound/NOTE_PIANO 1 (pitchkey notes))
-        (sugot.world/play-sound loc org.bukkit.Sound/NOTE_PLING 1 (pitchkey notes)))
+        (sugot.world/play-sound loc org.bukkit.Sound/BLOCK_NOTE_PLING 1 (pitchkey notes)))
       (sugot.lib/later (if (zero? interval)
                          0
                          (long (/ 32 interval)))
@@ -114,7 +114,7 @@
                     b-above)]
               (when (seq targets)
                 (sugot.world/play-sound (.getLocation player)
-                                        Sound/CAT_MEOW 0.8 1.5))
+                                        Sound/ENTITY_CAT_PURR 0.8 1.5))
               (doseq [b-above (take (.getAmount item-in-hand) targets)]
                 (b/set-block b-above Material/CROPS (byte 0))
                 (l/consume-item player)))))))))
