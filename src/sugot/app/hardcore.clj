@@ -2,7 +2,7 @@
   (:require [sugot.lib :as l]
             [sugot.block :as b]
             [sugot.world]
-            [sugot.app.brioche])
+            #_[sugot.app.brioche])
   (:import [org.bukkit Bukkit Server WorldCreator Material Location Sound
             Effect]
            [org.bukkit.block Biome]
@@ -344,7 +344,8 @@
     48 (ItemStack. Material/CARPET (inc (rand-int 64)))
     49 (ItemStack. Material/CARROT_STICK 1)
     50 (ItemStack. Material/CAULDRON_ITEM 1)
-    51 (sugot.app.brioche/create-brioche (inc (rand-int 32)))
+    #_ 51 (sugot.app.brioche/create-brioche (inc (rand-int 32)))
+    51 (ItemStack. Material/GHAST_TEAR 1)
     52 (ItemStack. Material/COMPASS 1)
     53 (ItemStack. Material/DAYLIGHT_DETECTOR (inc (rand-int 8)))
     54 (ItemStack. Material/DIAMOND_HOE 1)
