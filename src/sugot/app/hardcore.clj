@@ -4,7 +4,7 @@
             [sugot.world]
             #_[sugot.app.brioche])
   (:import [org.bukkit Bukkit Server WorldCreator Material Location Sound
-            Effect]
+            Effect Difficulty]
            [org.bukkit.block Biome]
            [org.bukkit.entity ArmorStand Monster Blaze Egg SmallFireball
             Player LivingEntity Projectile Arrow Snowball Guardian Creeper Silverfish Horse
@@ -381,8 +381,8 @@
                       Material/OBSIDIAN 0)
         (b/set-block! (.getBlockAt hardcore-world x init-y z)
                       Material/TORCH 0))))
-  (let [[goal-distance chest-distance] [220 6]
-        amplifier (rand-nth [0.5 0.9 1.0 1.0 1.0 1.1 1.1 1.2 1.3 2.0])
+  (let [[goal-distance chest-distance] [300 6]
+        amplifier (rand-nth [0.6 0.9 1.0 1.0 1.0 1.1 1.1 1.2 1.3 1.8])
         [goal-x goal-z] (random-xz (int (* goal-distance amplifier)))
         goal-y (.getHighestBlockYAt hardcore-world goal-x goal-z)]
     (.setSpawnLocation hardcore-world goal-x (inc goal-y) goal-z)
@@ -413,6 +413,7 @@
                         (.seed (rand-int Integer/MAX_VALUE)
                                #_ (first interesting-seeds)))
         hardcore-world (.createWorld world-creator)]
+    (.setDifficulty hardcore-world Difficulty/HARD)
     (if (and
           (< 0 num-retry)
           (contains? #{Biome/OCEAN Biome/DEEP_OCEAN} (.getBiome hardcore-world 0 0)))
@@ -572,6 +573,11 @@
           (do
             (l/set-item-in-hand player (ItemStack. Material/PAPER 1))
             (leave-hardcore-with-message player)))))))
+
+(defn PlayerDeathEvent [event]
+  (let [pname (.getName (.getEntity event))]
+    (update-players-file (fn [players-set]
+                           (disj players-set pname)))))
 
 ; TODO
 ; This is loaded from ~/.sugot-init.clj
