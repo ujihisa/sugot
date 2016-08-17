@@ -49,12 +49,15 @@
       (catch java.io.FileNotFoundException _ #{})
       (catch Exception e (.printStackTrace e)))))
 
+(defn- magic-compass? [item-stack]
+  (= "Magic Compass" (l/get-display-name item-stack)))
+
 (defn PlayerDropItemEvent [event]
   (when (and
           (loc-in-hardcore? (.getLocation (.getPlayer event)))
-          (= "Magic Compass"
-             (some-> event
-                     .getItemDrop .getItemStack l/get-display-name)))
+          (if-let [item-stack (.getItemStack (.getItemDrop event))]
+            (magic-compass? item-stack)
+            true))
     (l/set-cancelled event)
     (l/send-message (.getPlayer event) "[HARDCORE] You should keep it for going back home!")))
 
@@ -575,7 +578,8 @@
             (leave-hardcore-with-message player)))))))
 
 (defn PlayerDeathEvent [event]
-  (let [pname (.getName (.getEntity event))]
+  (let [player (.getEntity event)
+        pname (.getName player)]
     (update-players-file (fn [players-set]
                            (disj players-set pname)))))
 
