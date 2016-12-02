@@ -117,7 +117,6 @@
     org.bukkit.event.player.PlayerInteractAtEntityEvent
     org.bukkit.event.player.PlayerInteractEntityEvent
     org.bukkit.event.player.PlayerInteractEvent
-    org.bukkit.event.player.PlayerInventoryEvent
     org.bukkit.event.player.PlayerItemBreakEvent
     org.bukkit.event.player.PlayerItemConsumeEvent
     org.bukkit.event.player.PlayerItemDamageEvent
