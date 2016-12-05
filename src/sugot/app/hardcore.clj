@@ -37,7 +37,7 @@
         (spit path (prn-str (f players-set))))
       (catch java.io.FileNotFoundException _
         (try
-          (spit path (prn-str "#{}"))
+          (spit path (prn-str #{}))
           (update-players-file f)
           (catch Exception e (.printStackTrace e))))
       (catch Exception e (.printStackTrace e)))))
