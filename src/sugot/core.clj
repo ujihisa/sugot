@@ -68,7 +68,6 @@
 (def dummy-sugot-plugin
   (reify org.bukkit.plugin.Plugin
     (getConfig [this] nil)
-    (getDatabase [this] nil)
     (getDataFolder [this] nil)
     (getDefaultWorldGenerator [this worldName id] nil)
     (getDescription [this] nil)
